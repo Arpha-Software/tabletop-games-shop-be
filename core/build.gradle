@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':abstract-user-service')
+    implementation project(':user-service')
+    implementation project(':notification-service')
+    implementation project(':abstract-notification-service')
+}
+
+bootJar{
+    enabled = true
+    mainClass = 'org.arpha.core.CoreApplication'
+}

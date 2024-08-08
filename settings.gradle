@@ -1,0 +1,7 @@
+rootProject.name = 'tabletop-games-shop'
+include 'core'
+include 'abstract-user-service'
+include 'user-service'
+include 'notification-service'
+include 'abstract-notification-service'
+
