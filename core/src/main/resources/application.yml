@@ -1,2 +1,17 @@
+spring:
+  profiles:
+    active: default
+  application:
+    name: tabletop-games-shop
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+  flyway:
+    default-schema: public
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
 server:
   port: 9999
