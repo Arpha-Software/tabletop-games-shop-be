@@ -1,6 +1,5 @@
 package org.arpha.security;
 
-import lombok.Getter;
 import org.arpha.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
 public record UserDetailsAdapter(User user) implements UserDetails {
 
     @Override
