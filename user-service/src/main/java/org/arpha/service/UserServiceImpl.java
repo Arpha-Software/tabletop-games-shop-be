@@ -1,16 +1,21 @@
 package org.arpha.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.user.request.ChangePasswordRequest;
 import org.arpha.dto.user.request.CreateUserRequest;
+import org.arpha.dto.user.response.ChangePasswordResponse;
 import org.arpha.dto.user.response.CreateUserResponse;
+import org.arpha.entity.User;
+import org.arpha.exception.ChangePasswordException;
 import org.arpha.exception.EmailAlreadyTakenException;
 import org.arpha.mapper.UserMapper;
 import org.arpha.repository.UserRepository;
 import org.arpha.security.UserDetailsAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.arpha.service.helper.UserServiceHelper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +26,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UserServiceHelper userServiceHelper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -43,4 +50,15 @@ public class UserServiceImpl implements UserService {
                         .formatted(createUserRequest.getEmail())));
     }
 
+    @Override
+    public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest) {
+        User user = ((UserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
+        return Optional
+                .of(changePasswordRequest)
+                .filter(changePasswordRequest1 -> passwordEncoder.matches(changePasswordRequest1.getPassword(), user.getPassword()))
+                .map(changePasswordRequest1 -> userServiceHelper.updatePassword(user, changePasswordRequest1.getNewPassword()))
+                .map(userRepository::save)
+                .map(user1 -> new ChangePasswordResponse(user1.getId(), true))
+                .orElseThrow(() -> new ChangePasswordException("Password wasn't changed because old password is wrong!"));
+    }
 }
