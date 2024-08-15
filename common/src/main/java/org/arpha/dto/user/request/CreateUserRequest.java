@@ -19,7 +19,7 @@ public class CreateUserRequest {
     private String lastName;
     @Email
     private String email;
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[\\w\\d\\W]{8,}$",
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$",
             message = "Password must contain at least one number, lower case and upper case letters and be 8 symbols long!")
     private String password;
     private String confirmationPassword;
