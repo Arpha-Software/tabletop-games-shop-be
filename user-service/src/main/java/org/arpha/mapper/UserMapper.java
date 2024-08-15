@@ -18,7 +18,7 @@ public interface UserMapper {
     @Mapping(target = "subscribedToNewsLetter", source = "subscribedToNewsLetter")
     @Mapping(target = "active", constant = "false")
     @Mapping(target = "blocked", constant = "false")
-    @Mapping(target = "role", constant = "USER")
+    @Mapping(target = "role", constant = "ROLE_USER")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     User toUser(CreateUserRequest createUserRequest);
