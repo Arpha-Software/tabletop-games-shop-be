@@ -8,6 +8,7 @@ import org.arpha.dto.user.response.ChangePasswordResponse;
 import org.arpha.dto.user.response.CreateUserResponse;
 import org.arpha.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ public class UserController {
         return userService.create(createUserRequest);
     }
 
-    @PostMapping("/password/change")
+    @PutMapping("/password")
     public ChangePasswordResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         return userService.changePassword(changePasswordRequest);
     }
