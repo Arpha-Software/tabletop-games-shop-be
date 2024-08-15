@@ -1,5 +1,6 @@
 package org.arpha.service;
 
+import lombok.RequiredArgsConstructor;
 import org.arpha.dto.user.request.LoginRequest;
 import org.arpha.dto.user.response.LoginResponse;
 import org.arpha.security.UserDetailsAdapter;
@@ -10,15 +11,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
-    }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {

@@ -1,5 +1,6 @@
 package org.arpha.config;
 
+import lombok.RequiredArgsConstructor;
 import org.arpha.security.jwt.AuthJwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,10 +16,10 @@ import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class FilterChainConfiguration {
 
-    @Autowired
-    private AuthJwtTokenFilter authJWTTokenFilter;
+    private final AuthJwtTokenFilter authJWTTokenFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
