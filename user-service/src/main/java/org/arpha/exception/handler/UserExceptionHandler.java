@@ -1,6 +1,7 @@
 package org.arpha.exception.handler;
 
 import jakarta.validation.ConstraintViolation;
+import lombok.extern.slf4j.Slf4j;
 import org.arpha.exception.EmailAlreadyTakenException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,25 +21,30 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyTakenException.class)
     public ProblemDetail handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
+        log.error("message", e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
     public ProblemDetail handleAuthError(RuntimeException e) {
+        log.error("message", e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ProblemDetail handleUnexpectedExceptions(RuntimeException e) {
+        log.error("message", e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        log.error("message", ex);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Some information isn't valid");
         problemDetail.setTitle("Constraint Violation");
 
