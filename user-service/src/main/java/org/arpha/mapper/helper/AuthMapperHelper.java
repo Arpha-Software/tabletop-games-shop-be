@@ -1,6 +1,5 @@
 package org.arpha.mapper.helper;
 
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.arpha.security.jwt.JwtUtils;
 import org.mapstruct.Named;
@@ -18,4 +17,5 @@ public class AuthMapperHelper {
     public LocalDateTime getExpirationDate(String jwtToken) {
         return jwtUtils.getExpirationDate(jwtToken);
     }
+
 }

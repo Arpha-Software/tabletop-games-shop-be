@@ -9,7 +9,6 @@ import org.arpha.security.jwt.JwtUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,7 +25,8 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         return Optional
                 .of(loginRequest)
-                .map(loginRequest1 -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest1.getUsername(), loginRequest1.getPassword())))
+                .map(loginRequest1 -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                        loginRequest1.getUsername(), loginRequest1.getPassword())))
                 .map(authentication -> (UserDetailsAdapter) authentication.getPrincipal())
                 .map(UserDetailsAdapter::user)
                 .map(user -> authMapper.toLoginResponse(user, jwtUtils.generateToken(user.getEmail())))

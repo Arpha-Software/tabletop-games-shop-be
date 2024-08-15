@@ -24,27 +24,29 @@ import java.util.Map;
 @Slf4j
 public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final String MESSAGE = "message";
+
     @ExceptionHandler(EmailAlreadyTakenException.class)
     public ProblemDetail handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
-        log.error("message", e);
+        log.error(MESSAGE, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
     public ProblemDetail handleAuthError(RuntimeException e) {
-        log.error("message", e);
+        log.error(MESSAGE, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ProblemDetail handleUnexpectedExceptions(RuntimeException e) {
-        log.error("message", e);
+        log.error(MESSAGE, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        log.error("message", ex);
+        log.error(MESSAGE, ex);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Some information isn't valid");
         problemDetail.setTitle("Constraint Violation");
 

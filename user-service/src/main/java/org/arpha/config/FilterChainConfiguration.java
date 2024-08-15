@@ -2,7 +2,6 @@ package org.arpha.config;
 
 import lombok.RequiredArgsConstructor;
 import org.arpha.security.jwt.AuthJwtTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
