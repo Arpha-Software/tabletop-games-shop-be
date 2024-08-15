@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -59,7 +59,8 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+        return id == user.id && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName)
+               && Objects.equals(email, user.email) && Objects.equals(password, user.password);
     }
 
     @Override
