@@ -1,4 +1,4 @@
-create table "file"
+create table "files"
 (
     id          bigint generated always as identity,
     name        varchar,

@@ -1,4 +1,4 @@
-create table "audit"
+create table "audits"
 (
     id bigint generated always as identity,
     action varchar not null,

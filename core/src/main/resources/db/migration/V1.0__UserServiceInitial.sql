@@ -1,4 +1,4 @@
-create table "user"
+create table "users"
 (
     id                          bigint generated always as identity,
     first_name                  varchar                  not null,
