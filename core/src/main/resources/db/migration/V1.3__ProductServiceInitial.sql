@@ -1,4 +1,4 @@
-create table "product"
+create table "products"
 (
     id bigint generated always as identity,
     name varchar not null,

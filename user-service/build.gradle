@@ -1,4 +1,5 @@
 dependencies {
     implementation project (':abstract-user-service')
+    implementation project (':common')
     implementation project (":abstract-notification-service")
 }

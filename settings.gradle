@@ -4,4 +4,5 @@ include 'abstract-user-service'
 include 'user-service'
 include 'notification-service'
 include 'abstract-notification-service'
+include 'common'
 
