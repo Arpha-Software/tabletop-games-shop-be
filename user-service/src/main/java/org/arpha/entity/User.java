@@ -36,6 +36,7 @@ public class User {
     private String lastName;
     @Column(unique=true)
     private String email;
+    private String phone;
     private String password;
     @Column(name = "is_subscribed_to_newsletter")
     private boolean isSubscribedToNewsLetter;
