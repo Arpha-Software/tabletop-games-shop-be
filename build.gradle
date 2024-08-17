@@ -6,6 +6,7 @@ buildscript {
         springCloudVersion = '2023.0.1'
         springCloudAzureVersion = '5.12.0'
         jwtApiVersion = '0.12.6'
+        openApiVersion = '2.6.0'
     }
 }
 
@@ -65,6 +66,7 @@ allprojects {
 
         implementation 'org.flywaydb:flyway-core'
         implementation "io.jsonwebtoken:jjwt-api:${jwtApiVersion}"
+        implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
 
         implementation "org.mapstruct:mapstruct:${mapStructVersion}"
         implementation "com.querydsl:querydsl-core:${queryDslVersion}"
