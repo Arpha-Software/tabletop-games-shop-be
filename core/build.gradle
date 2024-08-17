@@ -3,6 +3,7 @@ dependencies {
     implementation project(':user-service')
     implementation project(':notification-service')
     implementation project(':abstract-notification-service')
+    implementation project(':common')
 }
 
 bootJar{
