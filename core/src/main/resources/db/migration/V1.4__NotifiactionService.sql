@@ -9,4 +9,3 @@ create table "notifications"
 
     constraint notification_pk PRIMARY KEY (id)
 );
-
