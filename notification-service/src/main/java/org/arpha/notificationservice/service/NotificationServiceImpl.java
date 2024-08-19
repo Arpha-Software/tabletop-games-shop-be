@@ -18,8 +18,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationSender<SmsNotificationProperties> smsNotificationSender;
 
     @Override
-    public void triggerNotification(NotificationProperties configuration) {
-         switch (configuration) {
+    public void triggerNotification(NotificationProperties properties) {
+         switch (properties) {
             case EmailNotificationProperties emailProps -> emailNotificationSender.sendNotification(emailProps);
             case SmsNotificationProperties smsProps -> smsNotificationSender.sendNotification(smsProps);
             default -> throw new IllegalStateException("Notification delivery type is not supported!");
