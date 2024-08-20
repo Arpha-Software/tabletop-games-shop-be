@@ -19,3 +19,10 @@ server:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
+
+azure:
+  services:
+    communication:
+      connectionString: ${AZURE_COMMUNICATION_CONNECTION_STRING}
+      senderEmail: ${AZURE_COMMUNICATION_EMAIL}
+      senderPhoneNumber: ${AZURE_COMMUNICATION_PHONE}
