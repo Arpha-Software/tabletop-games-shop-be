@@ -9,15 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.arpha.domain.type.notification.configuration.EmailNotificationProperties;
 import org.arpha.notificationservice.configuration.properties.AzureCommunicationProperties;
-import org.arpha.notificationservice.domain.Notification;
-import org.arpha.notificationservice.domain.type.DeliveryType;
 import org.arpha.notificationservice.mapper.NotificationMapper;
 import org.arpha.notificationservice.repository.NotificationRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.time.OffsetDateTime;
 
 @Slf4j
 @Component
@@ -34,7 +30,8 @@ public class EmailNotificationSender implements NotificationSender<EmailNotifica
     public void sendNotification(EmailNotificationProperties notificationProperties) {
         Boxed.of(notificationProperties)
                 .to(this::sendMessage)
-                .apply(result -> this.save(result, notificationProperties));
+                .to(emailResult -> notificationMapper.mapToNotification(notificationProperties, emailResult))
+                .apply(notificationRepository::save);
     }
 
     private EmailSendResult sendMessage(EmailNotificationProperties notificationProperties) {
@@ -47,18 +44,6 @@ public class EmailNotificationSender implements NotificationSender<EmailNotifica
         SyncPoller<EmailSendResult, EmailSendResult> poller = emailClient.beginSend(emailMessage);
         poller.waitForCompletion();
         return poller.getFinalResult();
-    }
-
-    private void save(EmailSendResult result, EmailNotificationProperties notificationProperties) {
-        Notification notification = Notification.builder()
-                .deliveryType(DeliveryType.EMAIL)
-                .notificationType(notificationProperties.getNotificationType())
-                .recipient(notificationProperties.getRecipientEmail())
-                .status(notificationMapper.mapToNotificationStatus(result.getStatus()))
-                .createdAt(OffsetDateTime.now())
-                .build();
-
-        notificationRepository.save(notification);
     }
 
 }
