@@ -39,7 +39,7 @@ public class EmailNotificationSender implements NotificationSender<EmailNotifica
 
     private EmailSendResult sendMessage(EmailNotificationProperties notificationProperties) {
         EmailMessage emailMessage = new EmailMessage()
-                .setSenderAddress(azureCommunicationProperties.getSenderEmail())
+                .setSenderAddress(azureCommunicationProperties.senderEmail())
                 .setToRecipients(new EmailAddress(notificationProperties.getRecipientEmail()))
                 .setSubject(notificationProperties.getSubject())
                 .setBodyHtml(notificationProperties.getBody());

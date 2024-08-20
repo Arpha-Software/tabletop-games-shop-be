@@ -18,14 +18,14 @@ public class AzureConfiguration {
     @Bean
     public EmailClient azureEmailClient() {
         return new EmailClientBuilder()
-                .connectionString(azureCommunicationProperties.getConnectionString())
+                .connectionString(azureCommunicationProperties.connectionString())
                 .buildClient();
     }
 
     @Bean
     public SmsClient smsClient() {
         return new SmsClientBuilder()
-                .connectionString(azureCommunicationProperties.getConnectionString())
+                .connectionString(azureCommunicationProperties.connectionString())
                 .buildClient();
     }
 

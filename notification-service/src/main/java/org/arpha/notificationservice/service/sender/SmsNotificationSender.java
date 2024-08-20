@@ -35,7 +35,7 @@ public class SmsNotificationSender implements NotificationSender<SmsNotification
 
     private SmsSendResult sendMessage(SmsNotificationProperties notificationProperties) {
         return smsClient.send(
-                azureCommunicationProperties.getSenderPhoneNumber(),
+                azureCommunicationProperties.senderPhoneNumber(),
                 notificationProperties.getRecipientPhoneNumber(),
                 notificationProperties.getMessage(),
                 null
