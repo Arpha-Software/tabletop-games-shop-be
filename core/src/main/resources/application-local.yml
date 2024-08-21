@@ -11,6 +11,7 @@ jwt:
 azure:
   services:
     storage:
-      connectionString: ${BLOB_URL}
+      connectionString: ${AZURE_CONNECTION_STRING}
       containerName: ${BLOB_CONTAINER_NAME}
+      linkExpiration: ${AZURE_BLOB_LINK_EXPIRATION}
 
