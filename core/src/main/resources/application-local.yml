@@ -16,6 +16,6 @@ azure:
       senderPhoneNumber: ${AZURE_COMMUNICATION_PHONE}
     storage:
       connectionString: ${AZURE_CONNECTION_STRING}
-      containerName: ${BLOB_CONTAINER_NAME}
+      containerName: ${AZURE_BLOB_CONTAINER_NAME}
       linkExpiration: ${AZURE_BLOB_LINK_EXPIRATION}
 

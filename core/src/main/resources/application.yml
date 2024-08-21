@@ -27,5 +27,6 @@ azure:
       senderEmail: ${AZURE_COMMUNICATION_EMAIL}
       senderPhoneNumber: ${AZURE_COMMUNICATION_PHONE}
     storage:
-      connectionString: ${BLOB_URL}
-      containerName: ${BLOB_CONTAINER_NAME}
+      connectionString: ${AZURE_CONNECTION_STRING}
+      containerName: ${AZURE_BLOB_CONTAINER_NAME}
+      linkExpiration: ${AZURE_BLOB_LINK_EXPIRATION}
