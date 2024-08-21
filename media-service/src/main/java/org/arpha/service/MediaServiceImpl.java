@@ -12,12 +12,14 @@ import org.arpha.exception.FileUploadException;
 import org.arpha.mapper.FileMapper;
 import org.arpha.repository.FileRepository;
 import org.arpha.service.helper.MediaServiceHelper;
+import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
+import static org.arpha.dto.media.enums.AccessType.READ;
+import static org.arpha.dto.media.enums.AccessType.WRITE;
 
 @Service
 @RequiredArgsConstructor
@@ -30,41 +32,41 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     public FileResponse upload(@NonNull MultipartFile multipartFile, FileUploadRequest fileUploadRequest) {
-        return Optional
+        return Boxed
                 .of(multipartFile)
-                .map(MultipartFile::getOriginalFilename)
-                .map(blobContainerClient::getBlobClient)
+                .mapToBoxed(MultipartFile::getOriginalFilename)
+                .mapToBoxed(blobContainerClient::getBlobClient)
                 .filter(blobClient -> mediaServiceHelper.validate(fileUploadRequest, blobClient))
-                .map(blobClient -> mediaServiceHelper.upload(blobClient, multipartFile))
-                .map(multipartFile1 -> fileMapper.toFile(multipartFile, fileUploadRequest))
-                .map(fileRepository::save)
-                .map(fileMapper::toFileResponse)
+                .mapToBoxed(blobClient -> mediaServiceHelper.upload(blobClient, multipartFile))
+                .mapToBoxed(multipartFile1 -> fileMapper.toFile(multipartFile, fileUploadRequest))
+                .mapToBoxed(fileRepository::save)
+                .mapToBoxed(file -> fileMapper.toFileResponse(file, WRITE))
                 .orElseThrow(() -> new FileUploadException("File wasn't uploaded. Either entity with target id doesn't" +
                                                            " exist or file with that name already exist in storage"));
     }
 
     @Override
     public Page<FileResponse> getAll(Pageable pageable) {
-        return fileRepository.findAll(pageable).map(fileMapper::toFileResponse);
+        return fileRepository.findAll(pageable).map(file -> fileMapper.toFileResponse(file, READ));
     }
 
     @Override
     public void delete(Long id) {
-        Optional
+        Boxed
                 .of(id)
-                .flatMap(fileRepository::findById)
-                .map(File::getName)
-                .map(blobContainerClient::getBlobClient)
-                .map(BlobClient::deleteIfExists)
+                .flatOpt(fileRepository::findById)
+                .mapToBoxed(File::getName)
+                .mapToBoxed(blobContainerClient::getBlobClient)
+                .mapToBoxed(BlobClient::deleteIfExists)
                 .ifPresent(result -> fileRepository.deleteById(id));
     }
 
     @Override
     public FileResponse findById(long id) {
-        return Optional
+        return Boxed
                 .of(id)
-                .flatMap(fileRepository::findById)
-                .map(fileMapper::toFileResponse)
+                .flatOpt(fileRepository::findById)
+                .mapToBoxed(file -> fileMapper.toFileResponse(file, READ))
                 .orElseThrow(() -> new FileNotFoundException("File with %s id wasn't found!".formatted(id)));
     }
 }
