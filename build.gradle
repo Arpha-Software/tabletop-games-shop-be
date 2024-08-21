@@ -9,6 +9,8 @@ buildscript {
         apacheCommonsVersion = '3.16.0'
         jwtApiVersion = '0.12.6'
         openApiVersion = '2.6.0'
+        azureEmailVersion = '1.0.15'
+        azureSmsVersion = '1.1.26'
     }
 }
 
@@ -74,6 +76,9 @@ allprojects {
         implementation "com.querydsl:querydsl-core:${queryDslVersion}"
         implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
         implementation "com.azure:azure-storage-blob:${azureBlobStorageVersion}"
+
+        implementation "com.azure:azure-communication-email:${azureEmailVersion}"
+        implementation "com.azure:azure-communication-sms:${azureSmsVersion}"
 
         compileOnly 'org.projectlombok:lombok'
         runtimeOnly 'org.postgresql:postgresql'

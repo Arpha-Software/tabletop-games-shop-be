@@ -22,6 +22,10 @@ jwt:
 
 azure:
   services:
+    communication:
+      connectionString: ${AZURE_COMMUNICATION_CONNECTION_STRING}
+      senderEmail: ${AZURE_COMMUNICATION_EMAIL}
+      senderPhoneNumber: ${AZURE_COMMUNICATION_PHONE}
     storage:
       connectionString: ${BLOB_URL}
       containerName: ${BLOB_CONTAINER_NAME}
