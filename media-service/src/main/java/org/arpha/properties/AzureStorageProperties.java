@@ -5,5 +5,5 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @EnableConfigurationProperties(AzureStorageProperties.class)
 @ConfigurationProperties("azure.services.storage")
-public record AzureStorageProperties(String connectionString, String containerName) {
+public record AzureStorageProperties(String connectionString, String containerName, long linkExpiration) {
 }
