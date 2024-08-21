@@ -16,5 +16,6 @@ public class FileResponse {
     private long targetId;
     private String fileType;
     private UploadType targetType;
+    private String link;
 
 }
