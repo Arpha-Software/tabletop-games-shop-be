@@ -19,3 +19,9 @@ server:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
+
+azure:
+  services:
+    storage:
+      connectionString: ${BLOB_URL}
+      containerName: ${BLOB_CONTAINER_NAME}
