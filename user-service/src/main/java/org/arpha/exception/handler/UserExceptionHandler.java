@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.arpha.exception.EmailAlreadyTakenException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -25,25 +26,21 @@ import java.util.Map;
 @Slf4j
 public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @Order(100)
     @ExceptionHandler(EmailAlreadyTakenException.class)
     public ProblemDetail handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
-
+    @Order(99)
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
     public ProblemDetail handleAuthError(RuntimeException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ProblemDetail handleUnexpectedExceptions(RuntimeException e) {
-        log.error(StringUtils.EMPTY, e);
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error happened, we are working on it!");
-    }
-
     @Override
+    @Order(98)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error(StringUtils.EMPTY, ex);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Some information isn't valid");
