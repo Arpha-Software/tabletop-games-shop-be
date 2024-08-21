@@ -1,13 +1,16 @@
 package org.arpha.mapper;
 
+import org.arpha.dto.media.enums.AccessType;
 import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.dto.media.response.FileResponse;
 import org.arpha.entity.File;
+import org.arpha.mapper.helper.FileMapperHelper;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.web.multipart.MultipartFile;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {FileMapperHelper.class})
 public interface FileMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -23,8 +26,9 @@ public interface FileMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "fileName", source = "file.name")
     @Mapping(target = "fileType", source = "file.type")
+    @Mapping(target = "link", source = "file.name", qualifiedByName = "generateAccessLink")
     @Mapping(target = "size", source = "file.size")
     @Mapping(target = "targetType", source = "file.targetType")
-    FileResponse toFileResponse(File file);
+    FileResponse toFileResponse(File file, @Context AccessType accessType);
 
 }
