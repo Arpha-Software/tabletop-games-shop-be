@@ -9,13 +9,14 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Order
 @RestControllerAdvice
 @Slf4j
 public class UnexpectedExceptionHandler {
 
-    @Order
-    @ExceptionHandler(RuntimeException.class)
-    public ProblemDetail handleUnexpectedExceptions(RuntimeException e) {
+
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleUnexpectedExceptions(Exception e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error happened, we are working on it!");
     }

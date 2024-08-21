@@ -24,15 +24,15 @@ import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
+@Order(1)
 public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @Order(100)
     @ExceptionHandler(EmailAlreadyTakenException.class)
     public ProblemDetail handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
-    @Order(99)
+
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
     public ProblemDetail handleAuthError(RuntimeException e) {
         log.error(StringUtils.EMPTY, e);
@@ -40,7 +40,6 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    @Order(98)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error(StringUtils.EMPTY, ex);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Some information isn't valid");

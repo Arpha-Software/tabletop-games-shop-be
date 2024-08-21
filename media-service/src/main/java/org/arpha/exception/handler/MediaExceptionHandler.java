@@ -12,16 +12,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
+@Order(2)
 public class MediaExceptionHandler {
 
-    @Order(95)
     @ExceptionHandler(FileUploadException.class)
     public ProblemDetail handleFileUploadException(FileUploadException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @Order(96)
     @ExceptionHandler(FileNotFoundException.class)
     public ProblemDetail handleFileNotFoundException(FileNotFoundException e) {
         log.error(StringUtils.EMPTY, e);
