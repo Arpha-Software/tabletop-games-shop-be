@@ -7,16 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
@@ -46,13 +44,11 @@ public class User {
     @Column(nullable = false)
     private String role;
     @Column(name="created_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @CreationTimestamp
+    private OffsetDateTime createdAt;
     @Column(name = "updated_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @UpdateTimestamp
+    private OffsetDateTime updatedAt;
 
     @Override
     public boolean equals(Object o) {
