@@ -26,4 +26,5 @@ public interface UserService extends UserDetailsService {
 
     Page<UserResponse> findAll(Pageable pageable);
 
+    boolean existById(long id);
 }

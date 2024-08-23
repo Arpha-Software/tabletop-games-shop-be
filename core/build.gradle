@@ -4,6 +4,8 @@ dependencies {
     implementation project(':notification-service')
     implementation project(':abstract-notification-service')
     implementation project(':common')
+    implementation project(':abstract-media-service')
+    implementation project(':media-service')
 }
 
 bootJar{

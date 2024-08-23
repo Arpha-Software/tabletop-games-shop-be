@@ -7,3 +7,15 @@ spring:
 jwt:
   secret: asdasdasdasdasasddddddddddddddddddddzxcvwe2erherher43b34sgfsdfg34f34c34c34ecsdcsdcsdcsdv34gf3vererhe
   expiration: 8640000
+
+azure:
+  services:
+    communication:
+      connectionString: ${AZURE_COMMUNICATION_CONNECTION_STRING}
+      senderEmail: ${AZURE_COMMUNICATION_EMAIL}
+      senderPhoneNumber: ${AZURE_COMMUNICATION_PHONE}
+    storage:
+      connectionString: ${AZURE_CONNECTION_STRING}
+      containerName: ${AZURE_BLOB_CONTAINER_NAME}
+      linkExpiration: ${AZURE_BLOB_LINK_EXPIRATION}
+
