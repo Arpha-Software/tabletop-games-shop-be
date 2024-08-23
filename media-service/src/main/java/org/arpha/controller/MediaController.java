@@ -1,6 +1,7 @@
 package org.arpha.controller;
 
 import com.querydsl.core.types.Predicate;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.dto.media.response.FileResponse;
@@ -28,7 +29,7 @@ public class MediaController {
     private final MediaService mediaService;
 
     @PostMapping
-    public FileResponse uploadMedia(@RequestBody FileUploadRequest fileUploadRequest) {
+    public FileResponse uploadMedia(@RequestBody @Valid FileUploadRequest fileUploadRequest) {
         return mediaService.upload(fileUploadRequest);
     }
 

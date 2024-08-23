@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.media.enums.UploadType;
+import org.arpha.dto.media.enums.TargetType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,7 +39,7 @@ public class File {
     private long targetId;
     @Column(name = "target_type")
     @Enumerated(EnumType.STRING)
-    private UploadType targetType;
+    private TargetType targetType;
     @Column(name = "created_at")
     @CreationTimestamp
     private OffsetDateTime createdAt;

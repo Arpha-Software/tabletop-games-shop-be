@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.arpha.dto.media.FileAccessLink;
-import org.arpha.dto.media.enums.UploadType;
+import org.arpha.dto.media.enums.TargetType;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class FileResponse {
     private String fileName;
     private long fileSize;
     private long targetId;
-    private UploadType targetType;
+    private TargetType targetType;
     private FileAccessLink fileAccessLink;
 
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.media.enums.UploadType;
+import org.arpha.dto.media.enums.TargetType;
 import org.springframework.util.MimeType;
 
 @Data
@@ -20,6 +20,6 @@ public class FileUploadRequest {
     @Min(1)
     private long targetId;
     @NotNull
-    private UploadType targetType;
+    private TargetType targetType;
 
 }

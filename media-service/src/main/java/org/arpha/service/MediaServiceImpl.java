@@ -4,7 +4,7 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.arpha.dto.media.enums.UploadType;
+import org.arpha.dto.media.enums.TargetType;
 import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.dto.media.response.FileResponse;
 import org.arpha.entity.File;
@@ -85,7 +85,7 @@ public class MediaServiceImpl implements MediaService {
         return Boxed
                 .of(fileUploadRequest)
                 .mapToBoxed(FileUploadRequest::getTargetType)
-                .mapToBoxed(UploadType::getFolder)
+                .mapToBoxed(TargetType::getFolder)
                 .mapToBoxed(folder -> folder.formatted(fileUploadRequest.getTargetId()))
                 .orElseThrow(() -> new IllegalArgumentException("Wrong target type in request"));
 

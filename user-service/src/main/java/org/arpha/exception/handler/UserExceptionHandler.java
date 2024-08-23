@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.arpha.exception.EmailAlreadyTakenException;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
-@Order(1)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyTakenException.class)

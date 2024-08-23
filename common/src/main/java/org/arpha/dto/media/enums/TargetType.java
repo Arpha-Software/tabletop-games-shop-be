@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum UploadType {
+public enum TargetType {
     USER("users/%s/"), PRODUCT("products/%s/");
 
     private final String folder;
