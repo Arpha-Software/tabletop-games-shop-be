@@ -61,4 +61,9 @@ public class UserServiceImpl implements UserService {
                 .map(user1 -> new ChangePasswordResponse(user1.getId(), true))
                 .orElseThrow(() -> new ChangePasswordException("Password wasn't changed because old password is wrong!"));
     }
+
+    @Override
+    public boolean existById(long id) {
+        return userRepository.existsById(id);
+    }
 }

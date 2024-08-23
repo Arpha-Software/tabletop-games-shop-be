@@ -12,4 +12,5 @@ public interface UserService extends UserDetailsService {
 
     ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest);
 
+    boolean existById(long id);
 }
