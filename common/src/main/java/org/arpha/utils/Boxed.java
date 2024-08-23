@@ -74,6 +74,14 @@ public final class Boxed<T> {
         }
     }
 
+    public <U> Boxed<U> flatOpt(Function<? super T, Optional<U>> mapper) {
+        if (value != null) {
+            return mapper.apply(value).map(Boxed::of).orElseGet(Boxed::empty);
+        } else {
+            return empty();
+        }
+    }
+
     public void ifPresent(Consumer<? super T> consumer) {
         if (value != null) {
             consumer.accept(value);

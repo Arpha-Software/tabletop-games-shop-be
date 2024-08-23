@@ -4,6 +4,8 @@ import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.arpha.exception.EmailAlreadyTakenException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyTakenException.class)
@@ -35,12 +38,6 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handleAuthError(RuntimeException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ProblemDetail handleUnexpectedExceptions(RuntimeException e) {
-        log.error(StringUtils.EMPTY, e);
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error happened, we are working on it!");
     }
 
     @Override

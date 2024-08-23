@@ -5,4 +5,6 @@ include 'user-service'
 include 'notification-service'
 include 'abstract-notification-service'
 include 'common'
+include 'abstract-media-service'
+include 'media-service'
 
