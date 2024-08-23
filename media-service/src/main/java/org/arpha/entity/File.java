@@ -16,6 +16,7 @@ import org.arpha.dto.media.enums.UploadType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.MimeType;
 
 import java.time.OffsetDateTime;
 
@@ -31,8 +32,9 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private String type;
-    private long size;
+    private MimeType type;
+    @Column(name = "file_size")
+    private long fileSize;
     @Column(name = "target_id")
     private long targetId;
     @Column(name = "target_type")
