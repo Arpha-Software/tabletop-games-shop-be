@@ -82,7 +82,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long userId) {
-       userRepository.deleteById(userId);
+        Optional
+                .of(userId)
+                .flatMap(userRepository::findById)
+                .ifPresent(user -> {
+                    user.setActive(false);
+                    userRepository.save(user);
+                });
     }
 
     @Override
@@ -99,4 +105,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable).map(userMapper::toUserResponse);
     }
 
+    @Override
+    public void activateAccount(long userId) {
+        Optional
+                .of(userId)
+                .flatMap(userRepository::findById)
+                .ifPresent(user -> {
+                    user.setActive(true);
+                    userRepository.save(user);
+                });
+    }
 }

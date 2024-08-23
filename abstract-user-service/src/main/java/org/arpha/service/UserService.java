@@ -20,6 +20,8 @@ public interface UserService extends UserDetailsService {
 
     void delete(long userId);
 
+    void activateAccount(long userId);
+
     UserResponse findById(long userId);
 
     Page<UserResponse> findAll(Pageable pageable);
