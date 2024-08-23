@@ -1,8 +1,10 @@
 package org.arpha.mapper.helper;
 
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.media.FileAccessLink;
 import org.arpha.dto.media.enums.AccessType;
-import org.arpha.service.helper.MediaServiceHelper;
+import org.arpha.entity.File;
+import org.arpha.service.BlobService;
 import org.mapstruct.Context;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
@@ -11,11 +13,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FileMapperHelper {
 
-    private final MediaServiceHelper mediaServiceHelper;
+    private final BlobService blobService;
 
     @Named("generateAccessLink")
-    public String generateAccessLink(String fileName, @Context AccessType accessType) {
-        return mediaServiceHelper.generateLink(fileName, accessType);
+    public FileAccessLink generateAccessLink(File file, @Context AccessType accessType) {
+        return new FileAccessLink(blobService.generateLink(file.getName(), accessType), accessType, file.getType());
     }
 
 }

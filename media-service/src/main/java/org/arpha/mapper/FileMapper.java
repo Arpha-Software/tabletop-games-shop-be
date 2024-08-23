@@ -1,5 +1,6 @@
 package org.arpha.mapper;
 
+import com.azure.storage.blob.BlobClient;
 import org.arpha.dto.media.enums.AccessType;
 import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.dto.media.response.FileResponse;
@@ -8,26 +9,24 @@ import org.arpha.mapper.helper.FileMapperHelper;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.web.multipart.MultipartFile;
 
 @Mapper(componentModel = "spring", uses = {FileMapperHelper.class})
 public interface FileMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "name", source = "file.originalFilename")
-    @Mapping(target = "type", source = "file.contentType")
-    @Mapping(target = "size", source = "file.size")
+    @Mapping(target = "name", source = "blobClient.blobName")
+    @Mapping(target = "type", source = "fileUploadRequest.type")
+    @Mapping(target = "fileSize", source = "fileUploadRequest.fileSize")
     @Mapping(target = "targetType", source = "fileUploadRequest.targetType")
     @Mapping(target = "targetId", source = "fileUploadRequest.targetId")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    File toFile(MultipartFile file, FileUploadRequest fileUploadRequest);
+    File toFile(FileUploadRequest fileUploadRequest, BlobClient blobClient);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "fileName", source = "file.name")
-    @Mapping(target = "fileType", source = "file.type")
-    @Mapping(target = "link", source = "file.name", qualifiedByName = "generateAccessLink")
-    @Mapping(target = "size", source = "file.size")
+    @Mapping(target = "fileAccessLink", source = "file", qualifiedByName = "generateAccessLink")
+    @Mapping(target = "fileSize", source = "file.fileSize")
     @Mapping(target = "targetType", source = "file.targetType")
     FileResponse toFileResponse(File file, @Context AccessType accessType);
 
