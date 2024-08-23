@@ -45,7 +45,7 @@ public class MediaServiceImpl implements MediaService {
                 .mapToBoxed(fileRepository::save)
                 .mapToBoxed(file -> fileMapper.toFileResponse(file, WRITE))
                 .orElseThrow(() -> new FileUploadException("File wasn't uploaded. Either entity with target id doesn't" +
-                                                           " exist or file with that name already exist in storage"));
+                                                           " exist!"));
     }
 
     @Override
