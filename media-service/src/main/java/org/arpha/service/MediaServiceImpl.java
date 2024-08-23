@@ -2,8 +2,9 @@ package org.arpha.service;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
-import lombok.NonNull;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.dto.media.response.FileResponse;
 import org.arpha.entity.File;
@@ -11,12 +12,14 @@ import org.arpha.exception.FileNotFoundException;
 import org.arpha.exception.FileUploadException;
 import org.arpha.mapper.FileMapper;
 import org.arpha.repository.FileRepository;
-import org.arpha.service.helper.MediaServiceHelper;
 import org.arpha.utils.Boxed;
+import org.arpha.validator.FileRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 import static org.arpha.dto.media.enums.AccessType.READ;
 import static org.arpha.dto.media.enums.AccessType.WRITE;
@@ -26,19 +29,19 @@ import static org.arpha.dto.media.enums.AccessType.WRITE;
 public class MediaServiceImpl implements MediaService {
 
     private final BlobContainerClient blobContainerClient;
-    private final MediaServiceHelper mediaServiceHelper;
+    private final FileRequestValidator fileRequestValidator;
     private final FileRepository fileRepository;
     private final FileMapper fileMapper;
 
     @Override
-    public FileResponse upload(@NonNull MultipartFile multipartFile, FileUploadRequest fileUploadRequest) {
+    public FileResponse upload(FileUploadRequest fileUploadRequest) {
         return Boxed
-                .of(multipartFile)
-                .mapToBoxed(MultipartFile::getOriginalFilename)
+                .of(UUID.randomUUID())
+                .mapToBoxed(UUID::toString)
+                .mapToBoxed(uuid-> uuid + "." + fileUploadRequest.getType().getSubtype())
                 .mapToBoxed(blobContainerClient::getBlobClient)
-                .filter(blobClient -> mediaServiceHelper.validate(fileUploadRequest, blobClient))
-                .mapToBoxed(blobClient -> mediaServiceHelper.upload(blobClient, multipartFile))
-                .mapToBoxed(multipartFile1 -> fileMapper.toFile(multipartFile, fileUploadRequest))
+                .filter(blobClient -> fileRequestValidator.validate(fileUploadRequest, blobClient))
+                .mapToBoxed(blobClient -> fileMapper.toFile(fileUploadRequest, blobClient))
                 .mapToBoxed(fileRepository::save)
                 .mapToBoxed(file -> fileMapper.toFileResponse(file, WRITE))
                 .orElseThrow(() -> new FileUploadException("File wasn't uploaded. Either entity with target id doesn't" +
@@ -46,8 +49,8 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
-    public Page<FileResponse> getAll(Pageable pageable) {
-        return fileRepository.findAll(pageable).map(file -> fileMapper.toFileResponse(file, READ));
+    public Page<FileResponse> getAll(Predicate predicate, Pageable pageable) {
+        return fileRepository.findAll(predicate, pageable).map(file -> fileMapper.toFileResponse(file, READ));
     }
 
     @Override
@@ -68,5 +71,11 @@ public class MediaServiceImpl implements MediaService {
                 .flatOpt(fileRepository::findById)
                 .mapToBoxed(file -> fileMapper.toFileResponse(file, READ))
                 .orElseThrow(() -> new FileNotFoundException("File with %s id wasn't found!".formatted(id)));
+    }
+
+    @SneakyThrows
+    public MultipartFile upload(BlobClient blobClient, MultipartFile multipartFile) {
+        blobClient.upload(multipartFile.getInputStream(), multipartFile.getSize());
+        return multipartFile;
     }
 }
