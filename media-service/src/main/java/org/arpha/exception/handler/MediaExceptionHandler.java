@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Order(2)
 public class MediaExceptionHandler {
 
-    @ExceptionHandler(FileUploadException.class)
-    public ProblemDetail handleFileUploadException(FileUploadException e) {
+    @ExceptionHandler({FileUploadException.class, IllegalArgumentException.class})
+    public ProblemDetail handleFileUploadException(RuntimeException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
