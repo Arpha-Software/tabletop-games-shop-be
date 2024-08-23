@@ -28,7 +28,7 @@ public class FilterChainConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers(POST, "/api/v1/users").permitAll()
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .addFilterBefore(authJWTTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
