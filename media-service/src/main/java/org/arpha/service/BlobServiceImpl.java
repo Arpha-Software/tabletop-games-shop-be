@@ -27,13 +27,17 @@ public class BlobServiceImpl implements BlobService {
         return Boxed
                 .of(accessType)
                 .mapToBoxed(accessType1 -> BlobSasPermission.parse(accessType1.getPermission()))
-                .mapToBoxed(blobSasPermission -> new BlobServiceSasSignatureValues(OffsetDateTime.now().plusSeconds(
-                        azureStorageProperties.linkExpiration()), blobSasPermission))
-                .mapToBoxed(blobSignature -> blobSignature.setProtocol(SasProtocol.HTTPS_ONLY))
-                .mapToBoxed(blobSignature -> blobSignature.setCacheControl("no-cache"))
+                .mapToBoxed(this::getSasSignature)
                 .mapToBoxed(blobSasPermission -> Pair.of(blobContainerClient.getBlobClient(fileName), blobSasPermission))
                 .mapToBoxed(pair -> pair.getLeft().getBlobUrl() + "?" + pair.getLeft().generateSas(pair.getRight()))
                 .orElseThrow(() -> new GenerateFileLinkException("Could not generate link for file " + fileName));
+    }
+
+    private BlobServiceSasSignatureValues getSasSignature(BlobSasPermission blobSasPermission) {
+        return new BlobServiceSasSignatureValues(OffsetDateTime.now().plusSeconds(
+                azureStorageProperties.linkExpiration()), blobSasPermission)
+                .setProtocol(SasProtocol.HTTPS_ONLY)
+                .setCacheControl("no-cache");
     }
 
 }
