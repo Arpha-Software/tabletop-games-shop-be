@@ -4,6 +4,7 @@ create table "users"
     first_name                  varchar                  not null,
     last_name                   varchar,
     email                       varchar                  not null,
+    phone                       varchar                  not null,
     password                    varchar                  not null,
     is_subscribed_to_newsletter boolean                  not null,
     is_active                   boolean                  not null,

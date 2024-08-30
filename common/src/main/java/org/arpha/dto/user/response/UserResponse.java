@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateUserResponse {
+public class UserResponse {
 
-    private long id;
+    private int id;
     private String firstName;
     private String lastName;
     private String email;
     private String phone;
+    private String role;
 
 }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.arpha.exception.EmailAlreadyTakenException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.arpha.exception.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -32,6 +33,12 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
         log.error(StringUtils.EMPTY, e);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ProblemDetail handleEmailAlreadyTakenException(UserNotFoundException e) {
+        log.error(StringUtils.EMPTY, e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
