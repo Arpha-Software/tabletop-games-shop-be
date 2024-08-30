@@ -1,5 +1,6 @@
 package org.arpha.service;
 
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.user.request.ChangePasswordRequest;
 import org.arpha.dto.user.request.CreateUserRequest;
@@ -101,8 +102,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponse> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable).map(userMapper::toUserResponse);
+    public Page<UserResponse> findAll(Predicate predicate, Pageable pageable) {
+        return userRepository.findAll(predicate, pageable).map(userMapper::toUserResponse);
     }
 
     @Override
