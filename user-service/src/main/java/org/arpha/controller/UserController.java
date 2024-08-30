@@ -12,6 +12,7 @@ import org.arpha.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,36 +30,43 @@ public class UserController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or isAnonymous()")
     @PostMapping
     public CreateUserResponse create(@RequestBody @Valid CreateUserRequest createUserRequest) {
         return userService.create(createUserRequest);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/password")
     public ChangePasswordResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         return userService.changePassword(changePasswordRequest);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @PutMapping("/{id}")
     public UserResponse update(@PathVariable long id, @RequestBody @Valid UpdateUserRequest updateUserRequest) {
         return userService.updateUser(id, updateUserRequest);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
         userService.delete(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @GetMapping("/{id}")
     public UserResponse read(@PathVariable long id) {
         return userService.findById(id);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public Page<UserResponse> findAll(@PageableDefault Pageable pageable) {
         return userService.findAll(pageable);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @PatchMapping("/{id}")
     public void activateAccount(@PathVariable long id) {
         userService.activateAccount(id);
