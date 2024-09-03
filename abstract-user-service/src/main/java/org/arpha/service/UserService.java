@@ -1,5 +1,6 @@
 package org.arpha.service;
 
+import com.querydsl.core.types.Predicate;
 import org.arpha.dto.user.request.ChangePasswordRequest;
 import org.arpha.dto.user.request.CreateUserRequest;
 import org.arpha.dto.user.request.UpdateUserRequest;
@@ -24,7 +25,7 @@ public interface UserService extends UserDetailsService {
 
     UserResponse findById(long userId);
 
-    Page<UserResponse> findAll(Pageable pageable);
+    Page<UserResponse> findAll(Predicate predicate, Pageable pageable);
 
     boolean existById(long id);
 }

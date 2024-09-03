@@ -1,6 +1,7 @@
 package org.arpha.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import com.querydsl.core.types.Predicate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.user.request.ChangePasswordRequest;
@@ -9,9 +10,11 @@ import org.arpha.dto.user.request.UpdateUserRequest;
 import org.arpha.dto.user.response.ChangePasswordResponse;
 import org.arpha.dto.user.response.CreateUserResponse;
 import org.arpha.dto.user.response.UserResponse;
+import org.arpha.entity.User;
 import org.arpha.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,8 +67,8 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public Page<UserResponse> findAll(@PageableDefault Pageable pageable) {
-        return userService.findAll(pageable);
+    public Page<UserResponse> findAll(@QuerydslPredicate(root = User.class) Predicate predicate, @PageableDefault Pageable pageable) {
+        return userService.findAll(predicate, pageable);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
