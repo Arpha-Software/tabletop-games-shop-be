@@ -1,6 +1,7 @@
 package org.arpha.controller;
 
 import com.querydsl.core.types.Predicate;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.media.request.FileUploadRequest;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class MediaController {
 
     private final MediaService mediaService;
