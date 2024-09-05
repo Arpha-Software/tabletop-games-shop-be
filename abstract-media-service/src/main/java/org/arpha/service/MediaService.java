@@ -12,7 +12,7 @@ public interface MediaService {
 
     Page<FileResponse> getAll(Predicate predicate, Pageable pageable);
 
-    void delete(Long id);
+    void deleteFileById(Long id);
 
-    FileResponse findById(long id);
+    FileResponse findFileById(long id);
 }
