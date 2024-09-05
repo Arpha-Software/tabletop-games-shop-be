@@ -17,7 +17,6 @@ import org.arpha.security.UserDetailsAdapter;
 import org.arpha.service.helper.UserServiceHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +29,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
+
+    public static final String USER_NOT_FOUND_MESSAGE = "User with %d id doesn't exist!";
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CreateUserResponse create(CreateUserRequest createUserRequest) {
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         return Optional
                 .of(createUserRequest)
                 .filter(createUserRequest1 -> !userRepository.existsByEmail(createUserRequest1.getEmail()))
@@ -59,7 +60,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest) {
-        User user = ((UserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
+        User user = userRepository
+                .findById(changePasswordRequest.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(changePasswordRequest.getUserId())));
+
         return Optional
                 .of(changePasswordRequest)
                 .filter(changePasswordRequest1 -> passwordEncoder.matches(changePasswordRequest1.getPassword(), user.getPassword()))
@@ -77,11 +81,11 @@ public class UserServiceImpl implements UserService {
                 .map(user -> userMapper.updateUser(user, updateUserRequest))
                 .map(userRepository::save)
                 .map(userMapper::toUserResponse)
-                .orElseThrow(() -> new UserNotFoundException("User with %d id doesn't exist!".formatted(userId)));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(userId)));
     }
 
     @Override
-    public void delete(long userId) {
+    public void deleteUserById(long userId) {
         Optional
                 .of(userId)
                 .flatMap(userRepository::findById)
@@ -92,12 +96,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findById(long userId) {
+    public UserResponse findUserById(long userId) {
         return Optional
                 .of(userId)
                 .flatMap(userRepository::findById)
                 .map(userMapper::toUserResponse)
-                .orElseThrow(() -> new UserNotFoundException("User with %d id doesn't exist!".formatted(userId)));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(userId)));
     }
 
     @Override
