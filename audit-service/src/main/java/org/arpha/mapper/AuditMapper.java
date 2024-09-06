@@ -19,10 +19,12 @@ public interface AuditMapper {
     @Mapping(target = "targetType", source = "targetType")
     AuditResponse toAuditResponse(Audit audit);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "action", source = "action")
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "targetId", source = "targetId")
     @Mapping(target = "targetType", source = "targetType")
+    @Mapping(target = "createdAt", ignore = true)
     Audit toAudit(Action action, Long userId, long targetId, TargetType targetType);
 
 }

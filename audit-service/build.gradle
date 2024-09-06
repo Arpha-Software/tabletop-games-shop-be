@@ -1,0 +1,5 @@
+dependencies {
+    implementation project (':abstract-audit-service')
+    implementation project (':common')
+    implementation project (':user-service')
+}
