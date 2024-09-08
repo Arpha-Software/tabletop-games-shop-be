@@ -38,12 +38,12 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or isAnonymous()")
     @PostMapping
     public CreateUserResponse create(@RequestBody @Valid CreateUserRequest createUserRequest) {
-        return userService.create(createUserRequest);
+        return userService.createUser(createUserRequest);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/password")
-    public ChangePasswordResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+    public ChangePasswordResponse changeUserPassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         return userService.changePassword(changePasswordRequest);
     }
 
@@ -56,13 +56,13 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
-        userService.delete(id);
+        userService.deleteUserById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @GetMapping("/{id}")
     public UserResponse read(@PathVariable long id) {
-        return userService.findById(id);
+        return userService.findUserById(id);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -73,7 +73,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
     @PatchMapping("/{id}")
-    public void activateAccount(@PathVariable long id) {
+    public void activateUserAccount(@PathVariable long id) {
         userService.activateAccount(id);
     }
 

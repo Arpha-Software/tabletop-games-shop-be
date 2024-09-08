@@ -30,3 +30,12 @@ azure:
       connectionString: ${AZURE_CONNECTION_STRING}
       containerName: ${AZURE_BLOB_CONTAINER_NAME}
       linkExpiration: ${AZURE_BLOB_LINK_EXPIRATION}
+
+aws:
+  services:
+    s3storage:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}
+      bucket:  ${AWS_BUCKET}
+      region:  ${AWS_REGION}
+      expiration:  ${AWS_S3_LINK_EXPIRATION}

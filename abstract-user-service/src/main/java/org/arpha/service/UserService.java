@@ -13,17 +13,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
 
-    CreateUserResponse create(CreateUserRequest createUserRequest);
+    CreateUserResponse createUser(CreateUserRequest createUserRequest);
 
     ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest);
 
     UserResponse updateUser(long userId, UpdateUserRequest updateUserRequest);
 
-    void delete(long userId);
+    void deleteUserById(long userId);
 
     void activateAccount(long userId);
 
-    UserResponse findById(long userId);
+    UserResponse findUserById(long userId);
 
     Page<UserResponse> findAll(Predicate predicate, Pageable pageable);
 

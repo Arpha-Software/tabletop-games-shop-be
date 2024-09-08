@@ -15,6 +15,7 @@ import org.arpha.dto.user.validation.FieldsValueMatch;
 )
 public class ChangePasswordRequest {
 
+    private long userId;
     private String password;
     private String confirmationPassword;
     private String newPassword;
