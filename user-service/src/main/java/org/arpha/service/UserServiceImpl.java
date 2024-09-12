@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findByEmail(String email) {
+    public UserResponse findUserByEmail(String email) {
         return Optional
                 .of(email)
                 .flatMap(userRepository::findByEmail)

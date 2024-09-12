@@ -36,7 +36,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             String lastName = oauthToken.getPrincipal().getAttribute("family_name");
             userResponse = userService.createUser(email, firstName, lastName);
         } else {
-            userResponse = userService.findByEmail(email);
+            userResponse = userService.findUserByEmail(email);
         }
         String jwtToken = jwtUtils.generateToken(email);
         LoginResponse loginResponse =  authMapper.toLoginResponse(userResponse, jwtToken);

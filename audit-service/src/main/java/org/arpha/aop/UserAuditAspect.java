@@ -42,6 +42,14 @@ public class UserAuditAspect {
     }
 
     @AfterReturning(
+            value = "execution(public org.arpha.dto.user.response.UserResponse findUserByEmail(String))",
+            argNames = "userResponse",
+            returning = "userResponse")
+    public void findUserByIdAdvice(UserResponse userResponse) {
+        auditService.saveAudit(FIND_USER_BY_EMAIL, userResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.USER);
+    }
+
+    @AfterReturning(
             value = "execution(public org.arpha.dto.user.response.UserResponse findUserById(long)) && args(id)",
             argNames = "id")
     public void findUserByIdAdvice(long id) {
