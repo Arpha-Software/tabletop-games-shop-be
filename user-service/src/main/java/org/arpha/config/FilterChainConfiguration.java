@@ -2,6 +2,7 @@ package org.arpha.config;
 
 import lombok.RequiredArgsConstructor;
 import org.arpha.security.jwt.AuthJwtTokenFilter;
+import org.arpha.security.oauth2.CustomOAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpMethod.POST;
 public class FilterChainConfiguration {
 
     private final AuthJwtTokenFilter authJWTTokenFilter;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,6 +36,7 @@ public class FilterChainConfiguration {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(authJWTTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2SuccessHandler))
                 .build();
     }
 
