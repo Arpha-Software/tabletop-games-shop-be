@@ -45,7 +45,7 @@ public class UserAuditAspect {
             value = "execution(public org.arpha.dto.user.response.UserResponse findUserByEmail(String))",
             argNames = "userResponse",
             returning = "userResponse")
-    public void findUserByIdAdvice(UserResponse userResponse) {
+    public void findUserByEmailAdvice(UserResponse userResponse) {
         auditService.saveAudit(FIND_USER_BY_EMAIL, userResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.USER);
     }
 
