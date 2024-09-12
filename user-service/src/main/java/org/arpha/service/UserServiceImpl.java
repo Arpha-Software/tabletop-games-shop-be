@@ -2,25 +2,17 @@ package org.arpha.service;
 
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.arpha.dto.user.request.ChangePasswordRequest;
-import org.arpha.dto.user.request.CreateUserRequest;
 import org.arpha.dto.user.request.UpdateUserRequest;
-import org.arpha.dto.user.response.ChangePasswordResponse;
-import org.arpha.dto.user.response.CreateUserResponse;
 import org.arpha.dto.user.response.UserResponse;
-import org.arpha.entity.User;
-import org.arpha.exception.ChangePasswordException;
 import org.arpha.exception.EmailAlreadyTakenException;
 import org.arpha.exception.UserNotFoundException;
 import org.arpha.mapper.UserMapper;
 import org.arpha.repository.UserRepository;
 import org.arpha.security.UserDetailsAdapter;
-import org.arpha.service.helper.UserServiceHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +27,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
-    private final UserServiceHelper userServiceHelper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,30 +38,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
+    public UserResponse createUser(String email, String firstName, String lastName) {
         return Optional
-                .of(createUserRequest)
-                .filter(createUserRequest1 -> !userRepository.existsByEmail(createUserRequest1.getEmail()))
-                .map(userMapper::toUser)
+                .of(email)
+                .filter(email1 -> !userRepository.existsByEmail(email1))
+                .map(email1 -> userMapper.toUser(firstName, lastName, email1))
                 .map(userRepository::save)
-                .map(userMapper::toCreateUserResponse)
+                .map(userMapper::toUserResponse)
                 .orElseThrow(() -> new EmailAlreadyTakenException("User with %s email already exists"
-                        .formatted(createUserRequest.getEmail())));
-    }
-
-    @Override
-    public ChangePasswordResponse changePassword(ChangePasswordRequest changePasswordRequest) {
-        User user = userRepository
-                .findById(changePasswordRequest.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(changePasswordRequest.getUserId())));
-
-        return Optional
-                .of(changePasswordRequest)
-                .filter(changePasswordRequest1 -> passwordEncoder.matches(changePasswordRequest1.getPassword(), user.getPassword()))
-                .map(changePasswordRequest1 -> userServiceHelper.updatePassword(user, changePasswordRequest1.getNewPassword()))
-                .map(userRepository::save)
-                .map(user1 -> new ChangePasswordResponse(user1.getId(), true))
-                .orElseThrow(() -> new ChangePasswordException("Password wasn't changed because old password is wrong!"));
+                        .formatted(email)));
     }
 
     @Override
@@ -122,8 +97,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existById(long id) {
-        return userRepository.existsById(id);
+    public boolean existByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
+    @Override
+    public UserResponse findByEmail(String email) {
+        return Optional
+                .of(email)
+                .flatMap(userRepository::findByEmail)
+                .map(userMapper::toUserResponse)
+                .orElseThrow(() -> new UserNotFoundException("User with %s email doesn't exist!".formatted(email)));
+    }
 }
