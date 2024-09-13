@@ -10,7 +10,7 @@ public class AspectUtils {
 
     public Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return !authentication.getName().equals("anonymousUser") ? ((UserDetailsAdapter) authentication.getPrincipal()).user().getId() : null;
+        return !authentication.getName().equals("anonymousUser") && authentication.getPrincipal() instanceof  UserDetailsAdapter userDetailsAdapter ? userDetailsAdapter.user().getId() : null;
     }
 
 }

@@ -17,7 +17,7 @@ public record UserDetailsAdapter(User user) implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return null;
     }
 
     @Override

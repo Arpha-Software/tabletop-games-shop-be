@@ -2,8 +2,6 @@ package org.arpha.aop;
 
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.audit.TargetType;
-import org.arpha.dto.user.response.ChangePasswordResponse;
-import org.arpha.dto.user.response.CreateUserResponse;
 import org.arpha.dto.user.response.UserResponse;
 import org.arpha.service.AuditService;
 import org.arpha.utills.AspectUtils;
@@ -21,19 +19,11 @@ public class UserAuditAspect {
     private final AuditService auditService;
 
     @AfterReturning(
-            value = "execution(public org.arpha.dto.user.response.CreateUserResponse createUser(org.arpha.dto.user.request.CreateUserRequest))",
-            argNames = "createUserResponse",
-            returning = "createUserResponse")
-    public void createUserAdvice(CreateUserResponse createUserResponse) {
-        auditService.saveAudit(CREATE_USER, createUserResponse.getId(), createUserResponse.getId(), TargetType.USER);
-    }
-
-    @AfterReturning(
-            value = "execution(public org.arpha.dto.user.response.ChangePasswordResponse changePassword(org.arpha.dto.user.request.ChangePasswordRequest))",
-            argNames = "changePasswordResponse",
-            returning = "changePasswordResponse")
-    public void changeUserPasswordAdvice(ChangePasswordResponse changePasswordResponse) {
-        auditService.saveAudit(CHANGE_USER_PASSWORD, changePasswordResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.USER);
+            value = "execution(public org.arpha.dto.user.response.UserResponse createUser(String, String, String))",
+            argNames = "userResponse",
+            returning = "userResponse")
+    public void createUserAdvice(UserResponse userResponse) {
+        auditService.saveAudit(CREATE_USER, userResponse.getId(), userResponse.getId(), TargetType.USER);
     }
 
     @AfterReturning(
@@ -49,6 +39,14 @@ public class UserAuditAspect {
             argNames = "id")
     public void deleteUserByIdAdvice(long id) {
         auditService.saveAudit(DELETE_USER_BY_ID, id, AspectUtils.getAuthenticatedUserId(), TargetType.USER);
+    }
+
+    @AfterReturning(
+            value = "execution(public org.arpha.dto.user.response.UserResponse findUserByEmail(String))",
+            argNames = "userResponse",
+            returning = "userResponse")
+    public void findUserByEmailAdvice(UserResponse userResponse) {
+        auditService.saveAudit(FIND_USER_BY_EMAIL, userResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.USER);
     }
 
     @AfterReturning(

@@ -35,7 +35,6 @@ public class User {
     @Column(unique=true)
     private String email;
     private String phone;
-    private String password;
     @Column(name = "is_subscribed_to_newsletter")
     private boolean isSubscribedToNewsLetter;
     @Column(name = "is_active")
@@ -57,12 +56,12 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName)
-               && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+               && Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, password);
+        return Objects.hash(id, firstName, lastName, email);
     }
 
 }
