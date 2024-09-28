@@ -2,9 +2,9 @@ package org.arpha.notificationservice.mapper;
 
 import com.azure.communication.email.models.EmailMessage;
 import com.azure.communication.email.models.EmailSendResult;
-import com.azure.communication.sms.models.SmsSendResult;
 import org.arpha.domain.type.notification.configuration.EmailNotificationProperties;
 import org.arpha.domain.type.notification.configuration.SmsNotificationProperties;
+import org.arpha.notificationservice.common.SmsSendResult;
 import org.arpha.notificationservice.domain.Notification;
 import org.arpha.notificationservice.mapper.helper.NotificationMapperHelper;
 import org.mapstruct.Context;
