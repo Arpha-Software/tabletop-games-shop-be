@@ -25,12 +25,15 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
 
+releans:
+  apiKey: ${SMS_SERVICE_API_KEY}
+  senderName: ${SMS_SERVICE_SENDER}
+
 azure:
   services:
     communication:
       connectionString: ${AZURE_COMMUNICATION_CONNECTION_STRING}
       senderEmail: ${AZURE_COMMUNICATION_EMAIL}
-      senderPhoneNumber: ${AZURE_COMMUNICATION_PHONE}
     storage:
       connectionString: ${AZURE_CONNECTION_STRING}
       containerName: ${AZURE_BLOB_CONTAINER_NAME}

@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.arpha.domain.type.notification.NotificationStatus;
 import org.arpha.domain.type.notification.NotificationType;
@@ -19,6 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.OffsetDateTime;
 
+@Getter
 @Builder
 @Entity
 @Table(name = "notifications")

@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @ConfigurationProperties(prefix = "azure.services.communication")
 public record AzureCommunicationProperties(
         String connectionString,
-        String senderEmail,
-        String senderPhoneNumber
+        String senderEmail
 ) {
 }

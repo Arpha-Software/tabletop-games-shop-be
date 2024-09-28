@@ -3,11 +3,11 @@ package org.arpha.notificationservice.mapper.helper;
 import com.azure.communication.email.models.EmailAddress;
 import com.azure.communication.email.models.EmailSendResult;
 import com.azure.communication.email.models.EmailSendStatus;
-import com.azure.communication.sms.models.SmsSendResult;
 import lombok.RequiredArgsConstructor;
 import org.arpha.domain.type.notification.NotificationStatus;
 import org.arpha.domain.type.notification.configuration.EmailNotificationProperties;
 import org.arpha.domain.type.notification.configuration.SmsNotificationProperties;
+import org.arpha.notificationservice.common.SmsSendResult;
 import org.arpha.notificationservice.configuration.properties.AzureCommunicationProperties;
 import org.mapstruct.Context;
 import org.mapstruct.Named;
@@ -22,7 +22,7 @@ public class NotificationMapperHelper {
     private final AzureCommunicationProperties azureCommunicationProperties;
 
     @Named("mapToEmailNotificationStatus")
-    public NotificationStatus mapToNotificationStatus(EmailNotificationProperties properties, @Context EmailSendResult result) {
+    public NotificationStatus mapToNotificationStatus(EmailNotificationProperties ignored, @Context EmailSendResult result) {
         EmailSendStatus emailSendStatus = result.getStatus();
         return switch (emailSendStatus.toString()) {
             case "NotStarted" -> NotificationStatus.NOT_STARTED;
@@ -35,12 +35,8 @@ public class NotificationMapperHelper {
     }
 
     @Named("mapToSmsNotificationStatus")
-    public NotificationStatus mapToNotificationStatus(SmsNotificationProperties properties, @Context SmsSendResult result) {
-        if (result.isSuccessful()) {
-            return NotificationStatus.SUCCEEDED;
-        } else {
-            return NotificationStatus.FAILED;
-        }
+    public NotificationStatus mapToNotificationStatus(SmsNotificationProperties ignored, @Context SmsSendResult result) {
+        return result.getStatus();
     }
 
     @Named("mapToEmailAddress")
@@ -49,7 +45,7 @@ public class NotificationMapperHelper {
     }
 
     @Named("mapToSenderAddress")
-    public String mapToSenderAddress(EmailNotificationProperties properties) {
+    public String mapToSenderAddress(EmailNotificationProperties ignored) {
         return azureCommunicationProperties.senderEmail();
     }
 
