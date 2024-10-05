@@ -2,5 +2,5 @@ package org.arpha.dto.audit;
 
 public enum TargetType {
 
-    USER, FILE;
+    USER, FILE, GENRE, CATEGORY, PRODUCT;
 }
