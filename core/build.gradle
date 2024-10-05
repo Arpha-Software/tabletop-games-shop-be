@@ -8,6 +8,8 @@ dependencies {
     implementation project(':media-service')
     implementation project(':abstract-audit-service')
     implementation project(':audit-service')
+    implementation project(':abstract-product-service')
+    implementation project(':product-service')
 }
 
 bootJar{
