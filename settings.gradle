@@ -9,4 +9,6 @@ include 'abstract-media-service'
 include 'media-service'
 include 'abstract-audit-service'
 include 'audit-service'
+include 'abstract-product-service'
+include 'product-service'
 
