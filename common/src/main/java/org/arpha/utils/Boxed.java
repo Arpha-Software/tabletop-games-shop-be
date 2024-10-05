@@ -96,6 +96,14 @@ public final class Boxed<T> {
         }
     }
 
+    public void ifPresentOrElseThrow(Consumer<? super T> action, Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (value != null) {
+            action.accept(value);
+        } else {
+           throw exceptionSupplier.get();
+        }
+    }
+
     public <U> Boxed<U> mapToBoxed(Function<? super T, ? extends U> mapper) {
         if (value != null) {
             return Boxed.of(mapper.apply(value));
