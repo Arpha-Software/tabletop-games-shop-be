@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
@@ -27,6 +28,7 @@ public class Genre {
     @Column(nullable = false, unique = true)
     private String name;
     @ManyToMany(mappedBy = "genres")
+    @EqualsAndHashCode.Exclude
     private Set<Product> products = new HashSet<>();
 
 }

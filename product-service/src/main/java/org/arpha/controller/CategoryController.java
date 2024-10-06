@@ -3,7 +3,8 @@ package org.arpha.controller;
 import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.arpha.dto.product.CategoryDto;
+import org.arpha.dto.product.request.CreateCategoryRequest;
+import org.arpha.dto.product.response.CategoryResponse;
 import org.arpha.entity.Category;
 import org.arpha.service.CategoryService;
 import org.springframework.data.domain.Page;
@@ -29,12 +30,12 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public CategoryDto create(@RequestBody CategoryDto categoryDto) {
-        return categoryService.createCategory(categoryDto);
+    public CategoryResponse create(@RequestBody CreateCategoryRequest createCategoryRequest) {
+        return categoryService.createCategory(createCategoryRequest);
     }
 
     @GetMapping
-    public Page<CategoryDto> getAllCategories(@QuerydslPredicate(root = Category.class) Predicate predicate, @PageableDefault Pageable pageable) {
+    public Page<CategoryResponse> getAllCategories(@QuerydslPredicate(root = Category.class) Predicate predicate, @PageableDefault Pageable pageable) {
         return categoryService.getAllCategories(predicate, pageable);
     }
 

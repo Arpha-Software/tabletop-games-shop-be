@@ -2,8 +2,9 @@ package org.arpha.service;
 
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.arpha.dto.product.GenreDto;
-import org.arpha.exception.CreateGenreException;
+import org.arpha.dto.product.request.CreateGenreRequest;
+import org.arpha.dto.product.response.GenreResponse;
+import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.DeleteEntityException;
 import org.arpha.mapper.GenreMapper;
 import org.arpha.repository.GenreRepository;
@@ -21,13 +22,14 @@ public class GenreServiceImpl implements GenreService {
     private final ProductService productService;
 
     @Override
-    public GenreDto createGenre(GenreDto genreDto) {
+    public GenreResponse createGenre(CreateGenreRequest createGenreRequest) {
         return Boxed
-                .of(genreDto)
+                .of(createGenreRequest)
+                .filter(genreDto1 -> !genreRepository.existsByName(createGenreRequest.getName()))
                 .mapToBoxed(genreMapper::toGenre)
                 .mapToBoxed(genreRepository::save)
                 .mapToBoxed(genreMapper::toGenreDto)
-                .orElseThrow(() -> new CreateGenreException("Error happened during genre creating"));
+                .orElseThrow(() -> new CreateEntityException("Unable to create genre, because it already exists!"));
     }
 
     @Override
@@ -40,7 +42,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Page<GenreDto> getAllGenres(Predicate predicate, Pageable pageable) {
+    public Page<GenreResponse> getAllGenres(Predicate predicate, Pageable pageable) {
         return genreRepository.findAll(predicate, pageable).map(genreMapper::toGenreDto);
     }
 

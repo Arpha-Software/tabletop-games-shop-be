@@ -2,8 +2,8 @@ package org.arpha.aop;
 
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.audit.TargetType;
-import org.arpha.dto.product.CategoryDto;
-import org.arpha.dto.product.GenreDto;
+import org.arpha.dto.product.response.GenreResponse;
+import org.arpha.dto.product.response.CategoryResponse;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.service.AuditService;
 import org.arpha.utills.AspectUtils;
@@ -28,11 +28,11 @@ public class ProductAuditAspect {
     private final AuditService auditService;
 
     @AfterReturning(
-            value = "execution(public org.arpha.dto.product.CategoryDto createCategory(org.arpha.dto.product.CategoryDto))",
-            argNames = "categoryDto",
-            returning = "categoryDto")
-    public void createCategoryAdvice(CategoryDto categoryDto) {
-        auditService.saveAudit(CREATE_CATEGORY, categoryDto.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.CATEGORY);
+            value = "execution(public org.arpha.dto.product.response.CategoryResponse createCategory(org.arpha.dto.product.request.CreateCategoryRequest))",
+            argNames = "categoryResponse",
+            returning = "categoryResponse")
+    public void createCategoryAdvice(CategoryResponse categoryResponse) {
+        auditService.saveAudit(CREATE_CATEGORY, categoryResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.CATEGORY);
     }
 
     @AfterReturning(
@@ -43,11 +43,11 @@ public class ProductAuditAspect {
     }
 
     @AfterReturning(
-            value = "execution(public org.arpha.dto.product.GenreDto createGenre(org.arpha.dto.product.GenreDto))",
-            argNames = "genreDto",
-            returning = "genreDto")
-    public void createGenreAdvice(GenreDto genreDto) {
-        auditService.saveAudit(CREATE_GENRE, genreDto.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.GENRE);
+            value = "execution(public org.arpha.dto.product.response.GenreResponse createGenre(org.arpha.dto.product.request.CreateGenreRequest))",
+            argNames = "genreResponse",
+            returning = "genreResponse")
+    public void createGenreAdvice(GenreResponse genreResponse) {
+        auditService.saveAudit(CREATE_GENRE, genreResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.GENRE);
     }
 
     @AfterReturning(

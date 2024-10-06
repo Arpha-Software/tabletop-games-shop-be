@@ -1,6 +1,7 @@
 package org.arpha.mapper;
 
-import org.arpha.dto.product.CategoryDto;
+import org.arpha.dto.product.request.CreateCategoryRequest;
+import org.arpha.dto.product.response.CategoryResponse;
 import org.arpha.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +11,7 @@ public interface CategoryMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
-    Category toCategory(CategoryDto categoryDto);
+    Category toCategory(CreateCategoryRequest createCategoryRequest);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
@@ -18,6 +19,6 @@ public interface CategoryMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
-    CategoryDto toCategoryDto(Category category);
+    CategoryResponse toCategoryDto(Category category);
 
 }

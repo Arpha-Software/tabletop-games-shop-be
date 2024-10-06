@@ -15,8 +15,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ProductExceptionHandler {
 
-    @ExceptionHandler({CreateCategoryException.class, CreateGenreException.class, CreateProductException.class, DeleteEntityException.class})
-    public ProblemDetail handleProductBadRequest(RuntimeException ex) {
+    @ExceptionHandler({CreateEntityException.class})
+    public ProblemDetail handleCreateEntityException(CreateEntityException ex) {
+        log.error(StringUtils.EMPTY, ex);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler({DeleteEntityException.class})
+    public ProblemDetail handleDeleteEntityException(DeleteEntityException ex) {
         log.error(StringUtils.EMPTY, ex);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }

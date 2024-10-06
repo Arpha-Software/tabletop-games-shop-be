@@ -3,7 +3,8 @@ package org.arpha.controller;
 import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.arpha.dto.product.GenreDto;
+import org.arpha.dto.product.request.CreateGenreRequest;
+import org.arpha.dto.product.response.GenreResponse;
 import org.arpha.entity.Genre;
 import org.arpha.service.GenreService;
 import org.springframework.data.domain.Page;
@@ -28,12 +29,12 @@ public class GenreController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
-    public GenreDto create(@RequestBody GenreDto genreDto) {
-        return genreService.createGenre(genreDto);
+    public GenreResponse create(@RequestBody CreateGenreRequest createGenreRequest) {
+        return genreService.createGenre(createGenreRequest);
     }
 
     @GetMapping
-    public Page<GenreDto> findAllGenres(@QuerydslPredicate(root = Genre.class) Predicate predicate, Pageable pageable) {
+    public Page<GenreResponse> getAllGenres(@QuerydslPredicate(root = Genre.class) Predicate predicate, Pageable pageable) {
         return genreService.getAllGenres(predicate, pageable);
     }
 

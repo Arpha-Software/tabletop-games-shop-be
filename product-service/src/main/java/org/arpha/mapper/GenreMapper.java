@@ -1,6 +1,7 @@
 package org.arpha.mapper;
 
-import org.arpha.dto.product.GenreDto;
+import org.arpha.dto.product.request.CreateGenreRequest;
+import org.arpha.dto.product.response.GenreResponse;
 import org.arpha.entity.Genre;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +11,7 @@ public interface GenreMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping( target = "name", source = "name")
-    Genre toGenre(GenreDto genreDto);
+    Genre toGenre(CreateGenreRequest createGenreRequest);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
@@ -18,6 +19,6 @@ public interface GenreMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
-    GenreDto toGenreDto(Genre genre);
+    GenreResponse toGenreDto(Genre genre);
 
 }

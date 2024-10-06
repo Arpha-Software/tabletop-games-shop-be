@@ -31,7 +31,7 @@ public class MediaController {
 
     private final MediaService mediaService;
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public FileResponse uploadMedia(@RequestBody @Valid FileUploadRequest fileUploadRequest) {
         return mediaService.upload(fileUploadRequest);

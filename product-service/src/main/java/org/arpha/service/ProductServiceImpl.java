@@ -5,7 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.response.ProductResponse;
-import org.arpha.exception.CreateProductException;
+import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
 import org.arpha.mapper.ProductMapper;
 import org.arpha.mapper.helper.ProductMapperHelper;
@@ -32,15 +32,17 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse createProduct(CreateProductRequest createProductRequest) {
         return Boxed
                 .of(createProductRequest)
+                .filter(createProductRequest1 -> !productRepository.existsByName(createProductRequest1.getName()))
                 .mapToBoxed(productMapper::toProduct)
                 .mapToBoxed(productRepository::save)
                 .mapToBoxed(productMapper::toProductResponse)
-                .orElseThrow(() -> new CreateProductException("Error happened during product creation"));
+                .orElseThrow(() -> new CreateEntityException(("Unable to create product, because product with the %s name" +
+                                                              " already exists!").formatted(createProductRequest.getName())));
     }
 
     @Override
     public void deleteProduct(long id) {
-       productRepository.deleteById(id);
+        productRepository.deleteById(id);
     }
 
     @Override
@@ -76,9 +78,7 @@ public class ProductServiceImpl implements ProductService {
         return Boxed
                 .of(id)
                 .flatOpt(productRepository::findById)
-                .mapToBoxed(product -> {
-                    product.getGenres().addAll(productMapperHelper.toGenres(genres));
-                    return product;})
+                .doWith(product -> product.getGenres().addAll(productMapperHelper.toGenres(genres)))
                 .mapToBoxed(productRepository::save)
                 .mapToBoxed(productMapper::toProductResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
@@ -89,9 +89,7 @@ public class ProductServiceImpl implements ProductService {
         return Boxed
                 .of(id)
                 .flatOpt(productRepository::findById)
-                .mapToBoxed(product -> {
-                    product.getCategories().addAll(productMapperHelper.toCategories(categories));
-                    return product;})
+                .doWith(product -> product.getCategories().addAll(productMapperHelper.toCategories(categories)))
                 .mapToBoxed(productRepository::save)
                 .mapToBoxed(productMapper::toProductResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));

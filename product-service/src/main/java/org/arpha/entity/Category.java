@@ -9,10 +9,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "categories")
@@ -27,6 +28,7 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
     @ManyToMany(mappedBy = "categories")
-    private List<Product> products = new ArrayList<>();
+    @EqualsAndHashCode.Exclude
+    private Set<Product> products = new HashSet<>();
 
 }
