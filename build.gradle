@@ -79,7 +79,6 @@ allprojects {
         implementation "org.mapstruct:mapstruct:${mapStructVersion}"
         implementation "com.querydsl:querydsl-core:${queryDslVersion}"
         implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
-        implementation "software.amazon.awssdk:s3:2.27.19"
 
         implementation "com.azure:azure-storage-blob:${azureBlobStorageVersion}"
         implementation "com.azure:azure-communication-email:${azureEmailVersion}"
@@ -88,7 +87,6 @@ allprojects {
         runtimeOnly 'org.postgresql:postgresql'
         runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtApiVersion}"
         runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jwtApiVersion}"
-        testImplementation 'software.amazon.awssdk:s3:2.27.19'
 
         annotationProcessor 'org.projectlombok:lombok'
         annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
