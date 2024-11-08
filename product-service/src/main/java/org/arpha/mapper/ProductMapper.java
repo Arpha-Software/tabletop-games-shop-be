@@ -1,6 +1,7 @@
 package org.arpha.mapper;
 
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.mapper.helper.ProductMapperHelper;
@@ -21,6 +22,7 @@ public interface ProductMapper {
     @Mapping(target = "playTime", source = "playTime")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "price", source = "price")
+    @Mapping(target = "quantity", source = "quantity")
     @Mapping(target = "rulesLink", source = "rulesLink")
     @Mapping(target = "genres", source = "genres", qualifiedByName = "toStringGenres")
     @Mapping(target = "categories", source = "categories", qualifiedByName = "toStringCategories")
@@ -28,6 +30,8 @@ public interface ProductMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "mainImgLink", source = "product", qualifiedByName = "toMainImgLink")
+    @Mapping(target = "productPhotos", source = "product", qualifiedByName = "toProductPhotos")
     ProductResponse toProductResponse(Product product);
 
     @Mapping(target = "id", source = "id")
@@ -36,6 +40,7 @@ public interface ProductMapper {
     @Mapping(target = "playTime", source = "playTime")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "price", source = "price")
+    @Mapping(target = "quantity", source = "quantity")
     @Mapping(target = "rulesLink", source = "rulesLink")
     @Mapping(target = "genres", source = "genres", qualifiedByName = "toStringGenres")
     @Mapping(target = "categories", source = "categories", qualifiedByName = "toStringCategories")
@@ -51,6 +56,7 @@ public interface ProductMapper {
     @Mapping(target = "playTime", source = "playTime")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "price", source = "price")
+    @Mapping(target = "quantity", source = "quantity")
     @Mapping(target = "genres", source = "genres", qualifiedByName = "toGenres")
     @Mapping(target = "categories", source = "categories", qualifiedByName = "toCategories")
     @Mapping(target = "createdBy", ignore = true)
@@ -58,4 +64,10 @@ public interface ProductMapper {
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Product toProduct(CreateProductRequest createProductRequest);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "price", source = "price")
+    @Mapping(target = "quantity", source = "quantity")
+    @Mapping(target = "mainImgLink", source = "product", qualifiedByName = "toMainImgLink")
+    GetProductListInfo toGetProductListInfo(Product product);
 }

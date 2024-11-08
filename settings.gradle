@@ -11,4 +11,7 @@ include 'abstract-audit-service'
 include 'audit-service'
 include 'abstract-product-service'
 include 'product-service'
+include 'abstract-order-service'
+include 'order-service'
+include 'abstract-order-service'
 

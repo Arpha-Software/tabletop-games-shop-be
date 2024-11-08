@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -25,9 +26,12 @@ public class ProductResponse {
     private String rulesLink;
     private String createdBy;
     private String updatedBy;
+    private long quantity;
+    private String mainImgLink;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private Set<String> categories;
     private Set<String> genres;
+    private List<String> productPhotos;
 
 }
