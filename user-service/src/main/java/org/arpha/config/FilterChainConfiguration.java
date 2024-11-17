@@ -52,7 +52,7 @@ public class FilterChainConfiguration {
                         .anyRequest().authenticated())
                 .addFilterBefore(authJWTTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2SuccessHandler))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
 
