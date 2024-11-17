@@ -32,7 +32,7 @@ public class JwtUtils {
                 .issuer("tabletop-games-shop")
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .expiration(new Date(System.currentTimeMillis() + (jwtExpirationMs * 1000L)))
                 .signWith(key)
                 .compact();
     }
