@@ -20,7 +20,7 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
 server:
-  port: 9999
+  port: ${PORT:9999}
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
