@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
@@ -12,6 +13,6 @@ import java.time.LocalDateTime;
 public class TokenDetails {
 
     private String token;
-    private LocalDateTime expires;
+    private OffsetDateTime expires;
 
 }

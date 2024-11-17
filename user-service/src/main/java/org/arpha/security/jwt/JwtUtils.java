@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -57,7 +58,7 @@ public class JwtUtils {
                 .getSubject();
     }
 
-    public LocalDateTime getExpirationDate(String token) {
+    public OffsetDateTime getExpirationDate(String token) {
         return Jwts
                 .parser()
                 .verifyWith(key)
@@ -67,6 +68,6 @@ public class JwtUtils {
                 .getExpiration()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+                .toOffsetDateTime();
     }
 }
