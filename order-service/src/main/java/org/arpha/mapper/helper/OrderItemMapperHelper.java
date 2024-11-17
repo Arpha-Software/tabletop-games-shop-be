@@ -3,9 +3,8 @@ package org.arpha.mapper.helper;
 import jdk.jfr.Name;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.request.CreateOrderItem;
-import org.arpha.entity.OrderItem;
 import org.arpha.entity.Product;
-import org.arpha.exception.ProductNotFoundException;
+import org.arpha.exception.CreateOrderException;
 import org.arpha.repository.ProductRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.stereotype.Component;
@@ -22,7 +21,10 @@ public class OrderItemMapperHelper {
                 .of(createOrderItem)
                 .mapToBoxed(CreateOrderItem::getProductId)
                 .flatOpt(productRepository::findById)
-                .orElseThrow(() -> new ProductNotFoundException("Product with %s id doesn't exist!".formatted(createOrderItem.getProductId())));
+                .filter(product -> product.getQuantity() >= createOrderItem.getQuantity())
+                .doWith(product -> product.setQuantity(product.getQuantity() - createOrderItem.getQuantity()))
+                .orElseThrow(() -> new CreateOrderException("Product with %s id doesn't exist or quantity not enough to create order!"
+                        .formatted(createOrderItem.getProductId())));
     }
 
 }

@@ -4,8 +4,10 @@ import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.entity.Order;
 import org.arpha.mapper.helper.OrderMapperHelper;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = {OrderMapperHelper.class, OrderItemMapper.class})
 public interface OrderMapper {
@@ -37,4 +39,10 @@ public interface OrderMapper {
     @Mapping(target = "customerDetails.phoneNumber", source = "customerDetails.phoneNumber")
     @Mapping(target = "customerDetails.email", source = "customerDetails.email")
     OrderDetailsResponse toOrderDetailsResponse(Order order);
+
+    @AfterMapping
+    default void setOrderForIter(@MappingTarget Order order) {
+        order.getOrderItems().forEach(orderItem -> orderItem.setOrder(order));
+    }
+
 }

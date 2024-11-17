@@ -13,7 +13,6 @@ import org.arpha.exception.FileUploadException;
 import org.arpha.mapper.FileMapper;
 import org.arpha.repository.FileRepository;
 import org.arpha.utils.Boxed;
-import org.arpha.validator.FileRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ import static org.arpha.dto.media.enums.AccessType.WRITE;
 public class MediaServiceImpl implements MediaService {
 
     private final BlobContainerClient blobContainerClient;
-    private final FileRequestValidator fileRequestValidator;
     private final FileRepository fileRepository;
     private final FileMapper fileMapper;
     private final BlobService blobService;
@@ -43,7 +41,6 @@ public class MediaServiceImpl implements MediaService {
                 .of(fileUploadRequest)
                 .mapToBoxed(this::generateFileName)
                 .mapToBoxed(blobContainerClient::getBlobClient)
-                .filter(blobClient -> fileRequestValidator.validate(fileUploadRequest, blobClient))
                 .mapToBoxed(blobClient -> fileMapper.toFile(fileUploadRequest, blobClient))
                 .doWith(this::deleteOldMainImgIfPresent)
                 .mapToBoxed(fileRepository::save)
