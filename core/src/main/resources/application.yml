@@ -13,6 +13,8 @@ spring:
     hibernate:
       ddl-auto: validate
   security:
+    cors:
+      allowedOrigins: ${CORS_ALLOWED_ORIGINS}
     oauth2:
       client:
         registration:
