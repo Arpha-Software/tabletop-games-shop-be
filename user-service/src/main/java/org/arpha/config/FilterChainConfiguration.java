@@ -36,7 +36,6 @@ public class FilterChainConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(CorsConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)// for local testing
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -52,7 +51,7 @@ public class FilterChainConfiguration {
                         .anyRequest().authenticated())
                 .addFilterBefore(authJWTTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2SuccessHandler))
-                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
 
