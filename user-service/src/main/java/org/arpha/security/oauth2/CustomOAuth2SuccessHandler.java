@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.user.TokenDetails;
 import org.arpha.dto.user.response.LoginResponse;
 import org.arpha.dto.user.response.UserResponse;
 import org.arpha.mapper.AuthMapper;
@@ -38,8 +39,20 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         } else {
             userResponse = userService.findUserByEmail(email);
         }
-        String jwtToken = jwtUtils.generateToken(email);
-        LoginResponse loginResponse =  authMapper.toLoginResponse(userResponse, jwtToken);
+
+        LoginResponse loginResponse = getLoginResponse(email, userResponse);
         response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
     }
+
+    private LoginResponse getLoginResponse(String email, UserResponse userResponse) {
+        String accessToken = jwtUtils.generateAccessToken(email);
+        String refreshToken = jwtUtils.generateRefreshToken(email);
+
+        return LoginResponse.builder()
+                .userDetails(authMapper.toUserDetails(userResponse))
+                .accessToken(TokenDetails.of(accessToken, jwtUtils.getExpirationDate(accessToken)))
+                .refreshToken(TokenDetails.of(refreshToken, jwtUtils.getExpirationDate(refreshToken)))
+                .build();
+    }
+
 }
