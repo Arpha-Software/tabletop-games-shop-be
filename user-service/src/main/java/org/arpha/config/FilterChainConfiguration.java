@@ -38,7 +38,7 @@ public class FilterChainConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)// for local testing
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(POST, "/api/v1/users").permitAll()
                         .requestMatchers(GET, "/api/v1/files/{id}").permitAll()
                         .requestMatchers(GET, "/api/v1/files").permitAll()

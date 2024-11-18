@@ -1,6 +1,13 @@
 package org.arpha.security.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +16,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
@@ -37,14 +39,13 @@ public class AuthJwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (!hasAuthorizationBearer(request)) {
-            filterChain.doFilter(request, response);
-            return;
+            sendErrorResponse(response, "Authorization token is missing!");
         }
+
         String token = getAccessToken(request);
 
         if (!jwtUtils.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
+            sendErrorResponse(response, "Token is not valid or expired!");
         }
 
         setAuthenticationContext(token, request);
@@ -67,6 +68,14 @@ public class AuthJwtTokenFilter extends OncePerRequestFilter {
     private boolean hasAuthorizationBearer(HttpServletRequest request) {
         return !ObjectUtils.isEmpty(request.getHeader(AUTH_HEADER))
                && request.getHeader(AUTH_HEADER).startsWith(BEARER_PREFIX);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, message);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(problemDetail));
+        response.getWriter().flush();
     }
 
 }
