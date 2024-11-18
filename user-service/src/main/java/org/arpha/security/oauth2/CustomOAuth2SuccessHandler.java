@@ -3,9 +3,9 @@ package org.arpha.security.oauth2;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.user.TokenDetails;
 import org.arpha.dto.user.response.LoginResponse;
 import org.arpha.dto.user.response.UserResponse;
-import org.arpha.mapper.AuthMapper;
 import org.arpha.security.jwt.JwtUtils;
 import org.arpha.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +22,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     private final JwtUtils jwtUtils;
     private final UserService userService;
-    private final AuthMapper authMapper;
-
     @Value("${spring.security.oauth2.feRedirectUrl}")
     private String frontendUrl;
 
@@ -40,18 +38,20 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         } else {
             userResponse = userService.findUserByEmail(email);
         }
-
-        String jwtToken = jwtUtils.generateToken(email);
-        LoginResponse loginResponse = authMapper.toLoginResponse(userResponse, jwtToken);
-
-        response.sendRedirect(getRedirectUrl(loginResponse));
+        TokenDetails accessToken = jwtUtils.generateAccessToken(email);
+        TokenDetails refreshToken = jwtUtils.generateRefreshToken(email);
+        response.sendRedirect(getRedirectUrl(LoginResponse.of(userResponse, accessToken, refreshToken)));
     }
 
     private String getRedirectUrl(LoginResponse loginResponse) {
         return frontendUrl + "/callback?" +
-                "accessToken=" + loginResponse.getTokenDetails().getToken() +
+                "accessToken=" + loginResponse.getAccessToken().getToken() +
                 "&" +
-                "accessTokenExpirationDate=" + loginResponse.getTokenDetails().getExpires() +
+                "accessTokenExpirationDate=" + loginResponse.getAccessToken().getExpires() +
+                "&" +
+                "refreshToken=" + loginResponse.getRefreshToken().getToken() +
+                "&" +
+                "refreshTokenExpirationDate=" + loginResponse.getRefreshToken().getExpires() +
                 "&" +
                 "email=" + loginResponse.getUserDetails().getEmail() +
                 "&" +
