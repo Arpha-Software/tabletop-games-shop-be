@@ -38,3 +38,12 @@ azure:
       connectionString: ${AZURE_BLOB_CONNECTION_STRING}
       containerName: ${AZURE_BLOB_CONTAINER_NAME}
       linkExpiration: ${AZURE_BLOB_LINK_EXPIRATION}
+nova-poshta:
+  config:
+    apiKey: ${NOVA_POSHTA_API_KEY}
+    apiUrl: https://api.novaposhta.ua/v2.0/json/
+    senderPhone: ${SENDER_PHONE_NOVA_POSHTA}
+    senderIndentification: ${SENDER_IDENTIFICATION_NOVA_POSHTA}
+logging:
+  level:
+    root: debug
