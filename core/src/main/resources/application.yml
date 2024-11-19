@@ -44,6 +44,3 @@ nova-poshta:
     apiUrl: https://api.novaposhta.ua/v2.0/json/
     senderPhone: ${SENDER_PHONE_NOVA_POSHTA}
     senderIndentification: ${SENDER_IDENTIFICATION_NOVA_POSHTA}
-logging:
-  level:
-    root: debug
