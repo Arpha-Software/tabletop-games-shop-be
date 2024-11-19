@@ -15,6 +15,7 @@ public interface AuthMapper {
     @Mapping(target = "userDetails.lastName", source = "userResponse.lastName")
     @Mapping(target = "userDetails.email", source = "userResponse.email")
     @Mapping(target = "userDetails.id", source = "userResponse.id")
+    @Mapping(target = "userDetails.role", source = "userResponse.role")
     LoginResponse toLoginResponse(UserResponse userResponse, String jwtToken);
 
 }

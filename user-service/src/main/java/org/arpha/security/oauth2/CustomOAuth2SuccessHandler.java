@@ -41,7 +41,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             userResponse = userService.findUserByEmail(email);
         }
         String jwtToken = jwtUtils.generateToken(email);
-        LoginResponse loginResponse =  authMapper.toLoginResponse(userResponse, jwtToken);
+        LoginResponse loginResponse = authMapper.toLoginResponse(userResponse, jwtToken);
 
         response.sendRedirect(getRedirectUrl(loginResponse));
     }
@@ -58,6 +58,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 "&" +
                 "lastName=" + loginResponse.getUserDetails().getLastName() +
                 "&" +
-                "id=" + loginResponse.getUserDetails().getId();
+                "id=" + loginResponse.getUserDetails().getId() +
+                "&" +
+                "role=" + loginResponse.getUserDetails().getRole();
     }
 }
