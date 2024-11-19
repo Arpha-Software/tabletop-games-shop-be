@@ -1,6 +1,5 @@
 package org.arpha.security.oauth2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import org.arpha.dto.user.response.UserResponse;
 import org.arpha.mapper.AuthMapper;
 import org.arpha.security.jwt.JwtUtils;
 import org.arpha.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -23,7 +23,9 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final JwtUtils jwtUtils;
     private final UserService userService;
     private final AuthMapper authMapper;
-    private final ObjectMapper objectMapper;
+
+    @Value("${spring.security.oauth2.feRedirectUrl}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -40,6 +42,22 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
         String jwtToken = jwtUtils.generateToken(email);
         LoginResponse loginResponse =  authMapper.toLoginResponse(userResponse, jwtToken);
-        response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
+
+        response.sendRedirect(getRedirectUrl(loginResponse));
+    }
+
+    private String getRedirectUrl(LoginResponse loginResponse) {
+        return frontendUrl + "/callback?" +
+                "accessToken=" + loginResponse.getTokenDetails().getToken() +
+                "&" +
+                "accessTokenExpirationDate=" + loginResponse.getTokenDetails().getExpires() +
+                "&" +
+                "email=" + loginResponse.getUserDetails().getEmail() +
+                "&" +
+                "firstName=" + loginResponse.getUserDetails().getFirstName() +
+                "&" +
+                "lastName=" + loginResponse.getUserDetails().getLastName() +
+                "&" +
+                "id=" + loginResponse.getUserDetails().getId();
     }
 }
