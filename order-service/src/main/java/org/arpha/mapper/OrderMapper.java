@@ -23,7 +23,7 @@ public interface OrderMapper {
     @Mapping(target = "deliveryDetails.street", source = "deliveryDetails.street")
     @Mapping(target = "deliveryDetails.houseNumber", source = "deliveryDetails.houseNumber")
     @Mapping(target = "deliveryDetails.flatNumber", source = "deliveryDetails.flatNumber")
-    @Mapping(target = "orderItems", source = "createOrderItems", qualifiedByName = "toOrderItems")
+    //@Mapping(target = "orderItems", source = "createOrderItems", qualifiedByName = "toOrderItems")
     Order toOrder(CreateOrderRequest createOrderRequest);
 
 
@@ -32,7 +32,6 @@ public interface OrderMapper {
     @Mapping(target = "deliveryDetails.street", source = "deliveryDetails.street")
     @Mapping(target = "deliveryDetails.houseNumber", source = "deliveryDetails.houseNumber")
     @Mapping(target = "deliveryDetails.flatNumber", source = "deliveryDetails.flatNumber")
-    @Mapping(target = "customerDetails.firstName", source = "customerDetails.firstName")
     @Mapping(target = "customerDetails.firstName", source = "customerDetails.firstName")
     @Mapping(target = "customerDetails.middleName", source = "customerDetails.middleName")
     @Mapping(target = "customerDetails.lastName", source = "customerDetails.lastName")
