@@ -24,7 +24,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final UserService userService;
     private final AuthMapper authMapper;
 
-    @Value("spring.security.oauth2.feRedirectUrl")
+    @Value("${spring.security.oauth2.feRedirectUrl}")
     private String frontendUrl;
 
     @Override
