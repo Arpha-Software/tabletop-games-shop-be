@@ -3,9 +3,13 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.media.enums.TargetType;
+import org.arpha.dto.media.request.FileUploadRequest;
+import org.arpha.dto.media.response.FileResponse;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.response.ProductDetailsResponse;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.entity.Product;
 import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
 import org.arpha.mapper.ProductMapper;
@@ -16,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -27,16 +32,16 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final MediaService mediaService;
     private final ProductMapperHelper productMapperHelper;
 
     @Override
+    @Transactional
     public ProductDetailsResponse createProduct(CreateProductRequest createProductRequest) {
         return Boxed
                 .of(createProductRequest)
-                .filter(createProductRequest1 -> !productRepository.existsByName(createProductRequest1.getName()))
-                .mapToBoxed(productMapper::toProduct)
-                .mapToBoxed(productRepository::save)
-                .mapToBoxed(productMapper::toProductDetailsResponse)
+                .filter(request -> !productRepository.existsByName(request.getName()))
+                .mapToBoxed(this::saveProduct)
                 .orElseThrow(() -> new CreateEntityException(("Unable to create product, because product with the %s name" +
                                                               " already exists!").formatted(createProductRequest.getName())));
     }
@@ -110,6 +115,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean existProductById(long productId) {
         return productRepository.existsById(productId);
+    }
+
+    private ProductDetailsResponse saveProduct(CreateProductRequest createProductRequest) {
+        Product product = productRepository.save(productMapper.toProduct(createProductRequest));
+
+        List<FileResponse> fileResponses = createProductRequest.getFileUploadRequests().stream()
+                .map(request -> new FileUploadRequest(request.getType(), request.getFileSize(), product.getId(), TargetType.PRODUCT))
+                .map(mediaService::upload)
+                .toList();
+
+        return productMapper.toProductDetailsResponse(product, fileResponses);
     }
 
 }

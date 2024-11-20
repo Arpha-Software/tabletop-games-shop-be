@@ -74,7 +74,7 @@ public class ProductAuditAspect {
 
     @AfterReturning(
             value = "execution(public org.arpha.dto.product.response.ProductDetailsResponse addGenre(long, java.util.Set))",
-            argNames = "productResponse",
+            argNames = "productDetailsResponse",
             returning = "productDetailsResponse")
     public void addGenreToProductAdvice(ProductDetailsResponse productDetailsResponse) {
         auditService.saveAudit(ADD_GENRE_TO_PRODUCT, productDetailsResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
@@ -82,7 +82,7 @@ public class ProductAuditAspect {
 
     @AfterReturning(
             value = "execution(public org.arpha.dto.product.response.ProductDetailsResponse addCategory(long, java.util.Set))",
-            argNames = "productResponse",
+            argNames = "productDetailsResponse",
             returning = "productDetailsResponse")
     public void addCategoryToProductAdvice(ProductDetailsResponse productDetailsResponse) {
         auditService.saveAudit(ADD_CATEGORY_TO_PRODUCT, productDetailsResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);

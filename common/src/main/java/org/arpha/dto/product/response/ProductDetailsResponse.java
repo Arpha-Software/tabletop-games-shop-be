@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.arpha.dto.media.FileAccessLink;
+import org.arpha.dto.media.response.FileResponse;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,5 +33,6 @@ public class ProductDetailsResponse {
     private OffsetDateTime updatedAt;
     private Set<String> categories;
     private Set<String> genres;
+    private List<FileResponse> fileResponses;
 
 }

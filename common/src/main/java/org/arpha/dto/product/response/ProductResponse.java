@@ -3,6 +3,7 @@ package org.arpha.dto.product.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.arpha.dto.media.response.FileResponse;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -17,5 +18,6 @@ public class ProductResponse {
     private String type;
     private Set<String> genres;
     private BigDecimal price;
+    private FileResponse firstImage;
 
 }
