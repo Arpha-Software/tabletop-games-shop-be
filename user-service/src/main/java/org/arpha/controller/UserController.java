@@ -7,12 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.arpha.dto.user.request.UpdateUserRequest;
 import org.arpha.dto.user.response.UserResponse;
 import org.arpha.entity.User;
+import org.arpha.security.UserDetailsAdapter;
 import org.arpha.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -60,4 +62,9 @@ public class UserController {
         userService.activateAccount(id);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
+    public UserResponse getAuthenticatedUser(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter) {
+        return userService.findUserByEmail(userDetailsAdapter.getUsername());
+    }
 }
