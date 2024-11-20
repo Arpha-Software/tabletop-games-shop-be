@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import org.arpha.dto.order.enums.DeliveryType;
 
 @Entity
-@Table(name = "deliveries")
+@Table(name = "delivery_details")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +30,7 @@ public class DeliveryDetails {
     @Column(name = "flat_number")
     private String flatNumber;
     @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_type")
     private DeliveryType deliveryType;
 
 }

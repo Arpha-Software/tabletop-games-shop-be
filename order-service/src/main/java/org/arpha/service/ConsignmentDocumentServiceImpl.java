@@ -4,8 +4,12 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.SearchSettlementsRequest;
+import org.arpha.dto.order.request.SearchSettlementsStreetsRequest;
+import org.arpha.dto.order.request.SearchWarehousesRequest;
 import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
+import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
+import org.arpha.dto.order.response.SearchWarehousesResponse;
 import org.arpha.property.NovaPoshtaConsignmentProperties;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,30 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .body(searchSettlementsRequest)
                 .retrieve()
                 .toEntity(SearchSettlementsResponse.class)
+                .getBody();
+    }
+
+    @Override
+    public SearchSettlementsStreetsResponse searchSettlementsStreets(SearchSettlementsStreetsRequest searchSettlementsStreetsRequest) {
+        return restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(searchSettlementsStreetsRequest)
+                .retrieve()
+                .toEntity(SearchSettlementsStreetsResponse.class)
+                .getBody();
+    }
+
+    @Override
+    public SearchWarehousesResponse searchWarehouses(SearchWarehousesRequest searchWarehousesRequest) {
+        return restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(searchWarehousesRequest)
+                .retrieve()
+                .toEntity(SearchWarehousesResponse.class)
                 .getBody();
     }
 }
