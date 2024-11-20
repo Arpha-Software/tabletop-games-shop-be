@@ -12,7 +12,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", uses = {OrderMapperHelper.class, OrderItemMapper.class})
 public interface OrderMapper {
 
-    @Mapping(target = "user", source = "createOrderRequest", qualifiedByName = "getUser")
+    //@Mapping(target = "user", source = "createOrderRequest", qualifiedByName = "getUser")
     @Mapping(target = "customerDetails.firstName", source = "customerDetails.firstName")
     @Mapping(target = "customerDetails.middleName", source = "customerDetails.middleName")
     @Mapping(target = "customerDetails.lastName", source = "customerDetails.lastName")
