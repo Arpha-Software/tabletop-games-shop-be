@@ -3,23 +3,23 @@ package org.arpha.dto.order.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
+import org.arpha.dto.order.novaposhta.properties.SearchSettlementsStreetsProperties;
 import org.springframework.beans.factory.annotation.Value;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchSettlementsRequest {
+public class SearchSettlementsStreetsRequest {
 
     @Value("${nova-poshta.config.apiKey}")
     private String apiKey;
     private String modelName;
     private String calledMethod;
-    private SearchSettlementsProperties methodProperties;
+    private SearchSettlementsStreetsProperties methodProperties;
 
-    public SearchSettlementsRequest(SearchSettlementsProperties methodProperties) {
+    public SearchSettlementsStreetsRequest(SearchSettlementsStreetsProperties methodProperties) {
         this.modelName = "AddressGeneral";
-        this.calledMethod = "searchSettlements";
+        this.calledMethod = "searchSettlementStreets";
         this.methodProperties = methodProperties;
     }
 }

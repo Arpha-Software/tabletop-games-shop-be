@@ -3,7 +3,7 @@ package org.arpha.dto.order.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.order.SearchSettlementsData;
+import org.arpha.dto.order.novaposhta.data.SearchSettlementsData;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package org.arpha.dto.order.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.order.CreateConsignmentMethodProperties;
+import org.arpha.dto.order.novaposhta.properties.CreateConsignmentMethodProperties;
 
 @Data
 @AllArgsConstructor

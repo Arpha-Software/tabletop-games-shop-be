@@ -1,4 +1,4 @@
-package org.arpha.dto.order;
+package org.arpha.dto.order.novaposhta.properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

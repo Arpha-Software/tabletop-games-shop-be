@@ -3,23 +3,23 @@ package org.arpha.dto.order.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.order.Document;
+import org.arpha.dto.order.novaposhta.PaginationInfo;
+import org.arpha.dto.order.novaposhta.data.SearchWarehousesData;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateConsignmentDocumentResponse {
+public class SearchWarehousesResponse {
 
     private boolean success;
-    private List<Document> data;
+    private List<SearchWarehousesData> data;
     private List<String> errors;
     private List<String> warnings;
-    private List<String> info;
+    private PaginationInfo info;
     private List<String> messageCodes;
     private List<String> errorCodes;
     private List<String> warningCodes;
     private List<String> infoCodes;
-
 }

@@ -1,4 +1,4 @@
-package org.arpha.dto.order;
+package org.arpha.dto.order.novaposhta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -22,6 +22,6 @@ public class SettlementAddress {
     private String settlementTypeCode;
     @JsonProperty("Ref")
     private String ref;
-    @JsonProperty("Warehouses")
+    @JsonProperty("DeliveryCity")
     private String deliveryCity;
 }
