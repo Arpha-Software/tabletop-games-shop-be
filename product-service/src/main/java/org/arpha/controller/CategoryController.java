@@ -2,6 +2,7 @@ package org.arpha.controller;
 
 import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateCategoryRequest;
 import org.arpha.dto.product.response.CategoryResponse;
@@ -30,7 +31,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public CategoryResponse create(@RequestBody CreateCategoryRequest createCategoryRequest) {
+    public CategoryResponse create(@RequestBody @Valid CreateCategoryRequest createCategoryRequest) {
         return categoryService.createCategory(createCategoryRequest);
     }
 

@@ -1,4 +1,5 @@
 dependencies {
     implementation project (':common')
     implementation project (":abstract-product-service")
+    implementation project (":abstract-media-service")
 }

@@ -2,6 +2,7 @@ package org.arpha.controller;
 
 import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateGenreRequest;
 import org.arpha.dto.product.response.GenreResponse;
@@ -29,7 +30,7 @@ public class GenreController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
-    public GenreResponse create(@RequestBody CreateGenreRequest createGenreRequest) {
+    public GenreResponse create(@RequestBody @Valid CreateGenreRequest createGenreRequest) {
         return genreService.createGenre(createGenreRequest);
     }
 

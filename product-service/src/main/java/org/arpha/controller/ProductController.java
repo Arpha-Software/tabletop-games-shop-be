@@ -2,8 +2,10 @@ package org.arpha.controller;
 
 import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.response.ProductDetailsResponse;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.service.ProductService;
@@ -32,7 +34,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
+    public ProductDetailsResponse createProduct(@RequestBody @Valid CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
     }
 
@@ -42,7 +44,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductResponse findProductById(@PathVariable Long id) {
+    public ProductDetailsResponse findProductById(@PathVariable Long id) {
         return productService.findProductById(id);
     }
 
@@ -54,25 +56,25 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
-    public Page<ProductResponse> findAllAdminProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
+    public Page<ProductDetailsResponse> findAllAdminProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
         return productService.findAdminAllProducts(predicate, pageable);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}/admin")
-    public ProductResponse findAdminProductById(@PathVariable Long id) {
+    public ProductDetailsResponse findAdminProductById(@PathVariable Long id) {
         return productService.findAdminProductById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}/genres")
-    public ProductResponse addGenre(@RequestBody Set<String> genres, @PathVariable long id) {
+    public ProductDetailsResponse addGenre(@RequestBody Set<String> genres, @PathVariable long id) {
         return productService.addGenre(id, genres);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}/categories")
-    public ProductResponse addCategory(@RequestBody Set<String> genres, @PathVariable long id) {
+    public ProductDetailsResponse addCategory(@RequestBody Set<String> genres, @PathVariable long id) {
         return productService.addCategory(id, genres);
     }
 

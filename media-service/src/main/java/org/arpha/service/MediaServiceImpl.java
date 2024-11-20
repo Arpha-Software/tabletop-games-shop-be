@@ -13,12 +13,12 @@ import org.arpha.exception.FileUploadException;
 import org.arpha.mapper.FileMapper;
 import org.arpha.repository.FileRepository;
 import org.arpha.utils.Boxed;
-import org.arpha.validator.FileRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.arpha.dto.media.enums.AccessType.READ;
@@ -30,7 +30,6 @@ import static org.arpha.dto.media.enums.AccessType.WRITE;
 public class MediaServiceImpl implements MediaService {
 
     private final BlobContainerClient blobContainerClient;
-    private final FileRequestValidator fileRequestValidator;
     private final FileRepository fileRepository;
     private final FileMapper fileMapper;
 
@@ -40,7 +39,6 @@ public class MediaServiceImpl implements MediaService {
                 .of(fileUploadRequest)
                 .mapToBoxed(this::generateFileName)
                 .mapToBoxed(blobContainerClient::getBlobClient)
-                .filter(blobClient -> fileRequestValidator.validate(fileUploadRequest, blobClient))
                 .mapToBoxed(blobClient -> fileMapper.toFile(fileUploadRequest, blobClient))
                 .mapToBoxed(fileRepository::save)
                 .mapToBoxed(file -> fileMapper.toFileResponse(file, WRITE))
@@ -71,6 +69,13 @@ public class MediaServiceImpl implements MediaService {
                 .flatOpt(fileRepository::findById)
                 .mapToBoxed(file -> fileMapper.toFileResponse(file, READ))
                 .orElseThrow(() -> new FileNotFoundException("File with %s id wasn't found!".formatted(id)));
+    }
+
+    @Override
+    public List<FileResponse> findFilesByTarget(Long targetId, TargetType targetType) {
+        return fileRepository.findByTargetIdAndTargetType(targetId, targetType).stream()
+                .map(file -> fileMapper.toFileResponse(file, READ))
+                .toList();
     }
 
     private String generateFileName(FileUploadRequest fileUploadRequest) {

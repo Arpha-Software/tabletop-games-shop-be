@@ -1,16 +1,22 @@
 package org.arpha.mapper.helper;
 
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.media.FileAccessLink;
+import org.arpha.dto.media.enums.TargetType;
+import org.arpha.dto.media.response.FileResponse;
 import org.arpha.entity.Category;
 import org.arpha.entity.Genre;
+import org.arpha.entity.Product;
 import org.arpha.mapper.CategoryMapper;
 import org.arpha.mapper.GenreMapper;
 import org.arpha.repository.CategoryRepository;
 import org.arpha.repository.GenreRepository;
+import org.arpha.service.MediaService;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,6 +28,7 @@ public class ProductMapperHelper {
     private final GenreMapper genreMapper;
     private final CategoryRepository categoryRepository;
     private final GenreRepository genreRepository;
+    private final MediaService mediaService;
 
     @Named("toStringGenres")
     public Set<String> toStringGenres(Set<Genre> genres) {
@@ -59,6 +66,18 @@ public class ProductMapperHelper {
         }
 
         return categorySet;
+    }
+
+    @Named("toSingleProductFileResponse")
+    public FileResponse toSingleProductFileResponse(Product product) {
+        List<FileResponse> fileResponse = mediaService.findFilesByTarget(product.getId(), TargetType.PRODUCT);
+        return fileResponse.isEmpty() ? null : fileResponse.getFirst();
+    }
+
+    @Named("toProductFileResponses")
+    public List<FileResponse> toProductFileResponses(Product product) {
+        return mediaService.findFilesByTarget(product.getId(), TargetType.PRODUCT).stream()
+                .toList();
     }
 
 }
