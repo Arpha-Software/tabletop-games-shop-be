@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.arpha.dto.audit.TargetType;
 import org.arpha.dto.product.response.GenreResponse;
 import org.arpha.dto.product.response.CategoryResponse;
-import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.dto.product.response.ProductDetailsResponse;
 import org.arpha.service.AuditService;
 import org.arpha.utills.AspectUtils;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -58,10 +58,10 @@ public class ProductAuditAspect {
     }
 
     @AfterReturning(
-            value = "execution(public org.arpha.dto.product.response.ProductResponse createProduct(org.arpha.dto.product.request.CreateProductRequest))",
+            value = "execution(public org.arpha.dto.product.response.ProductDetailsResponse createProduct(org.arpha.dto.product.request.CreateProductRequest))",
             argNames = "createProductRequest",
             returning = "createProductRequest")
-    public void createProductAdvice(ProductResponse createProductRequest) {
+    public void createProductAdvice(ProductDetailsResponse createProductRequest) {
         auditService.saveAudit(CREATE_PRODUCT, createProductRequest.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
     }
 
@@ -73,19 +73,19 @@ public class ProductAuditAspect {
     }
 
     @AfterReturning(
-            value = "execution(public org.arpha.dto.product.response.ProductResponse addGenre(long, java.util.Set))",
+            value = "execution(public org.arpha.dto.product.response.ProductDetailsResponse addGenre(long, java.util.Set))",
             argNames = "productResponse",
-            returning = "productResponse")
-    public void addGenreToProductAdvice(ProductResponse productResponse) {
-        auditService.saveAudit(ADD_GENRE_TO_PRODUCT, productResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
+            returning = "productDetailsResponse")
+    public void addGenreToProductAdvice(ProductDetailsResponse productDetailsResponse) {
+        auditService.saveAudit(ADD_GENRE_TO_PRODUCT, productDetailsResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
     }
 
     @AfterReturning(
-            value = "execution(public org.arpha.dto.product.response.ProductResponse addCategory(long, java.util.Set))",
+            value = "execution(public org.arpha.dto.product.response.ProductDetailsResponse addCategory(long, java.util.Set))",
             argNames = "productResponse",
-            returning = "productResponse")
-    public void addCategoryToProductAdvice(ProductResponse productResponse) {
-        auditService.saveAudit(ADD_CATEGORY_TO_PRODUCT, productResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
+            returning = "productDetailsResponse")
+    public void addCategoryToProductAdvice(ProductDetailsResponse productDetailsResponse) {
+        auditService.saveAudit(ADD_CATEGORY_TO_PRODUCT, productDetailsResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
     }
 
 }

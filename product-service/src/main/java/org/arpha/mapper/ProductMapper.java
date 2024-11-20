@@ -1,6 +1,7 @@
 package org.arpha.mapper;
 
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.response.ProductDetailsResponse;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.mapper.helper.ProductMapperHelper;
@@ -29,6 +30,13 @@ public interface ProductMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    ProductDetailsResponse toProductDetailsResponse(Product product);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "type", source = "type")
+    @Mapping(target = "price", source = "price")
+    @Mapping(target = "genres", source = "genres", qualifiedByName = "toStringGenres")
     ProductResponse toProductResponse(Product product);
 
     @Mapping(target = "id", source = "id")
@@ -45,7 +53,7 @@ public interface ProductMapper {
     @Mapping(target = "updatedBy", source = "updatedBy")
     @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "updatedAt", source = "updatedAt")
-    ProductResponse toAdminProductResponse(Product product);
+    ProductDetailsResponse toAdminProductResponse(Product product);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")

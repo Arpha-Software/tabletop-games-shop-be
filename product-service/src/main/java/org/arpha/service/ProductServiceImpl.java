@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.response.ProductDetailsResponse;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
@@ -29,13 +30,13 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapperHelper productMapperHelper;
 
     @Override
-    public ProductResponse createProduct(CreateProductRequest createProductRequest) {
+    public ProductDetailsResponse createProduct(CreateProductRequest createProductRequest) {
         return Boxed
                 .of(createProductRequest)
                 .filter(createProductRequest1 -> !productRepository.existsByName(createProductRequest1.getName()))
                 .mapToBoxed(productMapper::toProduct)
                 .mapToBoxed(productRepository::save)
-                .mapToBoxed(productMapper::toProductResponse)
+                .mapToBoxed(productMapper::toProductDetailsResponse)
                 .orElseThrow(() -> new CreateEntityException(("Unable to create product, because product with the %s name" +
                                                               " already exists!").formatted(createProductRequest.getName())));
     }
@@ -46,21 +47,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse findProductById(long id) {
+    public ProductDetailsResponse findProductById(long id) {
         return Boxed
                 .of(id)
                 .flatOpt(productRepository::findById)
-                .mapToBoxed(productMapper::toProductResponse)
+                .mapToBoxed(productMapper::toProductDetailsResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
     }
 
     @Override
     public Page<ProductResponse> findAllProducts(Predicate predicate, Pageable pageable) {
-        return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
+        return productRepository.findAll(predicate, pageable)
+                .map(productMapper::toProductResponse);
     }
 
     @Override
-    public ProductResponse findAdminProductById(long id) {
+    public ProductDetailsResponse findAdminProductById(long id) {
         return Boxed
                 .of(id)
                 .flatOpt(productRepository::findById)
@@ -69,29 +71,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAdminAllProducts(Predicate predicate, Pageable pageable) {
+    public Page<ProductDetailsResponse> findAdminAllProducts(Predicate predicate, Pageable pageable) {
         return productRepository.findAll(predicate, pageable).map(productMapper::toAdminProductResponse);
     }
 
     @Override
-    public ProductResponse addGenre(long id, Set<String> genres) {
+    public ProductDetailsResponse addGenre(long id, Set<String> genres) {
         return Boxed
                 .of(id)
                 .flatOpt(productRepository::findById)
                 .doWith(product -> product.getGenres().addAll(productMapperHelper.toGenres(genres)))
                 .mapToBoxed(productRepository::save)
-                .mapToBoxed(productMapper::toProductResponse)
+                .mapToBoxed(productMapper::toProductDetailsResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
     }
 
     @Override
-    public ProductResponse addCategory(long id, Set<String> categories) {
+    public ProductDetailsResponse addCategory(long id, Set<String> categories) {
         return Boxed
                 .of(id)
                 .flatOpt(productRepository::findById)
                 .doWith(product -> product.getCategories().addAll(productMapperHelper.toCategories(categories)))
                 .mapToBoxed(productRepository::save)
-                .mapToBoxed(productMapper::toProductResponse)
+                .mapToBoxed(productMapper::toProductDetailsResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
     }
 
