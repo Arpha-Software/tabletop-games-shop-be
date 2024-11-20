@@ -1,5 +1,5 @@
 package org.arpha.dto.order.enums;
 
 public enum PaymentMethod {
-    DELIVERY, ONLINE;
+    CASH, NON_CASH, ONLINE
 }

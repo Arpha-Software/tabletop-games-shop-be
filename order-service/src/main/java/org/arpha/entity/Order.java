@@ -3,6 +3,8 @@ package org.arpha.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +16,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.arpha.dto.order.enums.OrderStatus;
 
 import java.util.List;
 
@@ -30,10 +33,13 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_status")
+    private OrderStatus orderStatus;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_details_id")
     private CustomerDetailsEntity customerDetails;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_details_id")
     private DeliveryDetails deliveryDetails;
     @OneToMany(mappedBy = "order")
