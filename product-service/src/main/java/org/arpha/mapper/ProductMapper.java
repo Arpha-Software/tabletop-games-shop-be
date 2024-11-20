@@ -18,6 +18,7 @@ public interface ProductMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "type", source = "type")
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
     @Mapping(target = "description", source = "description")
@@ -35,6 +36,7 @@ public interface ProductMapper {
     ProductResponse toProductResponse(Product product);
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "type", source = "type")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
@@ -51,6 +53,7 @@ public interface ProductMapper {
     ProductResponse toAdminProductResponse(Product product);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "type", source = "type")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
@@ -66,6 +69,7 @@ public interface ProductMapper {
     Product toProduct(CreateProductRequest createProductRequest);
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "price", source = "price")
     @Mapping(target = "quantity", source = "quantity")
     @Mapping(target = "mainImgLink", source = "product", qualifiedByName = "toMainImgLink")

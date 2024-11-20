@@ -3,10 +3,12 @@ package org.arpha.service;
 import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
+import org.arpha.dto.order.request.CreateContrAgentRequest;
 import org.arpha.dto.order.request.SearchSettlementsRequest;
 import org.arpha.dto.order.request.SearchSettlementsStreetsRequest;
 import org.arpha.dto.order.request.SearchWarehousesRequest;
 import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
+import org.arpha.dto.order.response.CreateContrAgentResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
@@ -61,6 +63,18 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .body(searchWarehousesRequest)
                 .retrieve()
                 .toEntity(SearchWarehousesResponse.class)
+                .getBody();
+    }
+
+    @Override
+    public CreateContrAgentResponse createContrAgent(CreateContrAgentRequest createContrAgentRequest) {
+        return restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(createContrAgentRequest)
+                .retrieve()
+                .toEntity(CreateContrAgentResponse.class)
                 .getBody();
     }
 }

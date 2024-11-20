@@ -17,6 +17,7 @@ import java.util.Set;
 public class ProductResponse {
 
     private long id;
+    private String name;
     private String type;
     private String genre;
     private Integer playerNumber;

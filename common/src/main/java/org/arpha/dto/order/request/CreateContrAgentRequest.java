@@ -16,4 +16,10 @@ public class CreateContrAgentRequest {
     private String modelName;
     private String calledMethod;
     private CreateContrAgentMethodProperties methodProperties;
+
+    public CreateContrAgentRequest(CreateContrAgentMethodProperties methodProperties) {
+        this.modelName = "CounterpartyGeneral";
+        this.calledMethod = "save";
+        this.methodProperties = methodProperties;
+    }
 }
