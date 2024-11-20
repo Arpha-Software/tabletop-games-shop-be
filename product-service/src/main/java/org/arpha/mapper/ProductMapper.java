@@ -16,6 +16,7 @@ import org.mapstruct.ReportingPolicy;
 public interface ProductMapper {
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "type", source = "type")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
@@ -31,6 +32,7 @@ public interface ProductMapper {
     ProductResponse toProductResponse(Product product);
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "type", source = "type")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
@@ -46,6 +48,7 @@ public interface ProductMapper {
     ProductResponse toAdminProductResponse(Product product);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "type", source = "type")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
