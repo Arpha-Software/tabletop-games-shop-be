@@ -17,8 +17,11 @@ CREATE TABLE IF NOT EXISTS delivery_details
     street        varchar not null,
     house_number  varchar,
     flat_number   varchar,
-    delivery_type varchar,
-
+    department varchar,
+    delivery_type varchar not null,
+    delivery_price number(10,2),
+    expected_delivery_date date,
+    doc_number varchar,
     constraint delivery_details_pk PRIMARY KEY (id)
 );
 
