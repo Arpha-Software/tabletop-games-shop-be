@@ -19,8 +19,9 @@ CREATE TABLE IF NOT EXISTS delivery_details
     flat_number   varchar,
     department varchar,
     delivery_type varchar not null,
-    delivery_price number(10,2),
+    delivery_price numeric(10,2),
     expected_delivery_date date,
+    payment_method varchar,
     doc_number varchar,
     constraint delivery_details_pk PRIMARY KEY (id)
 );
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS orders
     user_id bigint,
     customer_details_id bigint not null,
     delivery_details_id bigint not null,
+    order_status varchar not null,
 
     constraint orders_pk PRIMARY KEY (id),
     constraint order_customer_details_fk FOREIGN KEY (customer_details_id) references customer_details (id),
