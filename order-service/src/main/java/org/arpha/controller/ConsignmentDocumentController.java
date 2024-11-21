@@ -2,15 +2,10 @@ package org.arpha.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsStreetsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
-import org.arpha.dto.order.request.CreateContrAgentRequest;
-import org.arpha.dto.order.request.SearchSettlementsRequest;
-import org.arpha.dto.order.request.SearchSettlementsStreetsRequest;
-import org.arpha.dto.order.request.SearchWarehousesRequest;
 import org.arpha.dto.order.response.CreateContrAgentResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
@@ -31,22 +26,22 @@ public class ConsignmentDocumentController {
 
     @PostMapping("/settlements/search")
     public SearchSettlementsResponse searchSettlements(@RequestBody SearchSettlementsProperties searchSettlementsRequest) {
-        return consignmentDocumentService.searchSettlements(new SearchSettlementsRequest(searchSettlementsRequest));
+        return consignmentDocumentService.searchSettlements(searchSettlementsRequest);
     }
 
 
     @PostMapping("/settlements/streets/search")
     public SearchSettlementsStreetsResponse searchSettlementsStreets(@RequestBody SearchSettlementsStreetsProperties searchSettlementsProperties) {
-        return consignmentDocumentService.searchSettlementsStreets(new SearchSettlementsStreetsRequest(searchSettlementsProperties));
+        return consignmentDocumentService.searchSettlementsStreets(searchSettlementsProperties);
     }
 
     @PostMapping("/warehouses/search")
     public SearchWarehousesResponse searchWarehouses(@RequestBody SearchWarehouseMethodProperties warehouseMethodProperties) {
-        return consignmentDocumentService.searchWarehouses(new SearchWarehousesRequest(warehouseMethodProperties));
+        return consignmentDocumentService.searchWarehouses(warehouseMethodProperties);
     }
 
     @PostMapping("/contr-agents")
     public CreateContrAgentResponse createContrAgent(@RequestBody CreateContrAgentMethodProperties contrAgentMethodProperties) {
-        return consignmentDocumentService.createContrAgent(new CreateContrAgentRequest(contrAgentMethodProperties));
+        return consignmentDocumentService.createContrAgent(contrAgentMethodProperties);
     }
 }

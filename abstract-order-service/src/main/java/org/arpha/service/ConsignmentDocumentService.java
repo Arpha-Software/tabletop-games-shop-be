@@ -1,10 +1,10 @@
 package org.arpha.service;
 
-import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
-import org.arpha.dto.order.request.CreateContrAgentRequest;
-import org.arpha.dto.order.request.SearchSettlementsRequest;
-import org.arpha.dto.order.request.SearchSettlementsStreetsRequest;
-import org.arpha.dto.order.request.SearchWarehousesRequest;
+import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
+import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
+import org.arpha.dto.order.novaposhta.properties.SearchSettlementsStreetsProperties;
+import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
+import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
 import org.arpha.dto.order.response.CreateContrAgentResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
@@ -15,10 +15,10 @@ import java.util.List;
 
 public interface ConsignmentDocumentService {
 
-    CreateConsignmentDocumentResponse createConsignmentDocument(CreateConsignmentDocumentRequest createConsignmentDocumentRequest);
-    SearchSettlementsResponse searchSettlements(SearchSettlementsRequest searchSettlementsRequest);
-    SearchSettlementsStreetsResponse searchSettlementsStreets(SearchSettlementsStreetsRequest searchSettlementsStreetsRequest);
-    SearchWarehousesResponse searchWarehouses(SearchWarehousesRequest searchWarehousesRequest);
-    CreateContrAgentResponse createContrAgent(CreateContrAgentRequest createContrAgentRequest);
+    CreateConsignmentDocumentResponse createConsignmentDocument(CreateOrderRequest createOrderRequest);
+    SearchSettlementsResponse searchSettlements(SearchSettlementsProperties searchSettlementsProperties);
+    SearchSettlementsStreetsResponse searchSettlementsStreets(SearchSettlementsStreetsProperties settlementsStreetsProperties);
+    SearchWarehousesResponse searchWarehouses(SearchWarehouseMethodProperties warehouseMethodProperties);
+    CreateContrAgentResponse createContrAgent(CreateContrAgentMethodProperties contrAgentMethodProperties);
 
 }

@@ -5,5 +5,5 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @ConfigurationProperties("nova-poshta.config")
 @EnableConfigurationProperties(NovaPoshtaConsignmentProperties.class)
-public record NovaPoshtaConsignmentProperties(String apiUrl, String senderPhone, String senderIdentification) {
+public record NovaPoshtaConsignmentProperties(String apiKey, String apiUrl, String senderPhone, String senderIdentification) {
 }

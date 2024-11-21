@@ -1,5 +1,6 @@
 package org.arpha.dto.order.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SearchWarehousesResponse {
 
     private boolean success;
@@ -22,4 +24,5 @@ public class SearchWarehousesResponse {
     private List<String> errorCodes;
     private List<String> warningCodes;
     private List<String> infoCodes;
+
 }
