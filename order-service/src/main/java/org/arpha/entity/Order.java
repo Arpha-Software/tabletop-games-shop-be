@@ -18,6 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.arpha.dto.order.enums.OrderStatus;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -43,5 +44,13 @@ public class Order {
     @JoinColumn(name = "delivery_details_id")
     private DeliveryDetails deliveryDetails;
     @OneToMany(mappedBy = "order")
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderedItems;
+
+    public BigDecimal getTotalCost() {
+        return orderedItems
+                .stream()
+                .map(orderItem ->  orderItem.getProduct().getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
 }
