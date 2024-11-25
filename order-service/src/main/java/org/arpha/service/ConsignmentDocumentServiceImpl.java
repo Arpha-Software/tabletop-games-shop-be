@@ -10,40 +10,47 @@ import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateContrAgentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
+import org.arpha.dto.order.request.DeleteConsignmentDocumentRequest;
+import org.arpha.dto.order.request.GetCounterpartiesRequest;
+import org.arpha.dto.order.request.GetCounterpartyContactPersonsRequest;
 import org.arpha.dto.order.request.SearchSettlementsRequest;
 import org.arpha.dto.order.request.SearchSettlementsStreetsRequest;
 import org.arpha.dto.order.request.SearchWarehousesRequest;
 import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
 import org.arpha.dto.order.response.CreateContrAgentResponse;
+import org.arpha.dto.order.response.DeleteConsignmentDocumentResponse;
+import org.arpha.dto.order.response.GetCounterpartiesResponse;
+import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
+import org.arpha.entity.Order;
 import org.arpha.exception.CreateContrAgentException;
 import org.arpha.mapper.ConsignmentDocumentMapper;
 import org.arpha.property.NovaPoshtaConsignmentProperties;
+import org.arpha.property.NovaPoshtaSenderProperties;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentService {
 
     private final RestClient restClient;
-    private final ConsignmentDocumentMapper consignmentDocumentMapper;
     private final NovaPoshtaConsignmentProperties novaPoshtaConsignmentProperties;
 
     @Override
-    public CreateConsignmentDocumentResponse createConsignmentDocument(CreateOrderRequest createOrderRequest) {
-        CreateContrAgentMethodProperties contrAgentMethodProperties = consignmentDocumentMapper
-                .toCreateContrAgentMethodProperties(createOrderRequest);
-        CreateContrAgentResponse createContrAgentResponse = this.createContrAgent(contrAgentMethodProperties);
-        SearchWarehousesResponse receiptWarehouse = this.searchWarehouses()
-        return null;
+    public CreateConsignmentDocumentResponse createConsignmentDocument(CreateConsignmentDocumentRequest consignmentDocumentRequest) {
+        return restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .body(consignmentDocumentRequest)
+                .retrieve()
+                .body(CreateConsignmentDocumentResponse.class);
 
     }
+
 
     @Override
     public SearchSettlementsResponse searchSettlements(SearchSettlementsProperties searchSettlementsProperties) {
@@ -77,7 +84,43 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new SearchWarehousesRequest(novaPoshtaConsignmentProperties.apiKey(), warehouseMethodProperties))
                 .retrieve()
-                .toEntity(SearchWarehousesResponse.class)
+                .body(SearchWarehousesResponse.class);
+    }
+
+    @Override
+    public void deleteConsignment(String documentRef) {
+        DeleteConsignmentDocumentResponse deleteConsignmentDocumentResponse = restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new DeleteConsignmentDocumentRequest(novaPoshtaConsignmentProperties.apiKey(), documentRef))
+                .retrieve()
+                .body(DeleteConsignmentDocumentResponse.class);
+        if (!deleteConsignmentDocumentResponse.isSuccess()) {
+            throw new CreateContrAgentException(String.join(",", deleteConsignmentDocumentResponse.getErrors()));
+        }
+    }
+
+    @Override
+    public GetCounterpartiesResponse getCounterparties() {
+        return restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new GetCounterpartiesRequest(novaPoshtaConsignmentProperties.apiKey()))
+                .retrieve()
+                .body(GetCounterpartiesResponse.class);
+    }
+
+    @Override
+    public GetCounterpartyContactPersonsResponse getCounterpartyContactPersons(String counterpartyRef) {
+        return restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new GetCounterpartyContactPersonsRequest(novaPoshtaConsignmentProperties.apiKey(), counterpartyRef))
+                .retrieve()
+                .toEntity(GetCounterpartyContactPersonsResponse.class)
                 .getBody();
     }
 
@@ -91,9 +134,9 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .retrieve()
                 .toEntity(CreateContrAgentResponse.class)
                 .getBody();
-        if(!createContrAgentResponse.isSuccess()) {
+        if (!createContrAgentResponse.isSuccess()) {
             throw new CreateContrAgentException(String.join(",", createContrAgentResponse.getErrors()));
         }
-        return createContrAgentResponse
+        return createContrAgentResponse;
     }
 }
