@@ -27,6 +27,10 @@ public class ProductResponse {
     private String rulesLink;
     private String createdBy;
     private String updatedBy;
+    private BigDecimal width;
+    private BigDecimal height;
+    private BigDecimal length;
+    private BigDecimal weight;
     private long quantity;
     private String mainImgLink;
     private OffsetDateTime createdAt;
