@@ -1,5 +1,6 @@
 package org.arpha.dto.order.request;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,6 @@ public class CreateOrderRequest {
 
     private CustomerDetails customerDetails;
     private DeliveryDetails deliveryDetails;
-    private List<CreateOrderItem> orderItems;
+    @NotEmpty
+    private List<CreateOrderItem> orderedItems;
 }

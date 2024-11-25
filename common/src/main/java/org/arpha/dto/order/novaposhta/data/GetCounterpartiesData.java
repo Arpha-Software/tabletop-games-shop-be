@@ -4,34 +4,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arpha.dto.order.response.CreateContrAgentResponse;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateContrAgentData {
+public class GetCounterpartiesData {
 
-    @JsonProperty("Ref")
-    private String ref;
     @JsonProperty("Description")
     private String description;
+    @JsonProperty("Ref")
+    private String ref;
+    @JsonProperty("City")
+    private String city;
+    @JsonProperty("Counterparty")
+    private String counterparty;
     @JsonProperty("FirstName")
     private String firstName;
-    @JsonProperty("MiddleName")
-    private String middleName;
     @JsonProperty("LastName")
     private String lastName;
-    @JsonProperty("Counterparty")
-    private String counterParty;
-    @JsonProperty("OwnershipForm")
-    private String ownershipForm;
+    @JsonProperty("MiddleName")
+    private String middleName;
+    @JsonProperty("OwnershipFormRef")
+    private String ownershipFormRef;
     @JsonProperty("OwnershipFormDescription")
     private String ownershipFormDescription;
     @JsonProperty("EDRPOU")
     private String edrpou;
     @JsonProperty("CounterpartyType")
     private String counterpartyType;
-    @JsonProperty("ContactPerson")
-    private CreateContrAgentResponse contactPerson;
 
 }

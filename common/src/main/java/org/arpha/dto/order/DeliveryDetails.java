@@ -1,14 +1,19 @@
 package org.arpha.dto.order;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.arpha.dto.order.enums.DeliveryType;
 import org.arpha.dto.order.enums.PaymentMethod;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeliveryDetails {
 
     private DeliveryType deliveryType;
@@ -18,4 +23,8 @@ public class DeliveryDetails {
     private String houseNumber;
     private String flatNumber;
     private String department;
+    private String docNumber;
+    private LocalDate expectedDeliveryDate;
+    private BigDecimal deliveryPrice;
+
 }

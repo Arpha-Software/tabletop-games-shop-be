@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.arpha.dto.order.novaposhta.data.BackwardDeliveryData;
+import org.arpha.dto.order.novaposhta.data.OptionsSeatData;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -54,5 +58,8 @@ public class CreateConsignmentMethodProperties {
     private String contactRecipient;
     @JsonProperty("RecipientsPhone")
     private String recipientsPhone;
-
+    @JsonProperty("OptionsSeat")
+    private List<OptionsSeatData> optionsSeat;
+    @JsonProperty("BackwardDeliveryData")
+    private List<BackwardDeliveryData> backwardDeliveryData;
 }

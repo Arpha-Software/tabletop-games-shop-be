@@ -15,4 +15,10 @@ public class CreateConsignmentDocumentRequest {
     private String calledMethod;
     private CreateConsignmentMethodProperties methodProperties;
 
+    public CreateConsignmentDocumentRequest(String apiKey, CreateConsignmentMethodProperties methodProperties) {
+        this.modelName = "InternetDocumentGeneral";
+        this.calledMethod = "save";
+        this.apiKey = apiKey;
+        this.methodProperties = methodProperties;
+    }
 }

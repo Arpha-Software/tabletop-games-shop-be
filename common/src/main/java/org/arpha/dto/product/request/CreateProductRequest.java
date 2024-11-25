@@ -28,6 +28,14 @@ public class CreateProductRequest {
     private String description;
     @NotNull(message = "Product price can't be empty!")
     private BigDecimal price;
+    @NotNull(message = "Width price can't be empty!")
+    private BigDecimal width;
+    @NotNull(message = "Length price can't be empty!")
+    private BigDecimal length;
+    @NotNull(message = "Height price can't be empty!")
+    private BigDecimal height;
+    @NotNull(message = "Weight price can't be empty!")
+    private BigDecimal weight;
     @NotBlank(message = "Product rules link can't be empty!")
     private String rulesLink;
     private Set<String> categories;
