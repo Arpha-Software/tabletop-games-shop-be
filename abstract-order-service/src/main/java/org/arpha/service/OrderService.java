@@ -1,6 +1,7 @@
 package org.arpha.service;
 
 import com.querydsl.core.types.Predicate;
+import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
@@ -14,5 +15,5 @@ public interface OrderService {
     Page<OrderDetailsResponse> getsOrders(Predicate predicate, Pageable pageable);
     OrderInfoResponse getById(long orderId);
     void cancelOrder(long orderId);
-
+    OrderInfoResponse createConsignmentDocument(CreateConsignmentDocumentRequest documentRequest);
 }

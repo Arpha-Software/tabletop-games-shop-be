@@ -11,8 +11,6 @@ import org.arpha.utils.Boxed;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class OrderItemMapperHelper {

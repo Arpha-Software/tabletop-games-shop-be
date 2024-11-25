@@ -4,6 +4,7 @@ import org.arpha.dto.order.novaposhta.data.BackwardDeliveryData;
 import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.data.OptionsSeatData;
 import org.arpha.dto.order.response.GetCounterpartiesResponse;
+import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
 import org.arpha.entity.DeliveryDetails;
 import org.arpha.entity.Order;
 import org.arpha.entity.OrderItem;
@@ -12,6 +13,8 @@ import org.arpha.exception.CreateContrAgentException;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -35,12 +38,11 @@ public class ConsignmentDocumentMapperHelper {
 
     @Named("toRecipientContactRef")
     public String toRecipientContactRef(CreateContrAgentData createContrAgentData) {
-        if (createContrAgentData.getContactPerson().getData().size() != 1) {
-            throw new CreateContrAgentException("RecipientContactRef is 0");
+        if (createContrAgentData.getContactPerson().getData().isEmpty()) {
+            throw new CreateContrAgentException("RecipientContactRef is not found because response is empty");
         }
         return createContrAgentData.getContactPerson().getData().getFirst().getRef();
     }
-
 
     @Named("toSenderContactRef")
     public String toSenderContactRef(GetCounterpartiesResponse getCounterpartiesResponse) {
@@ -58,6 +60,35 @@ public class ConsignmentDocumentMapperHelper {
     @Named("toOptionsSeat")
     public List<OptionsSeatData> toOptionsSeatData(Order order) {
         return order.getOrderedItems().stream().flatMap(this::createOptionsSeat).toList();
+    }
+
+    @Named("toSendersPhone")
+    public String toSendersPhone(GetCounterpartyContactPersonsResponse getCounterpartyContactPersonsResponse) {
+        if (getCounterpartyContactPersonsResponse.getData().isEmpty()) {
+            throw new CreateContrAgentException("Can't find sender phone because response is empty");
+        }
+        return getCounterpartyContactPersonsResponse.getData().getFirst().getPhones();
+    }
+
+    @Named("toDate")
+    public String toDate(LocalDate localDate) {
+        return localDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    @Named("toSenderRef")
+    public String toSenderRef(GetCounterpartiesResponse getCounterpartiesResponse) {
+        if (getCounterpartiesResponse.getData().isEmpty()) {
+            throw new CreateContrAgentException("Can't find sender reference because response is empty");
+        }
+        return getCounterpartiesResponse.getData().getFirst().getRef();
+    }
+
+    @Named("toSenderContactRef")
+    public String toSenderContactRef(GetCounterpartyContactPersonsResponse contactSender) {
+        if (contactSender.getData().isEmpty()) {
+            throw new CreateContrAgentException("Can't find contact sender reference because response is empty");
+        }
+        return contactSender.getData().getFirst().getRef();
     }
 
     private Stream<OptionsSeatData> createOptionsSeat(OrderItem orderItem) {

@@ -3,6 +3,7 @@ package org.arpha.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -17,8 +18,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.arpha.dto.order.enums.OrderStatus;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.context.event.EventListener;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
@@ -26,6 +32,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
 
     @Id
@@ -43,8 +50,14 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_details_id")
     private DeliveryDetails deliveryDetails;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderedItems;
+    @Column(name="created_at", nullable = false)
+    @CreationTimestamp
+    private OffsetDateTime createdAt;
+    @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
+    private OffsetDateTime updatedAt;
 
     public BigDecimal getTotalCost() {
         return orderedItems

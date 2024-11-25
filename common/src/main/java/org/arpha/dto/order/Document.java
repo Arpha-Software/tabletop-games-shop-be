@@ -1,5 +1,6 @@
 package org.arpha.dto.order;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class Document {
     @JsonProperty("CostOnSite")
     private String costOnSite;
     @JsonProperty("EstimatedDeliveryDate")
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate estimatedDeliveryDate;
     @JsonProperty("IntDocNumber")
     private String intDocNumber;

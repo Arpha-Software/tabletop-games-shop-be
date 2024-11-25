@@ -9,7 +9,9 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {OrderItemMapperHelper.class})
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
+@Mapper(componentModel = "spring", uses = {OrderItemMapperHelper.class}, unmappedTargetPolicy = IGNORE)
 public interface OrderItemMapper {
     @Mapping(target = "product", source = "createOrderItem", qualifiedByName = "toOrderItemEntity")
     @Mapping(target = "quantity", source = "createOrderItem.quantity")

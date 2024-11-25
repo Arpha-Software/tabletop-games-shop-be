@@ -2,7 +2,9 @@ package org.arpha.controller;
 
 import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
@@ -35,7 +37,7 @@ public class OrderController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/orders")
-    public OrderInfoResponse createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+    public OrderInfoResponse createOrder(@Valid @RequestBody CreateOrderRequest createOrderRequest) {
         return orderService.createOrder(createOrderRequest);
     }
 
@@ -62,6 +64,12 @@ public class OrderController {
     @DeleteMapping("/users/{userId}/orders/{orderId}")
     public void cancelOrder(@PathVariable long userId, @PathVariable long orderId) {
         orderService.cancelOrder(orderId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/documents")
+    public OrderInfoResponse createConsignmentDocument(@Valid @RequestBody CreateConsignmentDocumentRequest consignmentDocumentRequest) {
+        return orderService.createConsignmentDocument(consignmentDocumentRequest);
     }
 
 }

@@ -17,4 +17,5 @@ public class SearchSettlementsStreetsData {
     private String totalCount;
     @JsonProperty("Addresses")
     private List<SettlementsStreetsAddress> addresses;
+
 }

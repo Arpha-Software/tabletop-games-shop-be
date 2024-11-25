@@ -12,7 +12,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring", uses = {OrderMapperHelper.class, OrderItemMapper.class})
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
+@Mapper(componentModel = "spring", uses = {OrderMapperHelper.class}, unmappedTargetPolicy = IGNORE)
 public interface OrderMapper {
 
     @Mapping(target = "user", source = "createOrderRequest", qualifiedByName = "getUser")
@@ -28,7 +30,7 @@ public interface OrderMapper {
     @Mapping(target = "deliveryDetails.deliveryAddress.flatNumber", source = "deliveryDetails.flatNumber")
     @Mapping(target = "deliveryDetails.deliveryAddress.department", source = "deliveryDetails.department")
     @Mapping(target = "orderStatus", constant = "NEW")
-    @Mapping(target = "orderedItems", source = "orderedItems")
+    @Mapping(target = "orderedItems", source = "orderedItems", qualifiedByName = "toOrderedItems")
     Order toOrder(CreateOrderRequest createOrderRequest);
 
     @Mapping(target = "id", source = "id")
@@ -48,7 +50,7 @@ public interface OrderMapper {
     @Mapping(target = "customerDetails.email", source = "customerDetails.email")
     @Mapping(target = "orderStatus", source = "orderStatus")
     @Mapping(target = "createdAt", source = "createdAt")
-    @Mapping(target = "orderedItems", source = "orderedItems")
+    @Mapping(target = "orderedItems", source = "orderedItems", qualifiedByName = "toItemDetails")
     OrderInfoResponse toOrderInfoResponse(Order order);
 
     @Mapping(target = "id", source = "id")
@@ -63,7 +65,7 @@ public interface OrderMapper {
     OrderDetailsResponse toOrderDetailsResponse(Order order);
 
     @Mapping(target = "order.deliveryDetails.deliveryPrice", source = "document.costOnSite", qualifiedByName = "toDeliveryPrice")
-    @Mapping(target = "order.deliveryDetails.expectedDeliveryTime", source = "document.estimatedDeliveryDate", qualifiedByName = "toDate")
+    @Mapping(target = "order.deliveryDetails.expectedDeliveryDate", source = "document.estimatedDeliveryDate", qualifiedByName = "toDate")
     @Mapping(target = "order.deliveryDetails.docNumber", source = "document.intDocNumber")
     @Mapping(target = "order.deliveryDetails.documentRef", source = "document.ref")
     void addDocumentDataToOrder(@MappingTarget Order order, Document document);

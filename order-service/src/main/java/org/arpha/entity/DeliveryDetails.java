@@ -1,5 +1,6 @@
 package org.arpha.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +18,7 @@ import org.arpha.dto.order.enums.DeliveryType;
 import org.arpha.dto.order.enums.PaymentMethod;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -37,13 +39,13 @@ public class DeliveryDetails {
     private DeliveryType deliveryType;
     @Column(name = "delivery_price")
     private BigDecimal deliveryPrice;
-    @Column(name = "expected_delivery_time")
-    private OffsetDateTime expectedDeliveryTime;
+    @Column(name = "expected_delivery_date")
+    private LocalDate expectedDeliveryDate;
     @Column(name = "doc_number")
     private String docNumber;
     @Column(name = "document_ref")
     private String documentRef;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_address_id")
     private DeliveryAddress deliveryAddress;
 }

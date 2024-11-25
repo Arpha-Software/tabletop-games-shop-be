@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 CREATE TABLE IF NOT EXISTS customer_details
 (
     id           bigint generated always as identity,
@@ -7,7 +9,7 @@ CREATE TABLE IF NOT EXISTS customer_details
     phone_number varchar not null,
     email        varchar not null,
 
-    constraint customer_details_pk PRIMARY KEY (id),
+    constraint customer_details_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS delivery_addresses
@@ -34,7 +36,7 @@ CREATE TABLE IF NOT EXISTS delivery_details
     document_ref           varchar,
 
     constraint delivery_details_pk PRIMARY KEY (id),
-    constraint delivery_addresses_fk FOREIGN KEY (delivery_address_id) references delivery_addresses (id),
+    constraint delivery_addresses_fk FOREIGN KEY (delivery_address_id) references delivery_addresses (id)
 );
 
 CREATE TABLE IF NOT EXISTS orders
@@ -50,8 +52,7 @@ CREATE TABLE IF NOT EXISTS orders
     constraint orders_pk PRIMARY KEY (id),
     constraint order_customer_details_fk FOREIGN KEY (customer_details_id) references customer_details (id),
     constraint delivery_details_fk FOREIGN KEY (delivery_details_id) references delivery_details (id),
-    constraint user_order_fk FOREIGN KEY (user_id) references users (id),
-
+    constraint user_order_fk FOREIGN KEY (user_id) references users (id)
 );
 
 CREATE TABLE IF NOT EXISTS order_items
@@ -65,3 +66,4 @@ CREATE TABLE IF NOT EXISTS order_items
     constraint product_order_items_fk FOREIGN KEY (product_id) references products (id),
     constraint order_order_items_fk FOREIGN KEY (order_id) references orders (id)
 );
+COMMIT TRANSACTION;

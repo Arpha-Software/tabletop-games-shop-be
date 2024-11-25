@@ -26,10 +26,6 @@ public class CreateConsignmentMethodProperties {
     private String dateTime;
     @JsonProperty("CargoType")
     private String cargoType;
-    @JsonProperty("VolumeGeneral")
-    private String volumeGeneral;
-    @JsonProperty("Weight")
-    private String weight;
     @JsonProperty("ServiceType")
     private String serviceType;
     @JsonProperty("SeatsAmount")
