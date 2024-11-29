@@ -8,6 +8,7 @@ import org.arpha.dto.order.novaposhta.SettlementsStreetsAddress;
 import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.properties.CreateConsignmentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
+import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateConsignmentNovaPoshtaDocumentRequest;
@@ -24,7 +25,6 @@ import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
 import org.arpha.entity.Order;
 import org.arpha.exception.CreateConsignmentDocumentException;
-import org.arpha.exception.CreateContrAgentException;
 import org.arpha.exception.CreateOrderException;
 import org.arpha.exception.OrderNotFoundException;
 import org.arpha.mapper.ConsignmentDocumentMapper;
@@ -46,6 +46,8 @@ import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_POSHTMAT;
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
+
+    public static final String ORDER_NOT_FOUND_MESSAGE = "Order with %s number doesn't exist!";
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
@@ -74,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
                 .of(orderId)
                 .flatOpt(orderRepository::findById)
                 .mapToBoxed(orderMapper::toOrderInfoResponse)
-                .orElseThrow(() -> new OrderNotFoundException("Order with %s number doesn't exist!".formatted(orderId)));
+                .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(orderId)));
     }
 
     @Override
@@ -86,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderInfoResponse createConsignmentDocument(CreateConsignmentDocumentRequest documentRequest) {
         Order order = orderRepository.findById(documentRequest.getOrderId()).orElseThrow(() ->
-                new OrderNotFoundException("Order with %s number doesn't exist!".formatted(documentRequest.getOrderId())));
+                new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(documentRequest.getOrderId())));
         CreateConsignmentDocumentResponse createConsignmentDocumentResponse;
         if (List.of(NOVA_POSHTA_DEPARTMENT, NOVA_POSHTA_POSHTMAT).contains(order.getDeliveryDetails().getDeliveryType())) {
             createConsignmentDocumentResponse = createToWarehouseDeliveryDocument(order, documentRequest);
@@ -105,19 +107,27 @@ public class OrderServiceImpl implements OrderService {
     private CreateConsignmentDocumentResponse createToWarehouseDeliveryDocument(Order order, CreateConsignmentDocumentRequest documentRequest) {
         CreateContrAgentMethodProperties contrAgentMethodProperties = consignmentDocumentMapper
                 .toCreateContrAgentMethodProperties(order);
-        CreateContrAgentResponse createContrAgentResponse = consignmentDocumentService.createContrAgent(contrAgentMethodProperties);
-        SearchWarehouseMethodProperties searchWarehouseMethodProperties = consignmentDocumentMapper.toSearchWarehouseMethodProperties(order);
-        SearchWarehousesResponse receiptWarehouseResponse = consignmentDocumentService.searchWarehouses(searchWarehouseMethodProperties);
+        CreateContrAgentResponse createContrAgentResponse = consignmentDocumentService
+                .createContrAgent(contrAgentMethodProperties);
+        SearchWarehouseMethodProperties searchWarehouseMethodProperties = consignmentDocumentMapper
+                .toSearchWarehouseMethodProperties(order);
+        SearchWarehousesResponse receiptWarehouseResponse = consignmentDocumentService
+                .searchWarehouses(searchWarehouseMethodProperties);
         if (receiptWarehouseResponse.getData().size() != 1) {
-            throw new CreateContrAgentException("Department address not clear and was found %s warehouses".formatted(receiptWarehouseResponse.getData().size()));
+            throw new CreateConsignmentDocumentException("Department address not clear and was found %s warehouses"
+                    .formatted(receiptWarehouseResponse.getData().size()));
         }
         GetCounterpartiesResponse senderResponse = consignmentDocumentService.getCounterparties();
         String senderRef = senderResponse.getData().getFirst().getRef();
-        GetCounterpartyContactPersonsResponse contactSenderResponse = consignmentDocumentService.getCounterpartyContactPersons(senderRef);
-        SearchWarehouseMethodProperties senderWarehouseProperties = consignmentDocumentMapper.toSearchWarehouseMethodProperties(documentRequest);
-        SearchWarehousesResponse senderWarehouseResponse = consignmentDocumentService.searchWarehouses(senderWarehouseProperties);
+        GetCounterpartyContactPersonsResponse contactSenderResponse = consignmentDocumentService
+                .getCounterpartyContactPersons(senderRef);
+        SearchWarehouseMethodProperties senderWarehouseProperties = consignmentDocumentMapper
+                .toSearchWarehouseMethodProperties(documentRequest);
+        SearchWarehousesResponse senderWarehouseResponse = consignmentDocumentService
+                .searchWarehouses(senderWarehouseProperties);
         if (senderWarehouseResponse.getData().size() != 1) {
-            throw new CreateContrAgentException("Department address not clear and was found %s warehouses".formatted(receiptWarehouseResponse.getData().size()));
+            throw new CreateConsignmentDocumentException("Department address not clear and was found %s warehouses"
+                    .formatted(receiptWarehouseResponse.getData().size()));
         }
         CreateConsignmentMethodProperties createConsignmentMethodProperties = consignmentDocumentMapper
                 .toCreateConsignmentMethodProperties(order, senderResponse, contactSenderResponse,
@@ -134,16 +144,20 @@ public class OrderServiceImpl implements OrderService {
                 .toCreateContrAgentMethodProperties(order);
         CreateContrAgentResponse createContrAgentResponse = consignmentDocumentService.createContrAgent(contrAgentMethodProperties);
         CreateContrAgentData createContrAgentData = createContrAgentResponse.getData().getFirst();
-        SearchSettlementsResponse searchSettlementsResponse = consignmentDocumentService.searchSettlements(consignmentDocumentMapper.toSearchSettlementsProperties(order.getDeliveryDetails().getDeliveryAddress().getCity()));
+        SearchSettlementsProperties settlementsProperties = consignmentDocumentMapper.toSearchSettlementsProperties(
+                order.getDeliveryDetails().getDeliveryAddress().getCity());
+        SearchSettlementsResponse searchSettlementsResponse = consignmentDocumentService.searchSettlements(settlementsProperties);
         if (searchSettlementsResponse.getData().getFirst().getAddresses().size() != 1) {
-            throw new CreateConsignmentDocumentException("Settlement name isn not clear and was found %s settlements".formatted(searchSettlementsResponse.getData().getFirst().getAddresses().size()));
+            throw new CreateConsignmentDocumentException("Settlement name isn not clear and was found %s settlements"
+                    .formatted(searchSettlementsResponse.getData().getFirst().getAddresses().size()));
         }
         String settlementRef =
                 searchSettlementsResponse.getData().getFirst().getAddresses().getFirst().getRef();
         SearchSettlementsStreetsResponse searchSettlementsStreetsResponse = consignmentDocumentService.searchSettlementsStreets(consignmentDocumentMapper
                 .toSearchSettlementStreetsProperties(settlementRef, order.getDeliveryDetails().getDeliveryAddress().getStreet()));
         if (searchSettlementsStreetsResponse.getData().getFirst().getAddresses().size() != 1) {
-            throw new CreateContrAgentException("Street address is not clear and was found %s streets".formatted(searchSettlementsStreetsResponse.getData().size()));
+            throw new CreateConsignmentDocumentException("Street address is not clear and was found %s streets"
+                    .formatted(searchSettlementsStreetsResponse.getData().size()));
         }
 
         SettlementsStreetsAddress settlementsStreetsAddress = searchSettlementsStreetsResponse.getData().getFirst().getAddresses().getFirst();
@@ -173,6 +187,6 @@ public class OrderServiceImpl implements OrderService {
                                 NOVA_POSHTA_DEPARTMENT).contains(order.getDeliveryDetails().getDeliveryType()),
                         order -> consignmentDocumentService.deleteConsignment(order.getDeliveryDetails().getDocumentRef()))
                 .doWith(orderRepository::delete)
-                .orElseThrow(() -> new OrderNotFoundException("Order with %s number doesn't exist!".formatted(orderId)));
+                .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(orderId)));
     }
 }

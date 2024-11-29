@@ -24,8 +24,7 @@ import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
-import org.arpha.exception.CreateConsignmentDocumentException;
-import org.arpha.exception.CreateContrAgentException;
+import org.arpha.exception.NovaPoshtaApiException;
 import org.arpha.property.NovaPoshtaConsignmentProperties;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -39,55 +38,58 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
     private final NovaPoshtaConsignmentProperties novaPoshtaConsignmentProperties;
 
     @Override
-    public CreateConsignmentDocumentResponse createConsignmentDocument(CreateConsignmentNovaPoshtaDocumentRequest consignmentDocumentRequest) {
+    public CreateConsignmentDocumentResponse createConsignmentDocument(CreateConsignmentNovaPoshtaDocumentRequest request) {
         CreateConsignmentDocumentResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
-                .body(consignmentDocumentRequest)
+                .body(request)
                 .retrieve()
                 .body(CreateConsignmentDocumentResponse.class);
         if (!response.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during consignment document creation. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
         return response;
     }
 
 
     @Override
-    public SearchSettlementsResponse searchSettlements(SearchSettlementsProperties searchSettlementsProperties) {
+    public SearchSettlementsResponse searchSettlements(SearchSettlementsProperties settlementsProperties) {
         SearchSettlementsResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new SearchSettlementsRequest(novaPoshtaConsignmentProperties.apiKey(), searchSettlementsProperties))
+                .body(new SearchSettlementsRequest(novaPoshtaConsignmentProperties.apiKey(), settlementsProperties))
                 .retrieve()
                 .toEntity(SearchSettlementsResponse.class)
                 .getBody();
         if (!response.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during settlements search. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
         return response;
     }
 
     @Override
-    public SearchSettlementsStreetsResponse searchSettlementsStreets(SearchSettlementsStreetsProperties settlementsStreetsProperties) {
+    public SearchSettlementsStreetsResponse searchSettlementsStreets(SearchSettlementsStreetsProperties properties) {
         SearchSettlementsStreetsResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new SearchSettlementsStreetsRequest(novaPoshtaConsignmentProperties.apiKey(), settlementsStreetsProperties))
+                .body(new SearchSettlementsStreetsRequest(novaPoshtaConsignmentProperties.apiKey(), properties))
                 .retrieve()
                 .toEntity(SearchSettlementsStreetsResponse.class)
                 .getBody();
         if (!response.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during streets search. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
         return response;
     }
 
     @Override
     public SearchWarehousesResponse searchWarehouses(SearchWarehouseMethodProperties warehouseMethodProperties) {
-        SearchWarehousesResponse response =  restClient
+        SearchWarehousesResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,22 +97,24 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .retrieve()
                 .body(SearchWarehousesResponse.class);
         if (!response.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during warehouses search. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
         return response;
     }
 
     @Override
     public void deleteConsignment(String documentRef) {
-        DeleteConsignmentDocumentResponse deleteConsignmentDocumentResponse = restClient
+        DeleteConsignmentDocumentResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new DeleteConsignmentDocumentRequest(novaPoshtaConsignmentProperties.apiKey(), documentRef))
                 .retrieve()
                 .body(DeleteConsignmentDocumentResponse.class);
-        if (!deleteConsignmentDocumentResponse.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", deleteConsignmentDocumentResponse.getErrors()));
+        if (!response.isSuccess()) {
+            throw new NovaPoshtaApiException("Exception happened during consignment document deletion. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
     }
 
@@ -124,9 +128,9 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .retrieve()
                 .body(GetCounterpartiesResponse.class);
         if (!response.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during counterparties searching. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
-
         return response;
     }
 
@@ -141,14 +145,15 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .toEntity(GetCounterpartyContactPersonsResponse.class)
                 .getBody();
         if (!response.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during contact person of counterparty searching. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
         return response;
     }
 
     @Override
     public CreateContrAgentResponse createContrAgent(CreateContrAgentMethodProperties contrAgentMethodProperties) {
-        CreateContrAgentResponse createContrAgentResponse = restClient
+        CreateContrAgentResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -156,24 +161,26 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
                 .retrieve()
                 .toEntity(CreateContrAgentResponse.class)
                 .getBody();
-        if (!createContrAgentResponse.isSuccess()) {
-            throw new CreateContrAgentException(String.join(",", createContrAgentResponse.getErrors()));
+        if (!response.isSuccess()) {
+            throw new NovaPoshtaApiException("Exception happened during contr agent creation. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
-        return createContrAgentResponse;
+        return response;
     }
 
     @Override
-    public CreateHomeAddressResponse createHomeAddressResponse(CreateHomeAddressMethodProperties createHomeAddressMethodProperties) {
+    public CreateHomeAddressResponse createHomeAddressResponse(CreateHomeAddressMethodProperties methodProperties) {
         CreateHomeAddressResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new CreateHomeAddressRequest(novaPoshtaConsignmentProperties.apiKey(), createHomeAddressMethodProperties))
+                .body(new CreateHomeAddressRequest(novaPoshtaConsignmentProperties.apiKey(), methodProperties))
                 .retrieve()
                 .toEntity(CreateHomeAddressResponse.class)
                 .getBody();
         if (!response.isSuccess()) {
-            throw new CreateConsignmentDocumentException(String.join(",", response.getErrors()));
+            throw new NovaPoshtaApiException("Exception happened during home address creation for user. Reasons: " +
+                                             String.join(",", response.getErrors()));
         }
         return response;
     }
