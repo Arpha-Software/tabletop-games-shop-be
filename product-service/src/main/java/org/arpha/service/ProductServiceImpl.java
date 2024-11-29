@@ -3,10 +3,15 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.media.enums.TargetType;
+import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.entity.Product;
 import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
+import org.arpha.exception.UpdateEntityException;
 import org.arpha.mapper.ProductMapper;
 import org.arpha.mapper.helper.ProductMapperHelper;
 import org.arpha.repository.ProductRepository;
@@ -15,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -27,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final ProductMapperHelper productMapperHelper;
+    private final MediaService mediaService;
 
     @Override
     public ProductResponse createProduct(CreateProductRequest createProductRequest) {
@@ -43,6 +50,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(long id) {
         productRepository.deleteById(id);
+        mediaService.deleteAllByTargetIdAndType(id, TargetType.PRODUCT);
+        mediaService.deleteAllByTargetIdAndType(id, TargetType.PRODUCT_MAIN_IMG);
     }
 
     @Override
@@ -55,8 +64,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAllProducts(Predicate predicate, Pageable pageable) {
-        return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
+    public Page<GetProductListInfo> findAllProducts(Predicate predicate, Pageable pageable) {
+        return productRepository.findAll(predicate, pageable).map(productMapper::toGetProductListInfo);
     }
 
     @Override
@@ -108,6 +117,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean existProductById(long productId) {
         return productRepository.existsById(productId);
+    }
+
+    @Override
+    public void updateQuantity(List<CreateOrderItem> items) {
+        items.forEach(this::updateQuantity);
+    }
+
+    private void updateQuantity(CreateOrderItem item) {
+        Boxed
+                .of(item)
+                .flatOpt(item1 -> productRepository.findById(item1.getProductId()))
+                .filter(product ->  product.getQuantity() >= item.getQuantity())
+                .doWith(product -> product.setQuantity(product.getQuantity() - item.getQuantity()))
+                .mapToBoxed(productRepository::save)
+                .orElseThrow(() -> new UpdateEntityException("Couldn't update product with %s id, because requires more amount then in store.".formatted(item.getQuantity())));
     }
 
 }

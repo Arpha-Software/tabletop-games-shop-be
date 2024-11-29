@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.service.ProductService;
@@ -37,7 +38,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<ProductResponse> findAllProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
+    public Page<GetProductListInfo> findAllProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
         return productService.findAllProducts(predicate, pageable);
     }
 
