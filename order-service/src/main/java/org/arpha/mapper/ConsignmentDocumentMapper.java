@@ -38,29 +38,28 @@ public interface ConsignmentDocumentMapper {
     @Mapping(target = "page", constant = "1")
     SearchWarehouseMethodProperties toSearchWarehouseMethodProperties(Order order);
 
-    @Mapping(target = "findByString", source = "senderDepartmentName")
+    @Mapping(target = "findByString", source = "senderDepartment")
     @Mapping(target = "cityName", source = "city")
     @Mapping(target = "limit", constant = "5")
     @Mapping(target = "page", constant = "1")
     SearchWarehouseMethodProperties toSearchWarehouseMethodProperties(CreateConsignmentDocumentRequest request);
 
-    @Mapping(target = "senderWarehouseIndex", source = "senderWarehouse.warehouseIndex")
-    @Mapping(target = "recipientWarehouseIndex", source = "recipientWarehouse.warehouseIndex")
     @Mapping(target = "payerType", constant = "Recipient")
+    @Mapping(target = "recipientType", constant = "PrivatePerson")
     @Mapping(target = "paymentMethod", source = "order.deliveryDetails", qualifiedByName = "toPaymentMethod")
     @Mapping(target = "dateTime", source = "documentRequest.sendDate", qualifiedByName = "toDate")
     @Mapping(target = "cargoType", constant = "Cargo")
     @Mapping(target = "serviceType", source = "order.deliveryDetails", qualifiedByName = "toServiceType")
-    @Mapping(target = "seatsAmount", constant = "1")
+    @Mapping(target = "seatsAmount", source = "order", qualifiedByName = "toSeatsAmount")
     @Mapping(target = "cost", source = "order", qualifiedByName = "toCost")
-    @Mapping(target = "citySender", source = "senderWarehouse.cityRef")
+    @Mapping(target = "citySender", source = "documentRequest.cityCode")
     @Mapping(target = "sender", source = "sender", qualifiedByName = "toSenderRef")
-    @Mapping(target = "senderAddress", source = "senderWarehouse.ref")
+    @Mapping(target = "senderAddress", source = "documentRequest.senderDepartmentCode")
     @Mapping(target = "contactSender", source = "contactSender", qualifiedByName = "toSenderContactRef")
     @Mapping(target = "sendersPhone", source = "contactSender", qualifiedByName = "toSendersPhone")
-    @Mapping(target = "cityRecipient", source = "recipientWarehouse.cityRef")
+    @Mapping(target = "cityRecipient", source = "order.deliveryDetails.deliveryAddress.cityCode")
     @Mapping(target = "recipient", source = "recipientAgent.ref")
-    @Mapping(target = "recipientAddress", source = "recipientWarehouse.ref")
+    @Mapping(target = "recipientAddress", source = "order.deliveryDetails.deliveryAddress.departmentCode")
     @Mapping(target = "contactRecipient", source = "recipientAgent", qualifiedByName = "toRecipientContactRef")
     @Mapping(target = "recipientsPhone", source = "order.customerDetails.phoneNumber")
     @Mapping(target = "optionsSeat", source = "order", qualifiedByName = "toOptionsSeat")
@@ -69,24 +68,22 @@ public interface ConsignmentDocumentMapper {
     CreateConsignmentMethodProperties toCreateConsignmentMethodProperties(Order order, GetCounterpartiesResponse sender,
                                                                           GetCounterpartyContactPersonsResponse contactSender,
                                                                           CreateContrAgentData recipientAgent,
-                                                                          SearchWarehousesData recipientWarehouse,
-                                                                          SearchWarehousesData senderWarehouse,
                                                                           CreateConsignmentDocumentRequest documentRequest);
 
-    @Mapping(target = "senderWarehouseIndex", source = "senderWarehouse.warehouseIndex")
+    @Mapping(target = "recipientType", constant = "PrivatePerson")
     @Mapping(target = "payerType", constant = "Recipient")
     @Mapping(target = "paymentMethod", source = "order.deliveryDetails", qualifiedByName = "toPaymentMethod")
     @Mapping(target = "dateTime", source = "documentRequest.sendDate", qualifiedByName = "toDate")
     @Mapping(target = "cargoType", constant = "Cargo")
     @Mapping(target = "serviceType", source = "order.deliveryDetails", qualifiedByName = "toServiceType")
-    @Mapping(target = "seatsAmount", constant = "1")
+    @Mapping(target = "seatsAmount", source = "order", qualifiedByName = "toSeatsAmount")
     @Mapping(target = "cost", source = "order", qualifiedByName = "toCost")
-    @Mapping(target = "citySender", source = "senderWarehouse.cityRef")
+    @Mapping(target = "citySender", source = "documentRequest.cityCode")
     @Mapping(target = "sender", source = "sender", qualifiedByName = "toSenderRef")
-    @Mapping(target = "senderAddress", source = "senderWarehouse.ref")
+    @Mapping(target = "senderAddress", source = "documentRequest.senderDepartmentCode")
     @Mapping(target = "contactSender", source = "contactSender", qualifiedByName = "toSenderContactRef")
     @Mapping(target = "sendersPhone", source = "contactSender", qualifiedByName = "toSendersPhone")
-    @Mapping(target = "cityRecipient", source = "recipientCityRef")
+    @Mapping(target = "cityRecipient", source = "order.deliveryDetails.deliveryAddress.cityCode")
     @Mapping(target = "recipient", source = "recipientAgent.ref")
     @Mapping(target = "recipientAddress", source = "recipientHouse.ref")
     @Mapping(target = "contactRecipient", source = "recipientAgent", qualifiedByName = "toRecipientContactRef")
@@ -98,10 +95,7 @@ public interface ConsignmentDocumentMapper {
                                                                           GetCounterpartyContactPersonsResponse contactSender,
                                                                           CreateContrAgentData recipientAgent,
                                                                           CreateHomeAddressData recipientHouse,
-                                                                          SearchWarehousesData senderWarehouse,
-                                                                          CreateConsignmentDocumentRequest documentRequest,
-                                                                          String recipientCityRef);
-
+                                                                          CreateConsignmentDocumentRequest documentRequest);
 
     @Mapping(target = "cityName", source = "city")
     @Mapping(target = "limit", constant = "20")
@@ -115,11 +109,10 @@ public interface ConsignmentDocumentMapper {
 
     @Mapping(target = "contactPersonRef", source = "contactPersonRef")
     @Mapping(target = "addressType", constant = "Doors")
-    @Mapping(target = "settlementRef", source = "settlementsStreetsAddress.settlementRef")
-    @Mapping(target = "addressRef", source = "settlementsStreetsAddress.settlementStreetRef")
+    @Mapping(target = "settlementRef", source = "deliveryAddress.cityCode")
+    @Mapping(target = "addressRef", source = "deliveryAddress.streetCode")
     @Mapping(target = "buildingNumber", source = "deliveryAddress.houseNumber")
     @Mapping(target = "flat", source = "deliveryAddress.flatNumber")
     CreateHomeAddressMethodProperties toCreateHomeAddressMethodProperties(String contactPersonRef,
-                                                                          SettlementsStreetsAddress settlementsStreetsAddress,
                                                                           DeliveryAddress deliveryAddress);
 }

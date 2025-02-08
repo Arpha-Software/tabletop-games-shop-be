@@ -21,11 +21,17 @@ public class DeliveryAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String city;
+    @Column(name = "city_code")
+    private String cityCode;
+    @Column(name = "street_code")
+    private String streetCode;
     private String street;
     @Column(name = "house_number")
     private String houseNumber;
     @Column(name = "flat_number")
     private String flatNumber;
     private String department;
+    @Column(name = "department_code")
+    private String departmentCode;
 
 }

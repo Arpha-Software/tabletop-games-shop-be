@@ -20,8 +20,12 @@ public class CreateConsignmentMethodProperties {
     private String recipientWarehouseIndex;
     @JsonProperty("PayerType")
     private String payerType;
+    @JsonProperty("Weight")
+    private String weight;
     @JsonProperty("PaymentMethod")
     private String paymentMethod;
+    @JsonProperty("RecipientType")
+    private String recipientType;
     @JsonProperty("DateTime")
     private String dateTime;
     @JsonProperty("CargoType")

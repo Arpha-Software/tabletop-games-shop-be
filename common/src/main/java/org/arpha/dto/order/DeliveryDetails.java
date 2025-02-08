@@ -19,10 +19,13 @@ public class DeliveryDetails {
     private DeliveryType deliveryType;
     private PaymentMethod paymentMethod;
     private String city;
+    private String cityCode;
     private String street;
+    private String streetCode;
     private String houseNumber;
     private String flatNumber;
     private String department;
+    private String departmentCode;
     private String docNumber;
     private LocalDate expectedDeliveryDate;
     private BigDecimal deliveryPrice;

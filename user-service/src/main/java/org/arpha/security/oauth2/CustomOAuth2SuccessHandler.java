@@ -40,6 +40,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         } else {
             userResponse = userService.findUserByEmail(email);
         }
+
         String jwtToken = jwtUtils.generateToken(email);
         LoginResponse loginResponse = authMapper.toLoginResponse(userResponse, jwtToken);
 

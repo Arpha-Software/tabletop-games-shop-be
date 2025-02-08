@@ -17,6 +17,8 @@ public class CreateConsignmentDocumentRequest {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate sendDate;
     private String city;
-    private String senderDepartmentName;
+    private String cityCode;
+    private String senderDepartment;
+    private String senderDepartmentCode;
 
 }

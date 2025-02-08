@@ -25,10 +25,13 @@ public interface OrderMapper {
     @Mapping(target = "customerDetails.email", source = "customerDetails.email")
     @Mapping(target = "deliveryDetails.deliveryType", source = "deliveryDetails.deliveryType")
     @Mapping(target = "deliveryDetails.deliveryAddress.city", source = "deliveryDetails.city")
+    @Mapping(target = "deliveryDetails.deliveryAddress.cityCode", source = "deliveryDetails.cityCode")
     @Mapping(target = "deliveryDetails.deliveryAddress.street", source = "deliveryDetails.street")
+    @Mapping(target = "deliveryDetails.deliveryAddress.streetCode", source = "deliveryDetails.streetCode")
     @Mapping(target = "deliveryDetails.deliveryAddress.houseNumber", source = "deliveryDetails.houseNumber")
     @Mapping(target = "deliveryDetails.deliveryAddress.flatNumber", source = "deliveryDetails.flatNumber")
     @Mapping(target = "deliveryDetails.deliveryAddress.department", source = "deliveryDetails.department")
+    @Mapping(target = "deliveryDetails.deliveryAddress.departmentCode", source = "deliveryDetails.departmentCode")
     @Mapping(target = "orderStatus", constant = "NEW")
     @Mapping(target = "orderedItems", source = "orderedItems", qualifiedByName = "toOrderedItems")
     Order toOrder(CreateOrderRequest createOrderRequest);
@@ -68,6 +71,7 @@ public interface OrderMapper {
     @Mapping(target = "order.deliveryDetails.expectedDeliveryDate", source = "document.estimatedDeliveryDate", qualifiedByName = "toDate")
     @Mapping(target = "order.deliveryDetails.docNumber", source = "document.intDocNumber")
     @Mapping(target = "order.deliveryDetails.documentRef", source = "document.ref")
+    @Mapping(target = "order.status", constant = "DELIVERING")//Clarify this
     void addDocumentDataToOrder(@MappingTarget Order order, Document document);
 
     @AfterMapping

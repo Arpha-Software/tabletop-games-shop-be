@@ -37,6 +37,11 @@ public class ConsignmentDocumentMapperHelper {
         return order.getTotalCost().toPlainString();
     }
 
+    @Named("toSeatsAmount")
+    public String toSeatsAmount(Order order) {
+        return order.getOrderedItems().stream().map(OrderItem::getQuantity).reduce(0, Integer::sum).toString();
+    }
+
     @Named("toRecipientContactRef")
     public String toRecipientContactRef(CreateContrAgentData createContrAgentData) {
         if (createContrAgentData.getContactPerson().getData().isEmpty()) {
