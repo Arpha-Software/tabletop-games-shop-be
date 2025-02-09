@@ -1,5 +1,5 @@
 package org.arpha.dto.order.enums;
 
 public enum OrderStatus {
-    NEW, CANCELLED, COMPLETED, DELIVERING;
+    NEW, CANCELLED, COMPLETED, DELIVERING, CREATED_CONSIGNMENT;
 }

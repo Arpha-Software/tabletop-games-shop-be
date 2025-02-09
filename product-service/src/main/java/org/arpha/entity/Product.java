@@ -79,4 +79,10 @@ public class Product {
     @ToString.Exclude
     private Set<Genre> genres = new HashSet<>();
 
+    public void addQuantity(int quantity) {
+        if(quantity < 0) {
+            throw new IllegalArgumentException("Quantity can't be less than zero!");
+        }
+        this.quantity+=quantity;
+    }
 }

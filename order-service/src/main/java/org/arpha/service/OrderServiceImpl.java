@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.enums.DeliveryType;
+import org.arpha.dto.order.enums.OrderStatus;
 import org.arpha.dto.order.novaposhta.SettlementsStreetsAddress;
 import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.properties.CreateConsignmentMethodProperties;
@@ -24,6 +25,8 @@ import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
 import org.arpha.entity.Order;
+import org.arpha.entity.OrderItem;
+import org.arpha.entity.Product;
 import org.arpha.exception.CreateConsignmentDocumentException;
 import org.arpha.exception.CreateOrderException;
 import org.arpha.exception.OrderNotFoundException;
@@ -31,6 +34,7 @@ import org.arpha.mapper.ConsignmentDocumentMapper;
 import org.arpha.mapper.OrderMapper;
 import org.arpha.property.NovaPoshtaConsignmentProperties;
 import org.arpha.repository.OrderRepository;
+import org.arpha.repository.ProductRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
             createConsignmentDocumentResponse = createToHouseDeliveryDocument(order, documentRequest);
         } else {
             throw new CreateConsignmentDocumentException(("Consignment document can't be created for %s order because it's" +
-                                                          " wrong delivery type!").formatted(order.getId()));
+                    " wrong delivery type!").formatted(order.getId()));
         }
         orderMapper.addDocumentDataToOrder(order, createConsignmentDocumentResponse.getData().getFirst());
         orderRepository.save(order);
@@ -152,9 +156,16 @@ public class OrderServiceImpl implements OrderService {
                 .of(orderId)
                 .flatOpt(orderRepository::findById)
                 .doIfTrue(order -> List.of(DeliveryType.NOVA_POSHTA_COURIER, NOVA_POSHTA_POSHTMAT,
-                                NOVA_POSHTA_DEPARTMENT).contains(order.getDeliveryDetails().getDeliveryType()),
+                                NOVA_POSHTA_DEPARTMENT).contains(order.getDeliveryDetails().getDeliveryType()) &&
+                                order.getOrderStatus() == OrderStatus.CREATED_CONSIGNMENT,
                         order -> consignmentDocumentService.deleteConsignment(order.getDeliveryDetails().getDocumentRef()))
+                .doWith(this::returnQuantities)
                 .doWith(orderRepository::delete)
                 .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(orderId)));
+    }
+
+    private void returnQuantities(Order order) {
+        order.getOrderedItems().forEach(orderItem -> orderItem.getProduct().addQuantity(orderItem.getQuantity()));
+        orderRepository.save(order);
     }
 }

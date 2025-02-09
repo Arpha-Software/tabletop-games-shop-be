@@ -71,7 +71,7 @@ public interface OrderMapper {
     @Mapping(target = "order.deliveryDetails.expectedDeliveryDate", source = "document.estimatedDeliveryDate", qualifiedByName = "toDate")
     @Mapping(target = "order.deliveryDetails.docNumber", source = "document.intDocNumber")
     @Mapping(target = "order.deliveryDetails.documentRef", source = "document.ref")
-    @Mapping(target = "order.status", constant = "DELIVERING")//Clarify this
+    @Mapping(target = "order.orderStatus", constant = "CREATED_CONSIGNMENT")//Clarify this
     void addDocumentDataToOrder(@MappingTarget Order order, Document document);
 
     @AfterMapping

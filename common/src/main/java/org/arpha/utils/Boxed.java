@@ -35,6 +35,9 @@ public final class Boxed<T> {
     }
 
     public Boxed<T> doIfTrue(Predicate<T> predicate, Consumer<T> consumer) {
+        if(this.value == null) {
+            return empty();
+        }
         if(predicate.test(this.value)) {
             consumer.accept(this.value);
         }
