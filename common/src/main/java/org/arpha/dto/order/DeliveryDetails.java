@@ -1,6 +1,8 @@
 package org.arpha.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +18,11 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeliveryDetails {
 
+    @NotNull(message = "Delivery type can't null")
     private DeliveryType deliveryType;
+    @NotNull(message = "Payment method can't null")
     private PaymentMethod paymentMethod;
+    @NotEmpty(message = "City can't be null")
     private String city;
     private String cityCode;
     private String street;
