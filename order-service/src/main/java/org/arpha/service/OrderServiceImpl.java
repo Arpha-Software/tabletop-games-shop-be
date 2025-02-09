@@ -108,7 +108,8 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    private CreateConsignmentDocumentResponse createToWarehouseDeliveryDocument(Order order, CreateConsignmentDocumentRequest documentRequest) {
+    private CreateConsignmentDocumentResponse createToWarehouseDeliveryDocument(
+            Order order, CreateConsignmentDocumentRequest documentRequest) {
         CreateContrAgentMethodProperties contrAgentMethodProperties = consignmentDocumentMapper
                 .toCreateContrAgentMethodProperties(order);
         CreateContrAgentResponse createContrAgentResponse = consignmentDocumentService
@@ -124,14 +125,16 @@ public class OrderServiceImpl implements OrderService {
                         createContrAgentResponse.getData().getFirst(), documentRequest);
 
         return consignmentDocumentService
-                .createConsignmentDocument(new CreateConsignmentNovaPoshtaDocumentRequest(novaPoshtaConsignmentProperties.apiKey(),
-                        createConsignmentMethodProperties));
+                .createConsignmentDocument(new CreateConsignmentNovaPoshtaDocumentRequest(
+                        novaPoshtaConsignmentProperties.apiKey(), createConsignmentMethodProperties));
     }
 
-    private CreateConsignmentDocumentResponse createToHouseDeliveryDocument(Order order, CreateConsignmentDocumentRequest documentRequest) {
+    private CreateConsignmentDocumentResponse createToHouseDeliveryDocument(Order order, CreateConsignmentDocumentRequest
+            documentRequest) {
         CreateContrAgentMethodProperties contrAgentMethodProperties = consignmentDocumentMapper
                 .toCreateContrAgentMethodProperties(order);
-        CreateContrAgentResponse createContrAgentResponse = consignmentDocumentService.createContrAgent(contrAgentMethodProperties);
+        CreateContrAgentResponse createContrAgentResponse = consignmentDocumentService
+                .createContrAgent(contrAgentMethodProperties);
         CreateContrAgentData createContrAgentData = createContrAgentResponse.getData().getFirst();
 
         CreateHomeAddressResponse createHomeAddressResponse = consignmentDocumentService.createHomeAddressResponse(
@@ -139,15 +142,16 @@ public class OrderServiceImpl implements OrderService {
                         order.getDeliveryDetails().getDeliveryAddress()));
         GetCounterpartiesResponse senderResponse = consignmentDocumentService.getCounterparties();
         String senderRef = senderResponse.getData().getFirst().getRef();
-        GetCounterpartyContactPersonsResponse contactSenderResponse = consignmentDocumentService.getCounterpartyContactPersons(senderRef);
+        GetCounterpartyContactPersonsResponse contactSenderResponse = consignmentDocumentService
+                .getCounterpartyContactPersons(senderRef);
 
         CreateConsignmentMethodProperties createConsignmentMethodProperties = consignmentDocumentMapper
                 .toCreateConsignmentMethodProperties(order, senderResponse, contactSenderResponse, createContrAgentResponse
                         .getData().getFirst(), createHomeAddressResponse.getData().getFirst(), documentRequest);
 
         return consignmentDocumentService
-                .createConsignmentDocument(new CreateConsignmentNovaPoshtaDocumentRequest(novaPoshtaConsignmentProperties.apiKey(),
-                        createConsignmentMethodProperties));
+                .createConsignmentDocument(new CreateConsignmentNovaPoshtaDocumentRequest(
+                        novaPoshtaConsignmentProperties.apiKey(), createConsignmentMethodProperties));
     }
 
     @Override

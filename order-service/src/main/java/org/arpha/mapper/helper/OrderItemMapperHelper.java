@@ -26,7 +26,8 @@ public class OrderItemMapperHelper {
                 .flatOpt(productRepository::findById)
                 .doWith(product -> validateQuantity(createOrderItem, product))
                 .doWith(product -> product.setQuantity(product.getQuantity() - createOrderItem.getQuantity()))
-                .orElseThrow(() -> new CreateOrderException("Product with %s id doesn't exist!".formatted(createOrderItem.getProductId())));
+                .orElseThrow(() -> new CreateOrderException("Product with %s id doesn't exist!".formatted(
+                        createOrderItem.getProductId())));
     }
 
     @Named("toMainImg")
