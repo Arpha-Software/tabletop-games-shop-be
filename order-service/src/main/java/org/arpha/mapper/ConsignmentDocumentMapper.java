@@ -107,10 +107,8 @@ public interface ConsignmentDocumentMapper {
     @Mapping(target = "limit", constant = "20")
     SearchSettlementsStreetsProperties toSearchSettlementStreetsProperties(String settlementRef, String streetName);
 
-    @Mapping(target = "contactPersonRef", source = "contactPersonRef")
-    @Mapping(target = "addressType", constant = "Doors")
-    @Mapping(target = "settlementRef", source = "deliveryAddress.cityCode")
-    @Mapping(target = "addressRef", source = "deliveryAddress.streetCode")
+    @Mapping(target = "counterpartyRef", source = "contactPersonRef")
+    @Mapping(target = "streetRef", source = "deliveryAddress.streetCode")
     @Mapping(target = "buildingNumber", source = "deliveryAddress.houseNumber")
     @Mapping(target = "flat", source = "deliveryAddress.flatNumber")
     CreateHomeAddressMethodProperties toCreateHomeAddressMethodProperties(String contactPersonRef,

@@ -5,28 +5,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.enums.DeliveryType;
 import org.arpha.dto.order.enums.OrderStatus;
-import org.arpha.dto.order.novaposhta.SettlementsStreetsAddress;
 import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.properties.CreateConsignmentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
-import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
-import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateConsignmentNovaPoshtaDocumentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
-import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
-import org.arpha.dto.order.response.CreateContrAgentResponse;
-import org.arpha.dto.order.response.CreateHomeAddressResponse;
-import org.arpha.dto.order.response.GetCounterpartiesResponse;
-import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
-import org.arpha.dto.order.response.OrderDetailsResponse;
-import org.arpha.dto.order.response.OrderInfoResponse;
-import org.arpha.dto.order.response.SearchSettlementsResponse;
-import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
-import org.arpha.dto.order.response.SearchWarehousesResponse;
+import org.arpha.dto.order.response.*;
 import org.arpha.entity.Order;
-import org.arpha.entity.OrderItem;
-import org.arpha.entity.Product;
 import org.arpha.exception.CreateConsignmentDocumentException;
 import org.arpha.exception.CreateOrderException;
 import org.arpha.exception.OrderNotFoundException;
@@ -34,7 +20,6 @@ import org.arpha.mapper.ConsignmentDocumentMapper;
 import org.arpha.mapper.OrderMapper;
 import org.arpha.property.NovaPoshtaConsignmentProperties;
 import org.arpha.repository.OrderRepository;
-import org.arpha.repository.ProductRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_COURIER;
-import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_DEPARTMENT;
-import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_POSHTMAT;
+import static org.arpha.dto.order.enums.DeliveryType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -137,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
                 .createContrAgent(contrAgentMethodProperties);
         CreateContrAgentData createContrAgentData = createContrAgentResponse.getData().getFirst();
 
-        CreateHomeAddressResponse createHomeAddressResponse = consignmentDocumentService.createHomeAddressResponse(
+        CreateHomeAddressResponse createHomeAddressResponse = consignmentDocumentService.createHomeAddress(
                 consignmentDocumentMapper.toCreateHomeAddressMethodProperties(createContrAgentData.getRef(),
                         order.getDeliveryDetails().getDeliveryAddress()));
         GetCounterpartiesResponse senderResponse = consignmentDocumentService.getCounterparties();

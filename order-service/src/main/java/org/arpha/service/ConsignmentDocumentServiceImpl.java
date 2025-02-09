@@ -169,7 +169,7 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
     }
 
     @Override
-    public CreateHomeAddressResponse createHomeAddressResponse(CreateHomeAddressMethodProperties methodProperties) {
+    public CreateHomeAddressResponse createHomeAddress(CreateHomeAddressMethodProperties methodProperties) {
         CreateHomeAddressResponse response = restClient
                 .post()
                 .uri(novaPoshtaConsignmentProperties.apiUrl())

@@ -10,26 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateHomeAddressMethodProperties {
 
-    @JsonProperty("ContactPersonRef")
-    private String contactPersonRef;
-    @JsonProperty("SettlementRef")
-    private String settlementRef;
-    @JsonProperty("AddressRef")
-    private String addressRef;
-    @JsonProperty("AddressType")
-    private String addressType;
+    @JsonProperty("CounterpartyRef")
+    private String counterpartyRef;
+    @JsonProperty("StreetRef")
+    private String streetRef;
     @JsonProperty("BuildingNumber")
     private String buildingNumber;
     @JsonProperty("Flat")
     private String flat;
-    @JsonProperty("Flat")
+    @JsonProperty("Note")
     private String note;
 
-    public CreateHomeAddressMethodProperties(String contactPersonRef, String settlementRef, String addressRef, String buildingNumber, String flat) {
-        this.contactPersonRef = contactPersonRef;
-        this.settlementRef = settlementRef;
-        this.addressRef = addressRef;
-        this.addressType = "Doors";
+    public CreateHomeAddressMethodProperties(String counterpartyRef, String streetRef, String buildingNumber, String flat) {
+        this.counterpartyRef = counterpartyRef;
+        this.streetRef = streetRef;
         this.buildingNumber = buildingNumber;
         this.flat = flat;
     }

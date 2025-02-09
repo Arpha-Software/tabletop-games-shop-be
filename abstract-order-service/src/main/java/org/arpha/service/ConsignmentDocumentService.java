@@ -33,6 +33,6 @@ public interface ConsignmentDocumentService {
 
     GetCounterpartyContactPersonsResponse getCounterpartyContactPersons(String counterpartyRef);
 
-    CreateHomeAddressResponse createHomeAddressResponse(CreateHomeAddressMethodProperties createHomeAddressMethodProperties);
+    CreateHomeAddressResponse createHomeAddress(CreateHomeAddressMethodProperties createHomeAddressMethodProperties);
 
 }
