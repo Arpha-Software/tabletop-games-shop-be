@@ -18,7 +18,7 @@ public interface ProductMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "type", source = "type")
-    @Mapping(target = "name", source = "name")
+    @Mapping(target = "name", source = "product.name")
     @Mapping(target = "playerNumber", source = "playerNumber")
     @Mapping(target = "playTime", source = "playTime")
     @Mapping(target = "description", source = "description")
