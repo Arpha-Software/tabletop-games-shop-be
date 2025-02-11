@@ -100,8 +100,7 @@ public class ConsignmentDocumentMapperHelper {
 
     private OptionsSeatData createOptionsSeat(OrderItem orderItem) {
         Product product = orderItem.getProduct();
-        if (product.getWeight() == null && product.getHeight() == null && product.getLength() == null &&
-                product.getWidth() == null) {
+        if (product.getDimension() == null) {
             if(product.getType() == null) {
                 throw new IllegalArgumentException(("Product with %s id can't be ordered when product type is null and" +
                         " width, height, weight, length are null").formatted(product.getId()));
@@ -111,8 +110,9 @@ public class ConsignmentDocumentMapperHelper {
                     dimension.getWidth().toPlainString(),dimension.getHeight().multiply(BigDecimal.valueOf(
                             orderItem.getQuantity())).toPlainString());
         }
-        return new OptionsSeatData(product.getWeight().toPlainString(), product.getLength().toPlainString(),
-                product.getWidth().toPlainString(), product.getHeight().multiply(BigDecimal.valueOf(
+        Dimension dimension = product.getDimension();
+        return new OptionsSeatData(dimension.getWeight().toPlainString(), dimension.getLength().toPlainString(),
+                dimension.getWidth().toPlainString(), dimension.getHeight().multiply(BigDecimal.valueOf(
                         orderItem.getQuantity())).toPlainString());
     }
 

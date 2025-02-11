@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.arpha.dto.product.Dimension;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -43,10 +44,8 @@ public class Product {
     private BigDecimal price;
     @Column(name = "rules_link")
     private String rulesLink;
-    private BigDecimal width;
-    private BigDecimal length;
-    private BigDecimal weight;
-    private BigDecimal height;
+    @Embedded
+    private Dimension dimension;
     @CreatedBy
     @Column(nullable = false, name = "created_by")
     private String createdBy;
