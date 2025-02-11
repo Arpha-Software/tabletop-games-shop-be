@@ -1,5 +1,6 @@
 package org.arpha.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
@@ -22,10 +23,16 @@ public class OrderServiceExceptionHandler {
                                                                                   "to connect to Nova poshta servers");
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException e) {
+        log.error(StringUtils.EMPTY, e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
     @ExceptionHandler(OrderNotFoundException.class)
     public ProblemDetail handleOrderNotFoundException(OrderNotFoundException e) {
         log.error(StringUtils.EMPTY, e);
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(CreateOrderException.class)

@@ -5,6 +5,7 @@ import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.data.OptionsSeatData;
 import org.arpha.dto.order.response.GetCounterpartiesResponse;
 import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
+import org.arpha.dto.product.Dimension;
 import org.arpha.entity.DeliveryDetails;
 import org.arpha.entity.Order;
 import org.arpha.entity.OrderItem;
@@ -14,10 +15,10 @@ import org.arpha.exception.CreateOrderException;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Component
 public class ConsignmentDocumentMapperHelper {
@@ -65,7 +66,7 @@ public class ConsignmentDocumentMapperHelper {
 
     @Named("toOptionsSeat")
     public List<OptionsSeatData> toOptionsSeatData(Order order) {
-        return order.getOrderedItems().stream().flatMap(this::createOptionsSeat).toList();
+        return order.getOrderedItems().stream().map(this::createOptionsSeat).toList();
     }
 
     @Named("toSendersPhone")
@@ -97,10 +98,22 @@ public class ConsignmentDocumentMapperHelper {
         return contactSender.getData().getFirst().getRef();
     }
 
-    private Stream<OptionsSeatData> createOptionsSeat(OrderItem orderItem) {
+    private OptionsSeatData createOptionsSeat(OrderItem orderItem) {
         Product product = orderItem.getProduct();
-        return Stream.generate(() -> new OptionsSeatData(product.getWeight().toPlainString(), product.getLength().toPlainString(),
-                product.getWidth().toPlainString(), product.getHeight().toPlainString())).limit(orderItem.getQuantity());
+        if (product.getWeight() == null && product.getHeight() == null && product.getLength() == null &&
+                product.getWidth() == null) {
+            if(product.getType() == null) {
+                throw new IllegalArgumentException(("Product with %s id can't be ordered when product type is null and" +
+                        " width, height, weight, length are null").formatted(product.getId()));
+            }
+            Dimension dimension = product.getType().getDimension();
+            return new OptionsSeatData(dimension.getWeight().toPlainString(), dimension.getLength().toPlainString(),
+                    dimension.getWidth().toPlainString(),dimension.getHeight().multiply(BigDecimal.valueOf(
+                            orderItem.getQuantity())).toPlainString());
+        }
+        return new OptionsSeatData(product.getWeight().toPlainString(), product.getLength().toPlainString(),
+                product.getWidth().toPlainString(), product.getHeight().multiply(BigDecimal.valueOf(
+                        orderItem.getQuantity())).toPlainString());
     }
 
 }

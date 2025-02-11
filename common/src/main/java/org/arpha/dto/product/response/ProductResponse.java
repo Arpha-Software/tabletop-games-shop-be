@@ -18,7 +18,7 @@ public class ProductResponse {
 
     private long id;
     private String name;
-    private String type;
+    private GetProductTypeResponse type;
     private String genre;
     private Integer playerNumber;
     private Integer playTime;

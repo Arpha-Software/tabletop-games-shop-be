@@ -44,12 +44,23 @@ CREATE TABLE IF NOT EXISTS "audits"
     constraint audit_pk PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS "product_types" (
+    id bigint generated always as identity,
+    name varchar not null,
+    width numeric(10, 2) not null,
+    height numeric(10, 2) not null,
+    length numeric(10, 2) not null,
+    weight numeric(10, 2) not null,
+
+    constraint product_type_pk PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS "products"
 (
     id            bigint generated always as identity,
     name          varchar                  not null,
     quantity      bigint                   not null,
-    type          varchar                  not null,
+    type_id       bigint                   not null,
     player_number int                      not null,
     play_time     int                      not null,
     description   text                     not null,
@@ -64,7 +75,8 @@ CREATE TABLE IF NOT EXISTS "products"
     created_at    timestamp with time zone not null,
     updated_at    timestamp with time zone not null,
 
-    constraint product_pk PRIMARY KEY (id)
+    constraint product_pk PRIMARY KEY (id),
+    constraint product_type_fk FOREIGN KEY (type_id) REFERENCES product_types(id)
 );
 
 CREATE TABLE IF NOT EXISTS "notifications"

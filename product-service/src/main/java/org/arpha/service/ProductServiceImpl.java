@@ -1,11 +1,11 @@
 package org.arpha.service;
 
 import com.querydsl.core.types.Predicate;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.media.enums.TargetType;
 import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
@@ -19,6 +19,7 @@ import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse findProductById(long id) {
         return Boxed
                 .of(id)
@@ -64,11 +66,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<GetProductListInfo> findAllProducts(Predicate predicate, Pageable pageable) {
         return productRepository.findAll(predicate, pageable).map(productMapper::toGetProductListInfo);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse findAdminProductById(long id) {
         return Boxed
                 .of(id)
@@ -78,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ProductResponse> findAdminAllProducts(Predicate predicate, Pageable pageable) {
         return productRepository.findAll(predicate, pageable).map(productMapper::toAdminProductResponse);
     }
@@ -124,6 +129,17 @@ public class ProductServiceImpl implements ProductService {
         items.forEach(this::updateQuantity);
     }
 
+    @Override
+    public ProductResponse update(long id, UpdateProductRequest updateProductRequest) {
+        return Boxed
+                .of(id)
+                .flatOpt(productRepository::findById)
+                .doWith(product -> productMapper.update(product, updateProductRequest))
+                .mapToBoxed(productRepository::save)
+                .mapToBoxed(productMapper::toAdminProductResponse)
+                .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
+    }
+
     private void updateQuantity(CreateOrderItem item) {
         Boxed
                 .of(item)
@@ -133,5 +149,4 @@ public class ProductServiceImpl implements ProductService {
                 .mapToBoxed(productRepository::save)
                 .orElseThrow(() -> new UpdateEntityException("Couldn't update product with %s id, because requires more amount then in store.".formatted(item.getQuantity())));
     }
-
 }

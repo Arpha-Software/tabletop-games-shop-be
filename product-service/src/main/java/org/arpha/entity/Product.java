@@ -1,16 +1,6 @@
 package org.arpha.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,8 +30,9 @@ public class Product {
     @Column(nullable = false)
     private String name;
     private long quantity;
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "type_id")
+    private ProductType type;
     @Column(name = "player_number", nullable = false)
     private int playerNumber;
     @Column(name = "play_time", nullable = false)

@@ -147,11 +147,11 @@ public class OrderServiceImpl implements OrderService {
                                 order.getOrderStatus() == OrderStatus.CREATED_CONSIGNMENT,
                         order -> consignmentDocumentService.deleteConsignment(order.getDeliveryDetails().getDocumentRef()))
                 .doWith(this::returnQuantities)
-                .doWith(orderRepository::delete)
                 .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(orderId)));
     }
 
     private void returnQuantities(Order order) {
+        order.setOrderStatus(OrderStatus.CANCELLED);
         order.getOrderedItems().forEach(orderItem -> orderItem.getProduct().addQuantity(orderItem.getQuantity()));
         orderRepository.save(order);
     }
