@@ -34,6 +34,16 @@ public final class Boxed<T> {
         return value;
     }
 
+    public Boxed<T> doIfTrue(Predicate<T> predicate, Consumer<T> consumer) {
+        if(this.value == null) {
+            return empty();
+        }
+        if(predicate.test(this.value)) {
+            consumer.accept(this.value);
+        }
+        return this;
+    }
+
     public T orElse(T defaultValue) {
         return value != null ? value : defaultValue;
     }

@@ -1,0 +1,8 @@
+dependencies {
+    implementation project (':abstract-order-service')
+    implementation project (':common')
+    implementation project (':user-service')
+    implementation project (':abstract-product-service')
+    implementation project (':product-service')
+    implementation project (':abstract-media-service')
+}

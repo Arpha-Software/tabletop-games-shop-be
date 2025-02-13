@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -17,7 +18,7 @@ public class ProductResponse {
 
     private long id;
     private String name;
-    private String type;
+    private GetProductTypeResponse type;
     private String genre;
     private Integer playerNumber;
     private Integer playTime;
@@ -26,9 +27,16 @@ public class ProductResponse {
     private String rulesLink;
     private String createdBy;
     private String updatedBy;
+    private BigDecimal width;
+    private BigDecimal height;
+    private BigDecimal length;
+    private BigDecimal weight;
+    private long quantity;
+    private String mainImgLink;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private Set<String> categories;
     private Set<String> genres;
+    private List<String> productPhotos;
 
 }
