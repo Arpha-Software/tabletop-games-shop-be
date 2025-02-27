@@ -1,20 +1,11 @@
 package org.arpha.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.arpha.dto.product.Dimension;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -40,8 +31,9 @@ public class Product {
     @Column(nullable = false)
     private String name;
     private long quantity;
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "type_id")
+    private ProductType type;
     @Column(name = "player_number", nullable = false)
     private int playerNumber;
     @Column(name = "play_time", nullable = false)
@@ -52,6 +44,8 @@ public class Product {
     private BigDecimal price;
     @Column(name = "rules_link")
     private String rulesLink;
+    @Embedded
+    private Dimension dimension;
     @CreatedBy
     @Column(nullable = false, name = "created_by")
     private String createdBy;
@@ -75,4 +69,10 @@ public class Product {
     @ToString.Exclude
     private Set<Genre> genres = new HashSet<>();
 
+    public void addQuantity(int quantity) {
+        if(quantity < 0) {
+            throw new IllegalArgumentException("Quantity can't be less than zero!");
+        }
+        this.quantity+=quantity;
+    }
 }

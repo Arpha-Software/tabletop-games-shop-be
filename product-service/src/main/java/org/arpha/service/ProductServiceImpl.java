@@ -1,12 +1,17 @@
 package org.arpha.service;
 
 import com.querydsl.core.types.Predicate;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.media.enums.TargetType;
+import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.request.UpdateProductRequest;
+import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.entity.Product;
 import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
+import org.arpha.exception.UpdateEntityException;
 import org.arpha.mapper.ProductMapper;
 import org.arpha.mapper.helper.ProductMapperHelper;
 import org.arpha.repository.ProductRepository;
@@ -14,7 +19,9 @@ import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -27,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final ProductMapperHelper productMapperHelper;
+    private final MediaService mediaService;
 
     @Override
     public ProductResponse createProduct(CreateProductRequest createProductRequest) {
@@ -43,9 +51,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(long id) {
         productRepository.deleteById(id);
+        mediaService.deleteAllByTargetIdAndType(id, TargetType.PRODUCT);
+        mediaService.deleteAllByTargetIdAndType(id, TargetType.PRODUCT_MAIN_IMG);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse findProductById(long id) {
         return Boxed
                 .of(id)
@@ -55,11 +66,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAllProducts(Predicate predicate, Pageable pageable) {
-        return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
+    @Transactional(readOnly = true)
+    public Page<GetProductListInfo> findAllProducts(Predicate predicate, Pageable pageable) {
+        return productRepository.findAll(predicate, pageable).map(productMapper::toGetProductListInfo);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse findAdminProductById(long id) {
         return Boxed
                 .of(id)
@@ -69,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ProductResponse> findAdminAllProducts(Predicate predicate, Pageable pageable) {
         return productRepository.findAll(predicate, pageable).map(productMapper::toAdminProductResponse);
     }
@@ -110,4 +124,29 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.existsById(productId);
     }
 
+    @Override
+    public void updateQuantity(List<CreateOrderItem> items) {
+        items.forEach(this::updateQuantity);
+    }
+
+    @Override
+    public ProductResponse update(long id, UpdateProductRequest updateProductRequest) {
+        return Boxed
+                .of(id)
+                .flatOpt(productRepository::findById)
+                .doWith(product -> productMapper.update(product, updateProductRequest))
+                .mapToBoxed(productRepository::save)
+                .mapToBoxed(productMapper::toAdminProductResponse)
+                .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
+    }
+
+    private void updateQuantity(CreateOrderItem item) {
+        Boxed
+                .of(item)
+                .flatOpt(item1 -> productRepository.findById(item1.getProductId()))
+                .filter(product ->  product.getQuantity() >= item.getQuantity())
+                .doWith(product -> product.setQuantity(product.getQuantity() - item.getQuantity()))
+                .mapToBoxed(productRepository::save)
+                .orElseThrow(() -> new UpdateEntityException("Couldn't update product with %s id, because requires more amount then in store.".formatted(item.getQuantity())));
+    }
 }
