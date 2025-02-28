@@ -1,13 +1,17 @@
 package org.arpha.mapper;
 
 import lombok.Data;
+import org.arpha.dto.media.response.FileResponse;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
+import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.mapper.helper.ProductMapperHelper;
 import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -41,6 +45,32 @@ public interface ProductMapper {
     @Mapping(target = "mainImgLink", source = "product", qualifiedByName = "toMainImgLink")
     @Mapping(target = "productPhotos", source = "product", qualifiedByName = "toProductPhotos")
     ProductResponse toProductResponse(Product product);
+
+    @Mapping(target = "id", source = "product.id")
+    @Mapping(target = "name", source = "product.name")
+    @Mapping(target = "playerNumber", source = "product.playerNumber")
+    @Mapping(target = "playTime", source = "product.playTime")
+    @Mapping(target = "description", source = "product.description")
+    @Mapping(target = "price", source = "product.price")
+    @Mapping(target = "quantity", source = "product.quantity")
+    @Mapping(target = "rulesLink", source = "product.rulesLink")
+    @Mapping(target = "genres", source = "product.genres", qualifiedByName = "toStringGenres")
+    @Mapping(target = "categories", source = "product.categories", qualifiedByName = "toStringCategories")
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "width", source = "product.dimension.weight")
+    @Mapping(target = "height", source = "product.dimension.height")
+    @Mapping(target = "weight", source = "product.dimension.weight")
+    @Mapping(target = "length", source = "product.dimension.length")
+    @Mapping(target = "type.name", source = "product.type.name")
+    @Mapping(target = "type.dimension.width", source = "product.type.dimension.width")
+    @Mapping(target = "type.dimension.height", source = "product.type.dimension.height")
+    @Mapping(target = "type.dimension.weight", source = "product.type.dimension.weight")
+    @Mapping(target = "type.dimension.length", source = "product.type.dimension.length")
+    @Mapping(target = "fileResponses", source = "fileResponses")
+    CreateProductResponse toCreateProductResponse(Product product, List<FileResponse> fileResponses);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")

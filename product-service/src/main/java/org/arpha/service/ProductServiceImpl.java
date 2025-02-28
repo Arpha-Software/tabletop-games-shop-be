@@ -3,9 +3,13 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.media.enums.TargetType;
+import org.arpha.dto.media.request.FileUploadRequest;
+import org.arpha.dto.media.response.FileResponse;
 import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.request.CreateProductRequest.ProductFileRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
+import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
@@ -21,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -37,13 +42,11 @@ public class ProductServiceImpl implements ProductService {
     private final MediaService mediaService;
 
     @Override
-    public ProductResponse createProduct(CreateProductRequest createProductRequest) {
+    public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
         return Boxed
                 .of(createProductRequest)
-                .filter(createProductRequest1 -> !productRepository.existsByName(createProductRequest1.getName()))
-                .mapToBoxed(productMapper::toProduct)
-                .mapToBoxed(productRepository::save)
-                .mapToBoxed(productMapper::toProductResponse)
+                .filter(request -> !productRepository.existsByName(request.getName()))
+                .mapToBoxed(this::saveProduct)
                 .orElseThrow(() -> new CreateEntityException(("Unable to create product, because product with the %s name" +
                                                               " already exists!").formatted(createProductRequest.getName())));
     }
@@ -149,4 +152,26 @@ public class ProductServiceImpl implements ProductService {
                 .mapToBoxed(productRepository::save)
                 .orElseThrow(() -> new UpdateEntityException("Couldn't update product with %s id, because requires more amount then in store.".formatted(item.getQuantity())));
     }
+
+    private CreateProductResponse saveProduct(CreateProductRequest createProductRequest) {
+        Product product = productRepository.save(productMapper.toProduct(createProductRequest));
+        List<FileResponse> fileResponses = new ArrayList<>();
+        List<ProductFileRequest> productFileRequests = createProductRequest.getFileUploadRequests();
+
+        if (productFileRequests.size() > 1) {
+            ProductFileRequest fileUploadRequest = createProductRequest.getFileUploadRequests().getFirst();
+
+            FileResponse fileResponse = mediaService.upload(new FileUploadRequest(fileUploadRequest.getType(), fileUploadRequest.getFileSize(), product.getId(), TargetType.PRODUCT_MAIN_IMG));
+            fileResponses.add(fileResponse);
+            productFileRequests = productFileRequests.subList(1, productFileRequests.size());
+        }
+
+        productFileRequests.stream()
+                .map(request -> new FileUploadRequest(request.getType(), request.getFileSize(), product.getId(), TargetType.PRODUCT))
+                .map(mediaService::upload)
+                .forEach(fileResponses::add);
+
+        return productMapper.toCreateProductResponse(product, fileResponses);
+    }
+
 }

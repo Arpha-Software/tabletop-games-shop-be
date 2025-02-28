@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
+import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.entity.Product;
@@ -28,7 +29,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
+    public CreateProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
     }
 
