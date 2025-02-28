@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 CREATE TABLE IF NOT EXISTS "users"
 (
     id                          bigint generated always as identity,
@@ -195,6 +193,3 @@ CREATE TABLE IF NOT EXISTS order_items
     constraint product_order_items_fk FOREIGN KEY (product_id) references products (id),
     constraint order_order_items_fk FOREIGN KEY (order_id) references orders (id)
 );
-
-COMMIT TRANSACTION;
-

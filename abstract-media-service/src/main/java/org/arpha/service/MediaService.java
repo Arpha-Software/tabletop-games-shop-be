@@ -12,14 +12,11 @@ import java.util.List;
 public interface MediaService {
 
     FileResponse upload(FileUploadRequest fileUploadRequest);
-
     Page<FileResponse> getAll(Predicate predicate, Pageable pageable);
-
     void deleteFileById(Long id);
-
     FileResponse findFileById(long id);
-
     String getFileLink(long targetId, TargetType targetType);
     List<String> getFilesLinks(long targetId, TargetType targetType);
     void deleteAllByTargetIdAndType(long targetId, TargetType targetType);
+
 }

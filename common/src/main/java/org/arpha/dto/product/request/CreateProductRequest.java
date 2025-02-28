@@ -1,14 +1,19 @@
 package org.arpha.dto.product.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.arpha.misc.MimeTypeDeserializer;
+import org.springframework.util.MimeType;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,17 +35,29 @@ public class CreateProductRequest {
     private String description;
     @NotNull(message = "Product price can't be empty!")
     private BigDecimal price;
-    @NotNull(message = "Width price can't be empty!")
+    @NotNull(message = "Width can't be empty!")
     private BigDecimal width;
-    @NotNull(message = "Length price can't be empty!")
+    @NotNull(message = "Length can't be empty!")
     private BigDecimal length;
-    @NotNull(message = "Height price can't be empty!")
+    @NotNull(message = "Height can't be empty!")
     private BigDecimal height;
-    @NotNull(message = "Weight price can't be empty!")
+    @NotNull(message = "Weight can't be empty!")
     private BigDecimal weight;
-    @NotBlank(message = "Product rules link can't be empty!")
     private String rulesLink;
     private Set<String> categories;
     private Set<String> genres;
+    private List<ProductFileRequest> fileUploadRequests = new ArrayList<>();
+
+    @Data
+    public static class ProductFileRequest {
+
+        @NotNull
+        @Schema(type = "string", example = "application/json")
+        @JsonDeserialize(using = MimeTypeDeserializer.class)
+        private MimeType type;
+        @Min(1)
+        private long fileSize;
+
+    }
 
 }

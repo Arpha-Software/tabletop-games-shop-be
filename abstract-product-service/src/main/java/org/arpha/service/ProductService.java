@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
+import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 public interface ProductService {
 
-    ProductResponse createProduct(CreateProductRequest createProductRequest);
+    CreateProductResponse createProduct(CreateProductRequest createProductRequest);
     void deleteProduct(long id);
     ProductResponse findProductById(long id);
     ProductResponse update(long id, UpdateProductRequest updateProductRequest);
