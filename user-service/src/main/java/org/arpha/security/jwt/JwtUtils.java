@@ -1,46 +1,42 @@
 package org.arpha.security.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.arpha.config.properties.AccessTokenProperties;
+import org.arpha.dto.user.TokenDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-@Component
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtUtils {
 
-    private final int jwtExpirationMs;
+    private final AccessTokenProperties properties;
 
-    private final SecretKey key;
-
-    public JwtUtils(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") int jwtExpirationMs) {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        this.jwtExpirationMs = jwtExpirationMs;
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+    public TokenDetails generateAccessToken(String username) {
+        return generateToken(username, properties.expiration().accessToken());
     }
 
-    public String generateToken(String username) {
-        return Jwts
-                .builder()
-                .issuer("tabletop-games-shop")
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + (jwtExpirationMs * 1000L)))
-                .signWith(key)
-                .compact();
+    public TokenDetails generateRefreshToken(String username) {
+        return generateToken(username, properties.expiration().refreshToken());
     }
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
-            return true;
+            Claims claims = Jwts.parser()
+                    .verifyWith(properties.getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            Date expiration = claims.getExpiration();
+            return expiration.after(new Date());
         } catch (Exception e) {
             log.error("Error happened during token validation with message {}", e.getMessage(), e);
         }
@@ -50,7 +46,7 @@ public class JwtUtils {
     public String getSubject(String token) {
         return Jwts
                 .parser()
-                .verifyWith(key)
+                .verifyWith(properties.getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -60,7 +56,7 @@ public class JwtUtils {
     public LocalDateTime getExpirationDate(String token) {
         return Jwts
                 .parser()
-                .verifyWith(key)
+                .verifyWith(properties.getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -69,4 +65,20 @@ public class JwtUtils {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
     }
+
+    private TokenDetails generateToken(String username, int expiration) {
+        Date expirationDate = new Date(System.currentTimeMillis() + (expiration * 1000L));
+
+        String token = Jwts
+                .builder()
+                .issuer("tabletop-games-shop")
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(expirationDate)
+                .signWith(properties.getSecretKey())
+                .compact();
+
+        return TokenDetails.of(token, getExpirationDate(token));
+    }
+
 }
