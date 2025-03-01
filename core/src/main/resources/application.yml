@@ -43,3 +43,12 @@ nova-poshta:
   config:
     apiKey: ${NOVA_POSHTA_API_KEY}
     apiUrl: https://api.novaposhta.ua/v2.0/json/
+kyivstar:
+  baseUrl: ${KYIVSTAR_BASE_URL:https://api-gateway.kyivstar.ua}
+  #Should be specified in hours
+  tokenExpiration: ${KYIVSTAR_AUTH_TOKEN_EXPIRY:7}
+  clientId: ${KYIVSTAR_CLIENT_ID}
+  clientSecret: ${KYIVSTAR_CLIENT_SECRET}
+  environment: ${KYIVSTAR_ENVIRONMENT:/sandbox}
+  apiVersion: ${KYIVSTAR_API_VERSION:v1beta}
+  senderName: ${KYIVSTAR_SENDER_NAME:messagedesk}

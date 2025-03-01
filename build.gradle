@@ -13,6 +13,7 @@ buildscript {
         azureSmsVersion = '1.1.26'
         aws3Version = '2.27.19'
         springCloudVersion = '2023.0.3'
+        caffeineVersion = '3.2.0'
     }
 }
 
@@ -69,9 +70,11 @@ allprojects {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-cache'
         implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
         implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+        implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
         implementation 'org.flywaydb:flyway-core'
         implementation "io.jsonwebtoken:jjwt-api:${jwtApiVersion}"
         implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
