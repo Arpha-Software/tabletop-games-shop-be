@@ -1,4 +1,4 @@
 package org.arpha.notificationservice.dto;
 
-public record SmsSendRequest(String sender, String mobile, String content) {
+public record SmsSendRequest(String from, String to, String text) {
 }

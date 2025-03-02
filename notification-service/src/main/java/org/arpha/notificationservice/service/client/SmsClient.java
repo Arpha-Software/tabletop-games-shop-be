@@ -1,9 +1,8 @@
 package org.arpha.notificationservice.service.client;
 
 import lombok.RequiredArgsConstructor;
+import org.arpha.domain.type.notification.NotificationStatus;
 import org.arpha.notificationservice.common.SmsSendResult;
-import org.arpha.notificationservice.dto.SmsServiceResponse;
-import org.arpha.notificationservice.mapper.SmsClientMapper;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,11 +10,10 @@ import org.springframework.stereotype.Component;
 public class SmsClient {
 
     private final SmsServiceCommunicator communicator;
-    private final SmsClientMapper smsClientMapper;
 
     public SmsSendResult send(String recipientPhoneNumber, String message) {
-        SmsServiceResponse response = communicator.send(recipientPhoneNumber, message);
-        return smsClientMapper.toSmsSendResult(response);
+        communicator.send(recipientPhoneNumber, message);
+        return new SmsSendResult(NotificationStatus.SUCCEEDED);
     }
 
 }
