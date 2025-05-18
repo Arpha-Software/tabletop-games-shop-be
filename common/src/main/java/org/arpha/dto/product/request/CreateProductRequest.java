@@ -57,6 +57,7 @@ public class CreateProductRequest {
         private MimeType type;
         @Min(1)
         private long fileSize;
+        private String uuid;
 
     }
 

@@ -3,6 +3,7 @@ package org.arpha.mapper.helper;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.media.FileAccessLink;
 import org.arpha.dto.media.enums.AccessType;
+import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.entity.File;
 import org.arpha.service.BlobService;
 import org.mapstruct.Context;
@@ -19,4 +20,10 @@ public class FileMapperHelper {
     public FileAccessLink generateAccessLink(File file, @Context AccessType accessType) {
         return new FileAccessLink(blobService.generateLink(file.getName(), accessType), accessType, file.getType());
     }
+
+    @Named("addFileUuid")
+    public String addFileUuid(File file, @Context FileUploadRequest fileUploadRequest) {
+        return fileUploadRequest.getFileUuid();
+    }
+
 }

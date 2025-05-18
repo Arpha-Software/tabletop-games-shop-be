@@ -44,7 +44,7 @@ public class MediaServiceImpl implements MediaService {
                 .mapToBoxed(blobClient -> fileMapper.toFile(fileUploadRequest, blobClient))
                 .doWith(this::deleteOldMainImgIfPresent)
                 .mapToBoxed(fileRepository::save)
-                .mapToBoxed(file -> fileMapper.toFileResponse(file, WRITE))
+                .mapToBoxed(file -> fileMapper.toFileResponse(file, WRITE, fileUploadRequest))
                 .orElseThrow(() -> new FileUploadException("File wasn't uploaded. Either entity with target id doesn't" +
                                                            " exist!"));
     }

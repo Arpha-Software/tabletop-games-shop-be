@@ -11,6 +11,8 @@ import org.arpha.dto.media.enums.TargetType;
 import org.arpha.misc.MimeTypeDeserializer;
 import org.springframework.util.MimeType;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,5 +29,15 @@ public class FileUploadRequest {
     @Schema(type = "string", example = "application/json")
     @JsonDeserialize(using = MimeTypeDeserializer.class)
     private TargetType targetType;
+
+    private String fileUuid;
+
+    public FileUploadRequest(MimeType type, long fileSize, long targetId, TargetType targetType) {
+        this.type = type;
+        this.fileSize = fileSize;
+        this.targetId = targetId;
+        this.targetType = targetType;
+        this.fileUuid = UUID.randomUUID().toString();
+    }
 
 }

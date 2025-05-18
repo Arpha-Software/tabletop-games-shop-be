@@ -30,4 +30,12 @@ public interface FileMapper {
     @Mapping(target = "targetType", source = "file.targetType")
     FileResponse toFileResponse(File file, @Context AccessType accessType);
 
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "fileName", source = "file.name")
+    @Mapping(target = "fileAccessLink", source = "file", qualifiedByName = "generateAccessLink")
+    @Mapping(target = "fileSize", source = "file.fileSize")
+    @Mapping(target = "targetType", source = "file.targetType")
+    @Mapping(target = "fileUuid", source = "file", qualifiedByName = "addFileUuid")
+    FileResponse toFileResponse(File file, @Context AccessType accessType, @Context FileUploadRequest fileUploadRequest);
+
 }
