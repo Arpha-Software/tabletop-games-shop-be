@@ -58,6 +58,7 @@ public class CreateProductRequest {
         @Min(1)
         private long fileSize;
         private String uuid;
+        private boolean isMain;
 
     }
 
