@@ -160,7 +160,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (!productFileRequests.isEmpty()) {
             ProductFileRequest fileUploadRequest = createProductRequest.getFileUploadRequests().stream()
-                    .filter(ProductFileRequest::isMain).toList().getFirst();
+                    .filter(ProductFileRequest::getIsMain).toList().getFirst();
 
             FileResponse fileResponse = mediaService.upload(new FileUploadRequest(fileUploadRequest.getType(), fileUploadRequest.getFileSize(), product.getId(), TargetType.PRODUCT_MAIN_IMG, fileUploadRequest.getUuid()));
             fileResponses.add(fileResponse);
