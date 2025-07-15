@@ -1,6 +1,8 @@
 package org.arpha.config;
 
 import lombok.RequiredArgsConstructor;
+import org.arpha.security.CustomAccessDeniedHandler;
+import org.arpha.security.CustomAuthenticationEntryPoint;
 import org.arpha.security.jwt.AuthJwtTokenFilter;
 import org.arpha.security.oauth2.CustomOAuth2SuccessHandler;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,8 @@ public class FilterChainConfiguration {
 
     private final AuthJwtTokenFilter authJWTTokenFilter;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Value("${spring.security.cors.allowedOrigins}")
     private List<String> allowedOrigins;
@@ -50,6 +54,10 @@ public class FilterChainConfiguration {
                         .anyRequest().authenticated())
                 .addFilterBefore(authJWTTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2SuccessHandler))
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
