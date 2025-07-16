@@ -3,14 +3,18 @@ package org.arpha.mapper;
 import org.arpha.dto.order.Document;
 import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
+import org.arpha.dto.order.response.OrderAnalyticsDto;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
 import org.arpha.entity.Order;
+import org.arpha.entity.OrderItem;
 import org.arpha.mapper.helper.OrderMapperHelper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import java.util.List;
 
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
@@ -73,6 +77,15 @@ public interface OrderMapper {
     @Mapping(target = "order.deliveryDetails.documentRef", source = "document.ref")
     @Mapping(target = "order.orderStatus", constant = "CREATED_CONSIGNMENT")//Clarify this
     void addDocumentDataToOrder(@MappingTarget Order order, Document document);
+
+    @Mapping(target = "totalCost", expression = "java(order.getTotalCost())")
+    OrderAnalyticsDto toOrderAnalyticsDto(Order order);
+
+    List<OrderAnalyticsDto> toOrderAnalyticsDtoList(List<Order> orders);
+
+    @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "price", source = "product.price")
+    OrderAnalyticsDto.OrderItemAnalyticsDto toOrderItemAnalyticsDto(OrderItem orderItem);
 
     @AfterMapping
     default void setOrderForIter(@MappingTarget Order order) {

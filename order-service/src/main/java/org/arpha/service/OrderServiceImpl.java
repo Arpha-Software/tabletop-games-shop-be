@@ -23,6 +23,7 @@ import org.arpha.repository.OrderRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,6 +90,13 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         return orderMapper.toOrderInfoResponse(order);
 
+    }
+
+    @Override
+    @Transactional
+    public List<OrderAnalyticsDto> findAllByUserId(long userId, Sort sort) {
+        List<Order> orders = orderRepository.findAllByUserId(userId, sort);
+        return orderMapper.toOrderAnalyticsDtoList(orders);
     }
 
     private CreateConsignmentDocumentResponse createToWarehouseDeliveryDocument(

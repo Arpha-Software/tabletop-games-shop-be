@@ -1,11 +1,16 @@
 package org.arpha.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import com.querydsl.core.types.Predicate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.user.request.UpdateUserRequest;
 import org.arpha.dto.user.response.UserResponse;
+import org.arpha.dto.user.response.analytics.UserAnalyticsResponse;
 import org.arpha.entity.User;
 import org.arpha.security.UserDetailsAdapter;
 import org.arpha.service.UserService;
@@ -67,4 +72,21 @@ public class UserController {
     public UserResponse getAuthenticatedUser(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter) {
         return userService.findUserByEmail(userDetailsAdapter.getUsername());
     }
+
+    @Operation(summary = "Get user analytics",
+            description = "Retrieves comprehensive analytics for a single user, including order statistics and history.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved analytics",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserAnalyticsResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden - user does not have permission"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            })
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#id)")
+    @GetMapping("/{id}/analytics")
+    public UserAnalyticsResponse getAnalytics(@PathVariable long id) {
+        return userService.getUserAnalytics(id);
+    }
+
 }

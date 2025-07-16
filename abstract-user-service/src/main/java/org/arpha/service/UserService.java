@@ -3,6 +3,7 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import org.arpha.dto.user.request.UpdateUserRequest;
 import org.arpha.dto.user.response.UserResponse;
+import org.arpha.dto.user.response.analytics.UserAnalyticsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,4 +25,6 @@ public interface UserService extends UserDetailsService {
     boolean existByEmail(String email);
 
     UserResponse findUserByEmail(String email);
+
+    UserAnalyticsResponse getUserAnalytics(long userId);
 }

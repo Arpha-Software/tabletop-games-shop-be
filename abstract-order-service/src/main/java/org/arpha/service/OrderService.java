@@ -3,10 +3,14 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
+import org.arpha.dto.order.response.OrderAnalyticsDto;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 public interface OrderService {
 
@@ -16,4 +20,5 @@ public interface OrderService {
     OrderInfoResponse getById(long orderId);
     void cancelOrder(long orderId);
     OrderInfoResponse createConsignmentDocument(CreateConsignmentDocumentRequest documentRequest);
+    List<OrderAnalyticsDto> findAllByUserId(long userId, Sort sort);
 }
