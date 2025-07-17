@@ -26,5 +26,6 @@ public interface ProductService {
     boolean containCategoryAnyProduct(long categoryId);
     boolean containGenreAnyProduct(long genreId);
     boolean existProductById(long productId);
+    ProductResponse addAddon(long id, Set<Long> addonIds);
     void updateQuantity(List<CreateOrderItem> items);
 }

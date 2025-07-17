@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductResponse {
+public class AddonResponse {
     private long id;
     private String name;
     private String description;
@@ -27,7 +26,6 @@ public class ProductResponse {
     private ClassificationDetails classification;
     private PublicationDetails publicationDetails;
     private MediaDetails media;
-    private List<AddonResponse> addons;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 }

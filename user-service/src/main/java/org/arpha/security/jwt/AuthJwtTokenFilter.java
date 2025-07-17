@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -20,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class AuthJwtTokenFilter extends OncePerRequestFilter {
 
     public static final String AUTH_HEADER = "Authorization";
@@ -41,6 +43,8 @@ public class AuthJwtTokenFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
+            log.error("Authorization header not found");
+            log.error(header);
             filterChain.doFilter(request, response);
             return;
         }

@@ -113,6 +113,12 @@ public class Product {
     @ToString.Exclude
     private Set<Genre> genres = new HashSet<>();
 
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+    @JoinTable(name = "product_addons", joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "addon_id"))
+    @ToString.Exclude
+    private Set<Product> addons = new HashSet<>();
+
     public void addQuantity(int quantity) {
         if(quantity < 0) {
             throw new IllegalArgumentException("Quantity can't be less than zero!");

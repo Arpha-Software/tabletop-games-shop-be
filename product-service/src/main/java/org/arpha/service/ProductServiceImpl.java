@@ -135,6 +135,24 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
     }
 
+    @Override
+    public ProductResponse addAddon(long id, Set<Long> addonIds) {
+        return Boxed
+                .of(id)
+                .flatOpt(productRepository::findById)
+                .doWith(product -> {
+                    Set<Product> addons = addonIds.stream()
+                            .map(productRepository::findById)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .collect(Collectors.toSet());
+                    product.getAddons().addAll(addons);
+                })
+                .mapToBoxed(productRepository::save)
+                .mapToBoxed(productMapper::toProductResponse)
+                .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
+    }
+
     private void updateQuantity(CreateOrderItem item) {
         Boxed
                 .of(item)

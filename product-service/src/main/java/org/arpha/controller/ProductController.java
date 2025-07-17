@@ -72,4 +72,10 @@ public class ProductController {
     public ProductResponse updateProduct(@PathVariable long id, @RequestBody @Valid UpdateProductRequest updateProductRequest) {
         return productService.update(id, updateProductRequest);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{id}/addons")
+    public ProductResponse addAddons(@RequestBody Set<Long> addonIds, @PathVariable long id) {
+        return productService.addAddon(id, addonIds);
+    }
 }
