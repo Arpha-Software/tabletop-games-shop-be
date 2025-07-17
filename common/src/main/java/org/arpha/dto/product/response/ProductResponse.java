@@ -20,6 +20,8 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private long quantity;
+    private double averageRating;
+    private int reviewCount;
     private GameDetails gameDetails;
     private ClassificationDetails classification;
     private PublicationDetails publicationDetails;

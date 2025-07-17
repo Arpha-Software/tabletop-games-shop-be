@@ -97,6 +97,10 @@ public class Product {
     @Column(nullable = false, name = "updated_at")
     private OffsetDateTime updatedAt;
 
+    private Double averageRating;
+
+    private Integer reviewCount;
+
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
