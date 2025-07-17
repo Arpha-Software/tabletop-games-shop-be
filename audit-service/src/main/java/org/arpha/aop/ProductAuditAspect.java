@@ -19,6 +19,7 @@ import static org.arpha.dto.audit.Action.CREATE_PRODUCT;
 import static org.arpha.dto.audit.Action.DELETE_CATEGORY_BY_ID;
 import static org.arpha.dto.audit.Action.DELETE_GENRE_BY_ID;
 import static org.arpha.dto.audit.Action.DELETE_PRODUCT_BY_ID;
+import static org.arpha.dto.audit.Action.FIND_PRODUCT_BY_ID;
 
 @Component
 @Aspect
@@ -86,6 +87,14 @@ public class ProductAuditAspect {
             returning = "productResponse")
     public void addCategoryToProductAdvice(ProductResponse productResponse) {
         auditService.saveAudit(ADD_CATEGORY_TO_PRODUCT, productResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
+    }
+
+    @AfterReturning(
+            value = "execution(public org.arpha.dto.product.response.ProductResponse findProductById(long))",
+            argNames = "productResponse",
+            returning = "productResponse")
+    public void findProductByIdAdvice(ProductResponse productResponse) {
+        auditService.saveAudit(FIND_PRODUCT_BY_ID, productResponse.getId(), AspectUtils.getAuthenticatedUserId(), TargetType.PRODUCT);
     }
 
 }

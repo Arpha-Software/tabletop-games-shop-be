@@ -3,4 +3,6 @@ dependencies {
     implementation project (":abstract-product-service")
     implementation project (":abstract-media-service")
     implementation project (":abstract-user-service")
+    implementation project (":abstract-order-service")
+    implementation project (":abstract-audit-service")
 }

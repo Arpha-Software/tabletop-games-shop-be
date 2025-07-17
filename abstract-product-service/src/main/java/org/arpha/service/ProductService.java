@@ -7,8 +7,10 @@ import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.dto.product.response.RecommendedProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Set;
@@ -28,4 +30,5 @@ public interface ProductService {
     boolean existProductById(long productId);
     ProductResponse addAddon(long id, Set<Long> addonIds);
     void updateQuantity(List<CreateOrderItem> items);
+    List<RecommendedProductResponse> getRecommendationsForUser(UserDetails user);
 }

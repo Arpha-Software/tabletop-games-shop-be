@@ -33,7 +33,7 @@ public class ProductTypeServiceImpl implements ProductTypeService{
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional 
     public GetProductTypeResponse findById(long id) {
         return Boxed
                 .of(id)
@@ -43,7 +43,7 @@ public class ProductTypeServiceImpl implements ProductTypeService{
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional 
     public Page<GetProductTypeResponse> findAll(Predicate predicate, Pageable pageable) {
         return productTypeRepository.findAll(predicate, pageable).map(productTypeMapper::toGetProductTypeResponse);
     }

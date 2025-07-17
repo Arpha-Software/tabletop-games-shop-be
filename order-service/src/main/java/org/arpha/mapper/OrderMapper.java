@@ -85,6 +85,7 @@ public interface OrderMapper {
 
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "price", source = "product.price")
+    @Mapping(target = "productId", source = "product.id")
     OrderAnalyticsDto.OrderItemAnalyticsDto toOrderItemAnalyticsDto(OrderItem orderItem);
 
     @AfterMapping

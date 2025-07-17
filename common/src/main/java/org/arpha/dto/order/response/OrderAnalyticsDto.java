@@ -19,6 +19,7 @@ public class OrderAnalyticsDto {
     @Data
     @Builder
     public static class OrderItemAnalyticsDto {
+        private long productId;
         private String productName;
         private int quantity;
         private BigDecimal price;

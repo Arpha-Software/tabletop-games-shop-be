@@ -9,14 +9,21 @@ import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.dto.product.response.RecommendedProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -77,5 +84,17 @@ public class ProductController {
     @PatchMapping("/{id}/addons")
     public ProductResponse addAddons(@RequestBody Set<Long> addonIds, @PathVariable long id) {
         return productService.addAddon(id, addonIds);
+    }
+
+    @GetMapping("/recommendations")
+    public List<RecommendedProductResponse> getRecommendations() {
+        UserDetails userDetails;
+        try {
+            userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            userDetails = null;
+        }
+
+        return productService.getRecommendationsForUser(userDetails);
     }
 }

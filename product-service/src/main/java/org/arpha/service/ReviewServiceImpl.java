@@ -41,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional 
     public Page<ReviewResponse> getReviewsForProduct(Long productId, Pageable pageable) {
         return reviewRepository.findByProductId(productId, pageable)
                 .map(reviewMapper::toReviewResponse);
