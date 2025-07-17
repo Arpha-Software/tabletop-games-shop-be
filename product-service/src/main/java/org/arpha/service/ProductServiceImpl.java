@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,13 +44,13 @@ public class ProductServiceImpl implements ProductService {
     private final MediaService mediaService;
 
     @Override
-    public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
+    public ProductResponse createProduct(CreateProductRequest createProductRequest) { // Changed return type
         return Boxed
                 .of(createProductRequest)
                 .filter(request -> !productRepository.existsByName(request.getName()))
-                .mapToBoxed(this::saveProduct)
+                .mapToBoxed(this::saveProduct) // This now returns ProductResponse
                 .orElseThrow(() -> new CreateEntityException(("Unable to create product, because product with the %s name" +
-                                                              " already exists!").formatted(createProductRequest.getName())));
+                        " already exists!").formatted(createProductRequest.getName())));
     }
 
     @Override
@@ -70,24 +72,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<GetProductListInfo> findAllProducts(Predicate predicate, Pageable pageable) {
-        return productRepository.findAll(predicate, pageable).map(productMapper::toGetProductListInfo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ProductResponse findAdminProductById(long id) {
-        return Boxed
-                .of(id)
-                .flatOpt(productRepository::findById)
-                .mapToBoxed(productMapper::toAdminProductResponse)
-                .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
+    public Page<ProductResponse> findAllProducts(Predicate predicate, Pageable pageable) {
+        return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductResponse> findAdminAllProducts(Predicate predicate, Pageable pageable) {
-        return productRepository.findAll(predicate, pageable).map(productMapper::toAdminProductResponse);
+        return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
     }
 
     @Override
@@ -139,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
                 .flatOpt(productRepository::findById)
                 .doWith(product -> productMapper.update(product, updateProductRequest))
                 .mapToBoxed(productRepository::save)
-                .mapToBoxed(productMapper::toAdminProductResponse)
+                .mapToBoxed(productMapper::toProductResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
     }
 
@@ -153,26 +145,34 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new UpdateEntityException("Couldn't update product with %s id, because requires more amount then in store.".formatted(item.getQuantity())));
     }
 
-    private CreateProductResponse saveProduct(CreateProductRequest createProductRequest) {
+    private ProductResponse saveProduct(CreateProductRequest createProductRequest) { // Changed return type
         Product product = productRepository.save(productMapper.toProduct(createProductRequest));
+
+        // The file upload logic remains the same
         List<FileResponse> fileResponses = new ArrayList<>();
         List<ProductFileRequest> productFileRequests = createProductRequest.getFileUploadRequests();
 
-        if (!productFileRequests.isEmpty()) {
-            ProductFileRequest fileUploadRequest = createProductRequest.getFileUploadRequests().stream()
-                    .filter(ProductFileRequest::getIsMain).toList().getFirst();
+        Optional<ProductFileRequest> mainImageRequest = productFileRequests.stream()
+                .filter(pfr -> pfr.getIsMain() != null && pfr.getIsMain())
+                .findFirst();
 
+        if (mainImageRequest.isPresent()) {
+            ProductFileRequest fileUploadRequest = mainImageRequest.get();
             FileResponse fileResponse = mediaService.upload(new FileUploadRequest(fileUploadRequest.getType(), fileUploadRequest.getFileSize(), product.getId(), TargetType.PRODUCT_MAIN_IMG, fileUploadRequest.getUuid()));
             fileResponses.add(fileResponse);
-            productFileRequests = productFileRequests.subList(1, productFileRequests.size());
         }
 
-        productFileRequests.stream()
+        // Filter out the main image so it's not processed again
+        List<ProductFileRequest> remainingFiles = productFileRequests.stream()
+                .filter(pfr -> pfr.getIsMain() == null || !pfr.getIsMain())
+                .collect(Collectors.toList());
+
+        remainingFiles.stream()
                 .map(request -> new FileUploadRequest(request.getType(), request.getFileSize(), product.getId(), TargetType.PRODUCT, request.getUuid()))
                 .map(mediaService::upload)
                 .forEach(fileResponses::add);
 
-        return productMapper.toCreateProductResponse(product, fileResponses);
+        // Use the correct mapper method that returns the rich ProductResponse
+        return productMapper.toProductResponse(product);
     }
-
 }

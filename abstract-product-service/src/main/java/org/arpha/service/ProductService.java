@@ -15,12 +15,11 @@ import java.util.Set;
 
 public interface ProductService {
 
-    CreateProductResponse createProduct(CreateProductRequest createProductRequest);
+    ProductResponse createProduct(CreateProductRequest createProductRequest);
     void deleteProduct(long id);
     ProductResponse findProductById(long id);
     ProductResponse update(long id, UpdateProductRequest updateProductRequest);
-    Page<GetProductListInfo> findAllProducts(Predicate predicate, Pageable pageable);
-    ProductResponse findAdminProductById(long id);
+    Page<ProductResponse> findAllProducts(Predicate predicate, Pageable pageable);
     Page<ProductResponse> findAdminAllProducts(Predicate predicate, Pageable pageable);
     ProductResponse addGenre(long id, Set<String> genres);
     ProductResponse addCategory(long id, Set<String> categories);

@@ -29,12 +29,12 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public CreateProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
+    public ProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
     }
 
     @GetMapping
-    public Page<GetProductListInfo> findAllProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
+    public Page<ProductResponse> findAllProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
         return productService.findAllProducts(predicate, pageable);
     }
 
@@ -53,12 +53,6 @@ public class ProductController {
     @GetMapping("/admin")
     public Page<ProductResponse> findAllAdminProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
         return productService.findAdminAllProducts(predicate, pageable);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/{id}/admin")
-    public ProductResponse findAdminProductById(@PathVariable Long id) {
-        return productService.findAdminProductById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

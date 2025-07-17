@@ -28,41 +28,81 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(nullable = false)
     private String name;
+
     private long quantity;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "type_id")
     private ProductType type;
-    @Column(name = "player_number", nullable = false)
-    private int playerNumber;
-    @Column(name = "play_time", nullable = false)
-    private int playTime;
+
     @Column(nullable = false)
     private String description;
+
     @Column(nullable = false)
     private BigDecimal price;
-    @Column(name = "rules_link")
+
+    // --- New & Updated Fields ---
+    @Column(name = "min_player_number")
+    private Integer minPlayerNumber;
+
+    @Column(name = "max_player_number")
+    private Integer maxPlayerNumber;
+
+    @Column(name = "min_play_time")
+    private Integer minPlayTime;
+
+    @Column(name = "max_play_time")
+    private Integer maxPlayTime;
+
+    @Column(name = "min_age")
+    private Integer minAge;
+
+    private String language;
+    private String publisher;
+    private String author;
+
+    @Column(name = "bgg_rating")
+    private Double bggRating;
+
+    private Double complexity;
+
+    @Column(columnDefinition = "TEXT")
+    private String components;
+
     private String rulesLink;
     @Embedded
     private Dimension dimension;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "product_mechanics", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "mechanic")
+    private Set<String> mechanics = new HashSet<>();
+
     @CreatedBy
     @Column(nullable = false, name = "created_by")
     private String createdBy;
+
     @LastModifiedBy
     @Column(nullable = false, name = "updated_by")
     private String updatedBy;
+
     @CreationTimestamp
     @Column(nullable = false, name = "created_at")
     private OffsetDateTime createdAt;
+
     @UpdateTimestamp
     @Column(nullable = false, name = "updated_at")
     private OffsetDateTime updatedAt;
+
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     @ToString.Exclude
     private Set<Category> categories = new HashSet<>();
+
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinTable(name = "product_genre", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
