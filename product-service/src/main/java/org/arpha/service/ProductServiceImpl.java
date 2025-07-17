@@ -181,6 +181,19 @@ public class ProductServiceImpl implements ProductService {
                     Expressions.enumPath(Action.class, "action").eq(Action.FIND_PRODUCT_BY_ID),
                     PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"))
             );
+
+            if (mostViewedProducts.isEmpty()) {
+                // Fallback for cold start: return most recently added products
+                Page<Product> recentProducts = productRepository.findAll(
+                        Expressions.asBoolean(true).isTrue(),
+                        PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"))
+                );
+                return recentProducts.stream()
+                        .map(productMapper::toProductResponse)
+                        .map(product -> new RecommendedProductResponse(product, RecommendationReason.BASED_ON_GENRE))
+                        .toList();
+            }
+
             return mostViewedProducts.stream()
                     .map(audit -> findProductById(audit.getTargetId()))
                     .map(product -> new RecommendedProductResponse(product, RecommendationReason.BASED_ON_GENRE))
