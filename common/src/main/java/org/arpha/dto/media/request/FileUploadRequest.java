@@ -19,6 +19,7 @@ import java.util.UUID;
 public class FileUploadRequest {
 
     @NotNull
+    @JsonDeserialize(using = MimeTypeDeserializer.class)
     private MimeType type;
     @Min(1)
     private long fileSize;
@@ -27,7 +28,6 @@ public class FileUploadRequest {
 
     @NotNull
     @Schema(type = "string", example = "application/json")
-    @JsonDeserialize(using = MimeTypeDeserializer.class)
     private TargetType targetType;
 
     private String fileUuid;
