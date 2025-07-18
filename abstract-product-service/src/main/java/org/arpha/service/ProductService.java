@@ -7,6 +7,7 @@ import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.dto.product.response.ProductSearchResponse;
 import org.arpha.dto.product.response.RecommendedProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,4 +32,5 @@ public interface ProductService {
     ProductResponse addAddon(long id, Set<Long> addonIds);
     void updateQuantity(List<CreateOrderItem> items);
     List<RecommendedProductResponse> getRecommendationsForUser(UserDetails user);
+    List<ProductSearchResponse> searchProducts(String query);
 }

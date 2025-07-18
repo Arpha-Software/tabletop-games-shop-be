@@ -16,6 +16,7 @@ import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.dto.product.response.ProductSearchResponse;
 import org.arpha.dto.product.response.RecommendationReason;
 import org.arpha.dto.product.response.RecommendedProductResponse;
 import org.arpha.dto.user.response.UserResponse;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -169,6 +171,23 @@ public class ProductServiceImpl implements ProductService {
                 .mapToBoxed(productRepository::save)
                 .mapToBoxed(productMapper::toProductResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductSearchResponse> searchProducts(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String formattedQuery = Arrays.stream(query.trim().split("\\s+"))
+                .map(word -> word + ":*")
+                .collect(Collectors.joining(" & "));
+
+        List<Product> products = productRepository.searchByQuery(formattedQuery);
+        return products.stream()
+                .map(productMapper::toProductSearchResponse)
+                .collect(Collectors.toList());
     }
 
 

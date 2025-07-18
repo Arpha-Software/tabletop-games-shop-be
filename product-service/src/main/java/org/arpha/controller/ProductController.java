@@ -9,6 +9,7 @@ import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
+import org.arpha.dto.product.response.ProductSearchResponse;
 import org.arpha.dto.product.response.RecommendedProductResponse;
 import org.arpha.entity.Product;
 import org.arpha.service.ProductService;
@@ -96,5 +97,10 @@ public class ProductController {
         }
 
         return productService.getRecommendationsForUser(userDetails);
+    }
+
+    @GetMapping("/search")
+    public List<ProductSearchResponse> searchProducts(@RequestParam String query) {
+        return productService.searchProducts(query);
     }
 }
