@@ -18,25 +18,6 @@ import java.util.Set;
 public class CreateProductResponse {
 
     private long id;
-    private String name;
-    private GetProductTypeResponse type;
-    private String genre;
-    private Integer playerNumber;
-    private Integer playTime;
-    private String description;
-    private BigDecimal price;
-    private String rulesLink;
-    private String createdBy;
-    private String updatedBy;
-    private BigDecimal width;
-    private BigDecimal height;
-    private BigDecimal length;
-    private BigDecimal weight;
-    private long quantity;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime updatedAt;
-    private Set<String> categories;
-    private Set<String> genres;
     private List<FileResponse> fileResponses;
 
 }

@@ -37,7 +37,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
+    public CreateProductResponse createProduct(@RequestBody CreateProductRequest createProductRequest) {
         return productService.createProduct(createProductRequest);
     }
 

@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
     private final UserService userService;
 
     @Override
-    public ProductResponse createProduct(CreateProductRequest createProductRequest) { // Changed return type
+    public CreateProductResponse createProduct(CreateProductRequest createProductRequest) { // Changed return type
         return Boxed
                 .of(createProductRequest)
                 .filter(request -> !productRepository.existsByName(request.getName()))
@@ -336,7 +336,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new UpdateEntityException("Couldn't update product with %s id, because requires more amount then in store.".formatted(item.getQuantity())));
     }
 
-    private ProductResponse saveProduct(CreateProductRequest createProductRequest) { // Changed return type
+    private CreateProductResponse saveProduct(CreateProductRequest createProductRequest) { // Changed return type
         Product product = productRepository.save(productMapper.toProduct(createProductRequest));
 
         // The file upload logic remains the same
@@ -363,7 +363,6 @@ public class ProductServiceImpl implements ProductService {
                 .map(mediaService::upload)
                 .forEach(fileResponses::add);
 
-        // Use the correct mapper method that returns the rich ProductResponse
-        return productMapper.toProductResponse(product);
+        return new CreateProductResponse(product.getId(), fileResponses);
     }
 }
