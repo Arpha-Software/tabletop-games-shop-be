@@ -49,7 +49,6 @@ public interface ProductMapper {
     @Mapping(target = "photos", source = "product", qualifiedByName = "toProductPhotos")
     MediaDetails toMediaDetails(Product product);
 
-    @Mapping(target = "mainImgLink", source = "product", qualifiedByName = "toMainImgLink")
     ProductSearchResponse toProductSearchResponse(Product product);
 
 

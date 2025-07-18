@@ -13,5 +13,4 @@ public class ProductSearchResponse {
     private long id;
     private String name;
     private BigDecimal price;
-    private String mainImgLink;
 }
