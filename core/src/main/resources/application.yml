@@ -52,3 +52,7 @@ kyivstar:
   environment: ${KYIVSTAR_ENVIRONMENT:/sandbox}
   apiVersion: ${KYIVSTAR_API_VERSION:v1beta}
   senderName: ${KYIVSTAR_SENDER_NAME:messagedesk}
+
+springdoc:
+  swagger-ui:
+    persist-authorization: true

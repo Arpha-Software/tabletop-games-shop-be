@@ -51,6 +51,7 @@ public class FilterChainConfiguration {
                         .requestMatchers(GET, "/api/v1/products").permitAll()
                         .requestMatchers(GET, "/api/v1/products/{id}").permitAll()
                         .requestMatchers(GET, "/api/v1/products/{id}/reviews").permitAll()
+                        .requestMatchers(GET, "/api/v1/wishlists/share/{shareableLink}").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(authJWTTokenFilter, UsernamePasswordAuthenticationFilter.class)

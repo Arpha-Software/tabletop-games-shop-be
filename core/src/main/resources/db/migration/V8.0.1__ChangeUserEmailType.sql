@@ -1,0 +1,2 @@
+ALTER TABLE wishlists
+    ALTER COLUMN user_email TYPE VARCHAR(255);
