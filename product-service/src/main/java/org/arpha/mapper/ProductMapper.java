@@ -8,7 +8,9 @@ import org.arpha.entity.Product;
 import org.arpha.mapper.helper.ProductMapperHelper;
 import org.mapstruct.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Mapper(componentModel = "spring",
@@ -17,14 +19,43 @@ import java.util.Set;
         uses = ProductMapperHelper.class)
 public interface ProductMapper {
 
+    /**
+     * A context object to hold pre-fetched image links, avoiding the N+1 problem in list mappings.
+     */
+    record ImageLinksContext(Map<Long, List<String>> mainImageLinks, Map<Long, List<String>> otherImageLinks) {}
+
     // --- Mappings to the new OOP-style ProductResponse ---
 
+    /**
+     * Un-optimized mapping for single product lookups (e.g., findById).
+     * This will make individual calls to the media service.
+     *
+     * @param product The source Product entity.
+     * @return A fully mapped ProductResponse DTO.
+     */
     @Mapping(target = "gameDetails", source = "product")
     @Mapping(target = "classification", source = "product")
     @Mapping(target = "publicationDetails", source = "product")
     @Mapping(target = "media", source = "product")
     @Mapping(target = "addons", source = "addons")
     ProductResponse toProductResponse(Product product);
+
+    /**
+     * Optimized mapping for lists of products.
+     * This method accepts pre-fetched image links via the context object to prevent N+1 calls.
+     *
+     * @param product The source Product entity.
+     * @param context The context object with pre-fetched image links.
+     * @return A fully mapped ProductResponse DTO.
+     */
+    @Mapping(target = "gameDetails", source = "product")
+    @Mapping(target = "classification", source = "product")
+    @Mapping(target = "publicationDetails", source = "product")
+    @Mapping(target = "media", expression = "java(toMediaDetailsOptimized(product, context))")
+    @Mapping(target = "addons", source = "addons")
+    ProductResponse toProductResponse(Product product, @Context ImageLinksContext context);
+
+
 
     @Mapping(target = "gameDetails", source = "product")
     @Mapping(target = "classification", source = "product")
@@ -48,6 +79,24 @@ public interface ProductMapper {
     @Mapping(target = "mainImgLink", source = "product", qualifiedByName = "toMainImgLink")
     @Mapping(target = "photos", source = "product", qualifiedByName = "toProductPhotos")
     MediaDetails toMediaDetails(Product product);
+
+    /**
+     * Helper method for the optimized mapping. It builds MediaDetails from the pre-fetched context.
+     */
+    default MediaDetails toMediaDetailsOptimized(Product product, @Context ImageLinksContext context) {
+        String mainImgLink = context.mainImageLinks()
+                .getOrDefault(product.getId(), Collections.emptyList())
+                .stream().findFirst().orElse(null);
+
+        List<String> photos = context.otherImageLinks()
+                .getOrDefault(product.getId(), Collections.emptyList());
+
+        return MediaDetails.builder()
+                .mainImgLink(mainImgLink)
+                .photos(photos)
+                .rulesLink(product.getRulesLink())
+                .build();
+    }
 
     ProductSearchResponse toProductSearchResponse(Product product);
 

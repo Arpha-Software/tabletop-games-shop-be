@@ -1,5 +1,6 @@
 package org.arpha.service;
 
+import com.github.javafaker.Faker;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
@@ -10,41 +11,48 @@ import org.arpha.dto.media.request.FileUploadRequest;
 import org.arpha.dto.media.response.FileResponse;
 import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.order.response.OrderAnalyticsDto;
+import org.arpha.dto.product.Dimension;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.CreateProductRequest.ProductFileRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
-import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.dto.product.response.ProductSearchResponse;
 import org.arpha.dto.product.response.RecommendationReason;
 import org.arpha.dto.product.response.RecommendedProductResponse;
-import org.arpha.dto.user.response.UserResponse;
+import org.arpha.entity.Category;
+import org.arpha.entity.Genre;
 import org.arpha.entity.Product;
+import org.arpha.entity.ProductType;
 import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
 import org.arpha.exception.UpdateEntityException;
 import org.arpha.mapper.ProductMapper;
 import org.arpha.mapper.helper.ProductMapperHelper;
+import org.arpha.repository.CategoryRepository;
+import org.arpha.repository.GenreRepository;
 import org.arpha.repository.ProductRepository;
+import org.arpha.repository.ProductTypeRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,6 +70,9 @@ public class ProductServiceImpl implements ProductService {
     private final AuditService auditService;
     private final OrderService orderService;
     private final UserService userService;
+    private final ProductTypeRepository productTypeRepository;
+    private final CategoryRepository categoryRepository;
+    private final GenreRepository genreRepository;
 
     @Override
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) { // Changed return type
@@ -91,13 +102,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional 
+    @Transactional
     public Page<ProductResponse> findAllProducts(Predicate predicate, Pageable pageable) {
-        return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
+        Page<Product> productPage = productRepository.findAll(predicate, pageable);
+        List<Long> productIds = productPage.getContent().stream().map(Product::getId).collect(Collectors.toList());
+
+        // If there are no products on the page, return an empty page to avoid unnecessary calls
+        if (productIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        // 1. Fetch all media links in just two efficient batch calls
+        Map<Long, List<String>> mainImageLinks = mediaService.getFileLinksForProducts(productIds, TargetType.PRODUCT_MAIN_IMG);
+        Map<Long, List<String>> otherImageLinks = mediaService.getFileLinksForProducts(productIds, TargetType.PRODUCT);
+
+        // 2. Create the context object to pass to the mappera
+        ProductMapper.ImageLinksContext imageLinksContext = new ProductMapper.ImageLinksContext(mainImageLinks, otherImageLinks);
+
+        // 3. Use the new optimized mapper to map the page of products
+        return productPage.map(product -> productMapper.toProductResponse(product, imageLinksContext));
     }
 
     @Override
-    @Transactional 
+    @Transactional
     public Page<ProductResponse> findAdminAllProducts(Predicate predicate, Pageable pageable) {
         return productRepository.findAll(predicate, pageable).map(productMapper::toProductResponse);
     }
@@ -365,4 +392,91 @@ public class ProductServiceImpl implements ProductService {
 
         return new CreateProductResponse(product.getId(), fileResponses);
     }
+
+    @Override
+    public void generateFakeProducts(int count) {
+        Faker faker = new Faker(new Locale("uk"));
+
+        // Ensure at least one ProductType, Category, and Genre exists
+        List<ProductType> productTypes = ensureProductTypesExist();
+        List<Category> categories = ensureCategoriesExist();
+        List<Genre> genres = ensureGenresExist();
+
+        for (int i = 0; i < count; i++) {
+            CreateProductRequest request = new CreateProductRequest();
+
+            request.setName(faker.commerce().productName() + " " + faker.superhero().name());
+            request.setDescription(faker.lorem().paragraphs(3).toString());
+            request.setPrice(new BigDecimal(faker.commerce().price(50, 2000)));
+            request.setQuantity(faker.number().numberBetween(0, 100));
+
+            // Assign a random existing product type
+            request.setProductTypeId(productTypes.get(ThreadLocalRandom.current().nextInt(productTypes.size())).getId());
+
+            // Assign random categories and genres
+            request.setCategories(Collections.singleton(categories.get(ThreadLocalRandom.current().nextInt(categories.size())).getName()));
+            request.setGenres(Collections.singleton(genres.get(ThreadLocalRandom.current().nextInt(genres.size())).getName()));
+
+            // Game details
+            request.setMinPlayerNumber(faker.number().numberBetween(1, 2));
+            request.setMaxPlayerNumber(faker.number().numberBetween(3, 8));
+            request.setMinPlayTime(faker.number().numberBetween(15, 30));
+            request.setMaxPlayTime(faker.number().numberBetween(45, 120));
+            request.setMinAge(faker.number().numberBetween(6, 18));
+            request.setAuthor(faker.book().author());
+            request.setPublisher(faker.book().publisher());
+            request.setBggRating(faker.number().randomDouble(2, 6, 10));
+
+            request.setLength(new BigDecimal(faker.number().randomDouble(2, 10, 50)));
+            request.setHeight(new BigDecimal(faker.number().randomDouble(2, 5, 20)));
+            request.setWidth(new BigDecimal(faker.number().randomDouble(2, 10, 50)));
+            request.setWeight(new BigDecimal(faker.number().randomDouble(3, 1, 5)));
+
+
+            try {
+                createProduct(request);
+            } catch (CreateEntityException e) {
+                // Ignore if a product with the same name already exists and continue
+                System.out.println("Skipping duplicate product: " + request.getName());
+            }
+        }
+    }
+
+    private List<ProductType> ensureProductTypesExist() {
+        List<ProductType> types = productTypeRepository.findAll();
+        if (types.isEmpty()) {
+            ProductType defaultType = new ProductType();
+            defaultType.setName("Standard Game");
+            defaultType.setDimension(new Dimension(BigDecimal.valueOf(20), BigDecimal.valueOf(0.5), BigDecimal.valueOf(30), BigDecimal.valueOf(10)));
+            types.add(productTypeRepository.save(defaultType));
+        }
+        return types;
+    }
+
+    private List<Category> ensureCategoriesExist() {
+        List<Category> cats = categoryRepository.findAll();
+        if (cats.isEmpty()) {
+            List<String> defaultCategories = List.of("Сімейна", "Для вечірок", "Стратегія", "Кооперативна");
+            defaultCategories.forEach(name -> {
+                Category c = new Category();
+                c.setName(name);
+                cats.add(categoryRepository.save(c));
+            });
+        }
+        return cats;
+    }
+
+    private List<Genre> ensureGenresExist() {
+        List<Genre> gens = genreRepository.findAll();
+        if (gens.isEmpty()) {
+            List<String> defaultGenres = List.of("Фентезі", "Наукова фантастика", "Детектив", "Пригоди");
+            defaultGenres.forEach(name -> {
+                Genre g = new Genre();
+                g.setName(name);
+                gens.add(genreRepository.save(g));
+            });
+        }
+        return gens;
+    }
+
 }

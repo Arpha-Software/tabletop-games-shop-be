@@ -16,6 +16,8 @@ import org.arpha.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -102,5 +104,12 @@ public class ProductController {
     @GetMapping("/search")
     public List<ProductSearchResponse> searchProducts(@RequestParam String query) {
         return productService.searchProducts(query);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/generate-fake-data")
+    public ResponseEntity<Void> generateFakeProducts(@RequestParam(defaultValue = "50") int count) {
+        productService.generateFakeProducts(count);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

@@ -20,7 +20,9 @@ import org.springframework.util.MimeType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.arpha.dto.media.enums.AccessType.READ;
 import static org.arpha.dto.media.enums.AccessType.WRITE;
@@ -97,6 +99,16 @@ public class MediaServiceImpl implements MediaService {
                 .stream()
                 .map(file -> blobService.generateLink(file.getName(), READ))
                 .toList();
+    }
+
+    @Override
+    public Map<Long, List<String>> getFileLinksForProducts(List<Long> productIds, TargetType targetType) {
+        List<File> files = fileRepository.findAllByTargetIdInAndTargetType(productIds, targetType);
+        return files.stream()
+                .collect(Collectors.groupingBy(
+                        File::getTargetId,
+                        Collectors.mapping(file -> blobService.generateLink(file.getName(), READ), Collectors.toList())
+                ));
     }
 
     private String generateFileName(FileUploadRequest fileUploadRequest) {

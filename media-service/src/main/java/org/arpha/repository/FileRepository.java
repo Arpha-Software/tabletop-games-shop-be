@@ -15,4 +15,6 @@ public interface FileRepository extends JpaRepository<File, Long>, QuerydslPredi
 
     File findByTargetIdAndTargetType(long id, TargetType targetType);
     List<File> findAllByTargetIdAndTargetType(long id, TargetType targetType);
+
+    List<File> findAllByTargetIdInAndTargetType(List<Long> productIds, TargetType targetType);
 }

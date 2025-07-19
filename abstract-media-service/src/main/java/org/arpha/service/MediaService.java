@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MediaService {
 
@@ -18,5 +19,6 @@ public interface MediaService {
     String getFileLink(long targetId, TargetType targetType);
     List<String> getFilesLinks(long targetId, TargetType targetType);
     void deleteAllByTargetIdAndType(long targetId, TargetType targetType);
+    Map<Long, List<String>> getFileLinksForProducts(List<Long> productIds, TargetType targetType);
 
 }

@@ -3,7 +3,9 @@ package org.arpha.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.arpha.dto.product.Dimension;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,9 +21,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "products")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Product {
 
@@ -97,9 +100,9 @@ public class Product {
     @Column(nullable = false, name = "updated_at")
     private OffsetDateTime updatedAt;
 
-    private Double averageRating;
+    private Double averageRating = 0.0;
 
-    private Integer reviewCount;
+    private Integer reviewCount = 0;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"),

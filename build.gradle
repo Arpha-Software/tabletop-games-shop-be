@@ -86,6 +86,13 @@ allprojects {
         implementation "com.azure:azure-storage-blob:${azureBlobStorageVersion}"
         implementation "com.azure:azure-communication-email:${azureEmailVersion}"
 
+        implementation('com.github.javafaker:javafaker:1.0.2') {
+            exclude group: 'org.yaml', module: 'snakeyaml'
+        }
+
+        // Add the correct snakeyaml dependency explicitly
+        implementation 'org.yaml:snakeyaml:2.2'
+
         compileOnly 'org.projectlombok:lombok'
         runtimeOnly 'org.postgresql:postgresql'
         runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtApiVersion}"

@@ -33,4 +33,5 @@ public interface ProductService {
     void updateQuantity(List<CreateOrderItem> items);
     List<RecommendedProductResponse> getRecommendationsForUser(UserDetails user);
     List<ProductSearchResponse> searchProducts(String query);
+    void generateFakeProducts(int count);
 }
