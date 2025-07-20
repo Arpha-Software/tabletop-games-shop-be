@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.arpha.dto.product.Dimension;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -120,6 +121,7 @@ public class Product {
     @JoinTable(name = "product_addons", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "addon_id"))
     @ToString.Exclude
+    @BatchSize(size = 20) // <-- Add this annotation
     private Set<Product> addons = new HashSet<>();
 
     public void addQuantity(int quantity) {

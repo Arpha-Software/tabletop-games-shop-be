@@ -2,6 +2,7 @@ package org.arpha.service;
 
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateReviewRequest;
+import org.arpha.dto.product.response.RatingStats;
 import org.arpha.dto.product.response.ReviewResponse;
 import org.arpha.entity.Product;
 import org.arpha.entity.Review;
@@ -63,8 +64,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void updateProductRating(Product product) {
-        Double averageRating = reviewRepository.getAverageRatingByProductId(product.getId());
-        long reviewCount = reviewRepository.countByProductId(product.getId());
+        RatingStats ratingStats = reviewRepository.getRatingStatsByProductId(product.getId());
+        Double averageRating = ratingStats.average();
+        long reviewCount = ratingStats.count();
 
         product.setAverageRating(averageRating != null ? averageRating : 0.0);
         product.setReviewCount((int) reviewCount);

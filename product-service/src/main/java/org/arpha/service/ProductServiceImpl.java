@@ -107,7 +107,6 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = productRepository.findAll(predicate, pageable);
         List<Long> productIds = productPage.getContent().stream().map(Product::getId).collect(Collectors.toList());
 
-        // If there are no products on the page, return an empty page to avoid unnecessary calls
         if (productIds.isEmpty()) {
             return Page.empty(pageable);
         }
