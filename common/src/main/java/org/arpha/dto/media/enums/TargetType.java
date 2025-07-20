@@ -7,7 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TargetType {
     PRODUCT("products/%s/"),
-    PRODUCT_MAIN_IMG("products/%s/");
+    PRODUCT_MAIN_IMG("products/%s/"),
+    POST_IMAGE("posts/%s/"),
+    POST_MAIN_IMAGE("posts/%s/main/");
 
     private final String folder;
 }

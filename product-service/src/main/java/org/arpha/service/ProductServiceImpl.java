@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
+import org.arpha.configuration.ProductCacheConfig;
 import org.arpha.dto.audit.Action;
 import org.arpha.dto.audit.reponse.AuditResponse;
 import org.arpha.dto.media.enums.TargetType;
@@ -34,6 +35,8 @@ import org.arpha.repository.GenreRepository;
 import org.arpha.repository.ProductRepository;
 import org.arpha.repository.ProductTypeRepository;
 import org.arpha.utils.Boxed;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -85,6 +88,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = ProductCacheConfig.PRODUCTS_CACHE, key = "#id", cacheManager = ProductCacheConfig.PRODUCT_CACHE_MANAGER)
     public void deleteProduct(long id) {
         productRepository.deleteById(id);
         mediaService.deleteAllByTargetIdAndType(id, TargetType.PRODUCT);
@@ -93,6 +97,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Cacheable(value = ProductCacheConfig.PRODUCTS_CACHE, key = "#id", cacheManager = ProductCacheConfig.PRODUCT_CACHE_MANAGER)
     public ProductResponse findProductById(long id) {
         return Boxed
                 .of(id)
@@ -129,6 +134,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = ProductCacheConfig.PRODUCTS_CACHE, key = "#id", cacheManager = ProductCacheConfig.PRODUCT_CACHE_MANAGER)
     public ProductResponse addGenre(long id, Set<String> genres) {
         return Boxed
                 .of(id)
@@ -140,6 +146,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = ProductCacheConfig.PRODUCTS_CACHE, key = "#id", cacheManager = ProductCacheConfig.PRODUCT_CACHE_MANAGER)
     public ProductResponse addCategory(long id, Set<String> categories) {
         return Boxed
                 .of(id)
@@ -171,6 +178,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = ProductCacheConfig.PRODUCTS_CACHE, key = "#id", cacheManager = ProductCacheConfig.PRODUCT_CACHE_MANAGER)
     public ProductResponse update(long id, UpdateProductRequest updateProductRequest) {
         return Boxed
                 .of(id)
@@ -182,6 +190,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = ProductCacheConfig.PRODUCTS_CACHE, key = "#id", cacheManager = ProductCacheConfig.PRODUCT_CACHE_MANAGER)
     public ProductResponse addAddon(long id, Set<Long> addonIds) {
         return Boxed
                 .of(id)

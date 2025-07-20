@@ -1,6 +1,6 @@
 package org.arpha.service;
 
-import lombok.RequiredArgsConstructor;
+import org.arpha.configuration.ProductCacheConfig;
 import org.arpha.dto.product.request.CreateReviewRequest;
 import org.arpha.dto.product.response.RatingStats;
 import org.arpha.dto.product.response.ReviewResponse;
@@ -10,19 +10,31 @@ import org.arpha.exception.ProductNotFoundException;
 import org.arpha.mapper.ReviewMapper;
 import org.arpha.repository.ProductRepository;
 import org.arpha.repository.ReviewRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
-@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final ReviewMapper reviewMapper;
+    private final CacheManager productCacheManager;
+
+    public ReviewServiceImpl(ReviewRepository reviewRepository, ProductRepository productRepository, ReviewMapper reviewMapper,
+                             @Qualifier(ProductCacheConfig.PRODUCT_CACHE_MANAGER) CacheManager productCacheManager) {
+        this.reviewRepository = reviewRepository;
+        this.productRepository = productRepository;
+        this.reviewMapper = reviewMapper;
+        this.productCacheManager = productCacheManager;
+    }
 
     @Override
     @Transactional
@@ -71,5 +83,8 @@ public class ReviewServiceImpl implements ReviewService {
         product.setAverageRating(averageRating != null ? averageRating : 0.0);
         product.setReviewCount((int) reviewCount);
         productRepository.save(product);
+
+        Objects.requireNonNull(productCacheManager.getCache(ProductCacheConfig.PRODUCTS_CACHE))
+                .evict(product.getId());
     }
 }
