@@ -1,11 +1,10 @@
 package org.arpha.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.ComparablePath;
 import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.SetPath;
 import com.querydsl.core.types.dsl.StringPath;
 import org.arpha.entity.Product;
 import org.arpha.entity.QProduct;
@@ -17,17 +16,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
-import org.springframework.data.querydsl.binding.SingleValueBinding;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, QuerydslPredicateExecutor<Product>, QuerydslBinderCustomizer<QProduct> {
 
     boolean existsById(long id);
+
     boolean existsByName(String name);
 
     @Query(value = "SELECT p FROM Product p LEFT JOIN FETCH p.addons WHERE p.id = :id")
@@ -39,6 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Queryds
 
     @Query("SELECT COUNT(p) FROM Product p JOIN p.genres c WHERE c.id = :genreId")
     long containsGenreCount(long genreId);
+
     @Query("SELECT COUNT(p) FROM Product p JOIN p.categories c WHERE c.id = :categoryId")
     long containsCategoryCount(long categoryId);
 
@@ -50,134 +51,175 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Queryds
             "LIMIT 10",
             nativeQuery = true)
     List<Product> searchByQuery(@Param("query") String query);
+
     @Override
     default void customize(QuerydslBindings bindings, QProduct product) {
-        // Default exclusion of all properties to enable explicit binding
         bindings.excludeUnlistedProperties(true);
 
-        // Exclude specific complex properties from default auto-binding
-        bindings.excluding(product.categories);
-        bindings.excluding(product.genres);
-        bindings.excluding(product.type);
-        bindings.excluding(product.addons);
-        bindings.excluding(product.dimension);
-        // Removed `product.mechanics` from `excluding` here, as we're binding it directly by its path
-        // but `bindings.excludeUnlistedProperties(true)` handles it implicitly if not bound.
+        // --- FIELD BINDINGS ---
+        bindString(bindings, product.name);
+        bindString(bindings, product.description);
+        bindString(bindings, product.language);
+        bindString(bindings, product.publisher);
+        bindString(bindings, product.author);
+        bindString(bindings, product.components);
+        bindString(bindings, product.rulesLink);
 
-        // --- Basic Field Bindings (Direct Properties) ---
+        bindNumber(bindings, product.id);
+        bindNumber(bindings, product.quantity);
+        bindNumber(bindings, product.price);
+        bindNumber(bindings, product.minPlayerNumber);
+        bindNumber(bindings, product.maxPlayerNumber);
+        bindNumber(bindings, product.minPlayTime);
+        bindNumber(bindings, product.maxPlayTime);
+        bindNumber(bindings, product.minAge);
+        bindNumber(bindings, product.bggRating);
+        bindNumber(bindings, product.complexity);
+        bindNumber(bindings, product.averageRating);
+        bindNumber(bindings, product.reviewCount);
 
-        // String fields: case-insensitive contains for search-like behavior
-        // This general binding will apply to `name`, `description`, `publisher`, `author`, `components`, `rulesLink`
-        bindings.bind(String.class).first((SingleValueBinding<StringPath, String>) StringPath::containsIgnoreCase);
+        bindDateTime(bindings, product.createdAt);
+        bindDateTime(bindings, product.updatedAt);
 
-        // Specific String fields where exact match is more appropriate, or custom logic
-        // This will override the general String.class binding for `product.language`
-        bindings.bind(product.language).first(StringPath::eq);
+        // --- EMBEDDED & RELATIONAL BINDINGS ---
+        bindNumber(bindings, product.dimension.width);
+        bindNumber(bindings, product.dimension.weight);
+        bindNumber(bindings, product.dimension.length);
+        bindNumber(bindings, product.dimension.height);
 
-        // Numeric fields: default to exact match
-        bindings.bind(product.id).first(NumberPath::eq);
-        bindings.bind(product.quantity).first(NumberPath::eq);
-        bindings.bind(product.minPlayerNumber).first(NumberPath::eq);
-        bindings.bind(product.maxPlayerNumber).first(NumberPath::eq);
-        bindings.bind(product.minPlayTime).first(NumberPath::eq);
-        bindings.bind(product.maxPlayTime).first(NumberPath::eq);
-        bindings.bind(product.minAge).first(NumberPath::eq);
-        bindings.bind(product.bggRating).first(NumberPath::eq);
-        bindings.bind(product.complexity).first(NumberPath::eq);
-        bindings.bind(product.averageRating).first(NumberPath::eq);
-        bindings.bind(product.reviewCount).first(NumberPath::eq);
+        bindNumber(bindings, product.type.id);
+        bindString(bindings, product.type.name);
 
-
-        // Date/Time fields: exact match by default
-        bindings.bind(product.createdAt).first(DateTimePath::eq);
-        bindings.bind(product.updatedAt).first(DateTimePath::eq);
-
-
-        // --- Nested Object Bindings ---
-
-        // ProductType: Filter by type name or ID
-        bindings.bind(product.type.id).first(NumberPath::eq);
-        bindings.bind(product.type.name).first(StringPath::containsIgnoreCase);
-
-        // Dimension (Embedded): Filter by individual dimension properties
-        bindings.bind(product.dimension.width).first(NumberPath::eq);
-        bindings.bind(product.dimension.weight).first(NumberPath::eq);
-        bindings.bind(product.dimension.length).first(NumberPath::eq);
-        bindings.bind(product.dimension.height).first(NumberPath::eq);
-
-
-        // --- Collection Bindings (Multiple values with OR logic) ---
-
-        // Categories: Filter by category name (case-insensitive contains)
-        // Example: ?categories.name=Strategy%20Games&categories.name=Card%20Games
-        bindings.bind(product.categories.any().name).all((StringPath path, Collection<? extends String> values) -> {
-            BooleanBuilder builder = new BooleanBuilder();
-            for (String value : values) {
-                builder.or(path.containsIgnoreCase(value));
-            }
-            return Optional.of(builder);
+        // --- COLLECTION BINDINGS ---
+        bindings.bind(product.mechanics).as("mechanics.in").all((path, values) -> {
+            BooleanBuilder predicate = new BooleanBuilder();
+            values.stream().flatMap(Collection::stream).forEach(value -> predicate.or(path.contains(value)));
+            return predicate.hasValue() ? Optional.of(predicate) : Optional.empty();
         });
-        // Categories: Filter by category ID
-        // Example: ?categories.id=1&categories.id=5
-        bindings.bind(product.categories.any().id).all((NumberPath<Long> path, Collection<? extends Long> values) -> {
-            BooleanBuilder builder = new BooleanBuilder();
-            for (Long value : values) {
-                builder.or(path.eq(value));
-            }
-            return Optional.of(builder);
+        bindings.bind(product.mechanics).as("mechanics.all").all((path, values) -> {
+            BooleanBuilder predicate = new BooleanBuilder();
+            values.stream().flatMap(Collection::stream).forEach(value -> predicate.and(path.contains(value)));
+            return predicate.hasValue() ? Optional.of(predicate) : Optional.empty();
         });
 
+        bindCollectionById(bindings, product.categories.any().id, "categories.id.in");
+        bindCollectionByName(bindings, product.categories.any().name, "categories.name.in");
 
-        // Genres: Filter by genre name (case-insensitive contains)
-        // Example: ?genres.name=Fantasy&genres.name=Sci-Fi
-        bindings.bind(product.genres.any().name).all((StringPath path, Collection<? extends String> values) -> {
+        bindCollectionById(bindings, product.genres.any().id, "genres.id.in");
+        bindCollectionByName(bindings, product.genres.any().name, "genres.name.in");
+
+        bindCollectionById(bindings, product.addons.any().id, "addons.id.in");
+        bindCollectionByName(bindings, product.addons.any().name, "addons.name.in");
+    }
+
+    /**
+     * Helper method to bind common String operators.
+     */
+    private static void bindString(QuerydslBindings bindings, StringPath path) {
+        String name = path.getMetadata().getName();
+        // Single value operators use .first()
+        bindings.bind(path).as(name + ".eq").first((p, v) -> p.equalsIgnoreCase(v));
+        bindings.bind(path).as(name + ".ne").first((p, v) -> p.notEqualsIgnoreCase(v));
+        bindings.bind(path).as(name + ".contains").first((p, v) -> p.containsIgnoreCase(v));
+
+        // Multi-value operators use .all()
+        bindings.bind(path).as(name + ".in").all((p, v) -> {
             BooleanBuilder builder = new BooleanBuilder();
-            for (String value : values) {
-                builder.or(path.containsIgnoreCase(value));
-            }
+            v.forEach(val -> builder.or(p.equalsIgnoreCase(val)));
             return Optional.of(builder);
         });
-        // Genres: Filter by genre ID
-        // Example: ?genres.id=2&genres.id=7
-        bindings.bind(product.genres.any().id).all((NumberPath<Long> path, Collection<? extends Long> values) -> {
-            BooleanBuilder builder = new BooleanBuilder();
-            for (Long value : values) {
-                builder.or(path.eq(value));
-            }
-            return Optional.of(builder);
-        });
+    }
 
+    /**
+     * Helper method to bind common Number operators for standard number types.
+     */
+    private static <T extends Number & Comparable<?>> void bindNumber(QuerydslBindings bindings, NumberPath<T> path) {
+        String name = path.getMetadata().getName();
+        // Single value operators use .first()
+        bindings.bind(path).as(name + ".eq").first((p, v) -> p.eq(v));
+        bindings.bind(path).as(name + ".ne").first((p, v) -> p.ne(v));
+        bindings.bind(path).as(name + ".gt").first((p, v) -> p.gt(v));
+        bindings.bind(path).as(name + ".gte").first((p, v) -> p.goe(v));
+        bindings.bind(path).as(name + ".lt").first((p, v) -> p.lt(v));
+        bindings.bind(path).as(name + ".lte").first((p, v) -> p.loe(v));
 
-        // Addons: Filter by addon product name (case-insensitive contains)
-        // Example: ?addons.name=Expansion%20Pack&addons.name=Base%20Game
-        bindings.bind(product.addons.any().name).all((StringPath path, Collection<? extends String> values) -> {
-            BooleanBuilder builder = new BooleanBuilder();
-            for (String value : values) {
-                builder.or(path.containsIgnoreCase(value));
+        // Multi-value operators use .all()
+        bindings.bind(path).as(name + ".in").all((p, v) -> Optional.of(p.in(v)));
+        bindings.bind(path).as(name + ".between").all((p, values) -> {
+            if (values.size() != 2) {
+                // Ignore if not exactly two values are provided
+                return Optional.empty();
             }
-            return Optional.of(builder);
+            Iterator<? extends T> it = values.iterator();
+            return Optional.of(p.between(it.next(), it.next()));
         });
-        // Addons: Filter by addon product ID
-        // Example: ?addons.id=100&addons.id=101
-        bindings.bind(product.addons.any().id).all((NumberPath<Long> path, Collection<? extends Long> values) -> {
-            BooleanBuilder builder = new BooleanBuilder();
-            for (Long value : values) {
-                builder.or(path.eq(value));
-            }
-            return Optional.of(builder);
-        });
+    }
 
-        // Mechanics (ElementCollection of Strings): Filter by specific mechanic (exact match for each)
-        // Example: ?mechanics=Deckbuilding&mechanics=Worker%20Placement
-        // This will look for products where the 'mechanics' set contains ANY of the provided values (OR logic)
-        bindings.bind(product.mechanics).all((SetPath<String, StringPath> path, Collection<? extends Set<String>> values) -> {
-            BooleanBuilder builder = new BooleanBuilder();
-            for (Set<String> value : values) {
-                for (String key : value) {
-                    builder.or(path.contains(key));
-                }
+    /**
+     * Overloaded helper method to bind common Number operators for BigDecimal.
+     */
+    private static void bindNumber(QuerydslBindings bindings, ComparablePath<BigDecimal> path) {
+        String name = path.getMetadata().getName();
+        // Single value operators use .first()
+        bindings.bind(path).as(name + ".eq").first((p, v) -> p.eq(v));
+        bindings.bind(path).as(name + ".ne").first((p, v) -> p.ne(v));
+        bindings.bind(path).as(name + ".gt").first((p, v) -> p.gt(v));
+        bindings.bind(path).as(name + ".gte").first((p, v) -> p.goe(v));
+        bindings.bind(path).as(name + ".lt").first((p, v) -> p.lt(v));
+        bindings.bind(path).as(name + ".lte").first((p, v) -> p.loe(v));
+
+        // Multi-value operators use .all()
+        bindings.bind(path).as(name + ".in").all((p, v) -> Optional.of(p.in(v)));
+        bindings.bind(path).as(name + ".between").all((p, values) -> {
+            if (values.size() != 2) {
+                return Optional.empty();
             }
-            return Optional.of(builder);
+            Iterator<? extends BigDecimal> it = values.iterator();
+            return Optional.of(p.between(it.next(), it.next()));
+        });
+    }
+
+    /**
+     * Helper method to bind common DateTime operators.
+     */
+    private static <T extends Comparable> void bindDateTime(QuerydslBindings bindings, DateTimePath<T> path) {
+        String name = path.getMetadata().getName();
+        // Single value operators use .first()
+        bindings.bind(path).as(name + ".eq").first((p, v) -> p.eq(v));
+        bindings.bind(path).as(name + ".ne").first((p, v) -> p.ne(v));
+        bindings.bind(path).as(name + ".gt").first((p, v) -> p.gt(v));
+        bindings.bind(path).as(name + ".gte").first((p, v) -> p.goe(v));
+        bindings.bind(path).as(name + ".lt").first((p, v) -> p.lt(v));
+        bindings.bind(path).as(name + ".lte").first((p, v) -> p.loe(v));
+
+        bindings.bind(path).as(name + ".between").all((p, values) -> {
+            if (values.size() != 2) {
+                return Optional.empty();
+            }
+            Iterator<? extends T> it = values.iterator();
+            return Optional.of(p.between(it.next(), it.next()));
+        });
+    }
+
+    /**
+     * Helper method to bind a collection by the related entity's ID.
+     */
+    private static void bindCollectionById(QuerydslBindings bindings, NumberPath<Long> path, String alias) {
+        bindings.bind(path).as(alias).all((p, values) -> {
+            BooleanBuilder builder = new BooleanBuilder();
+            values.forEach(val -> builder.or(p.eq(val)));
+            return builder.hasValue() ? Optional.of(builder) : Optional.empty();
+        });
+    }
+
+    /**
+     * Helper method to bind a collection by the related entity's name.
+     */
+    private static void bindCollectionByName(QuerydslBindings bindings, StringPath path, String alias) {
+        bindings.bind(path).as(alias).all((p, values) -> {
+            BooleanBuilder builder = new BooleanBuilder();
+            values.stream().forEach(val -> builder.or(p.equalsIgnoreCase(val)));
+            return builder.hasValue() ? Optional.of(builder) : Optional.empty();
         });
     }
 }

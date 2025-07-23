@@ -49,41 +49,72 @@ public class ProductController {
 
     @GetMapping
     @Parameters({
-            @Parameter(name = "name", description = "Filter by product name (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "price", description = "Filter by price (exact match)", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
-            @Parameter(name = "language", description = "Filter by product language (exact match)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "minPlayerNumber", description = "Filter by minimum player number", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int32")),
-            @Parameter(name = "maxPlayerNumber", description = "Filter by maximum player number", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int32")),
-            @Parameter(name = "minPlayTime", description = "Filter by minimum playtime in minutes", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int32")),
-            @Parameter(name = "maxPlayTime", description = "Filter by maximum playtime in minutes", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int32")),
-            @Parameter(name = "minAge", description = "Filter by minimum age", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int32")),
-            @Parameter(name = "publisher", description = "Filter by publisher name (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "author", description = "Filter by author name (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "bggRating", description = "Filter by BoardGameGeek rating", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
-            @Parameter(name = "complexity", description = "Filter by complexity rating", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
-            @Parameter(name = "components", description = "Filter by components (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "rulesLink", description = "Filter by rules link (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "description", description = "Filter by product description (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            // --- Product Name (String) ---
+            @Parameter(name = "name.eq", description = "Filter by exact product name (case-insensitive).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "name.ne", description = "Filter by non-exact product name (case-insensitive).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "name.contains", description = "Filter for names containing the value (case-insensitive). Example: Catan", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "name.in", description = "Filter for names in a list (comma-separated). Example: Catan,Risk", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
 
-            // Nested Properties and Collections
-            @Parameter(name = "categories.name", description = "Filter by category name (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "genres.name", description = "Filter by genre name (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "type.name", description = "Filter by product type name (e.g., 'Board Game', 'Card Game')", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
-            @Parameter(name = "type.id", description = "Filter by product type ID", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int64")),
-            @Parameter(name = "addons.name", description = "Filter by addon name (case-insensitive contains)", in = ParameterIn.QUERY, schema = @Schema(type = "string")), // Assuming Addon has a 'name' field
+            // --- Price (Numeric) ---
+            @Parameter(name = "price.eq", description = "Filter by exact price.", in = ParameterIn.QUERY, schema = @Schema(type = "number")),
+            @Parameter(name = "price.ne", description = "Filter by non-exact price.", in = ParameterIn.QUERY, schema = @Schema(type = "number")),
+            @Parameter(name = "price.gt", description = "Filter for price greater than the value.", in = ParameterIn.QUERY, schema = @Schema(type = "number")),
+            @Parameter(name = "price.gte", description = "Filter for price greater than or equal to the value.", in = ParameterIn.QUERY, schema = @Schema(type = "number")),
+            @Parameter(name = "price.lt", description = "Filter for price less than the value.", in = ParameterIn.QUERY, schema = @Schema(type = "number")),
+            @Parameter(name = "price.lte", description = "Filter for price less than or equal to the value.", in = ParameterIn.QUERY, schema = @Schema(type = "number")),
+            @Parameter(name = "price.in", description = "Filter for price in a list (comma-separated). Example: 29.99,49.99", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "price.between", description = "Filter for price between two values (inclusive, comma-separated). Example: 50,100", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
 
-            // Nested Dimension properties
-            @Parameter(name = "dimension.width", description = "Filter by product width", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
-            @Parameter(name = "dimension.length", description = "Filter by product length", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
-            @Parameter(name = "dimension.height", description = "Filter by product height", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
-            @Parameter(name = "dimension.weight", description = "Filter by product weight", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
+            // --- Player Count (Numeric) ---
+            @Parameter(name = "minPlayerNumber.gte", description = "Filter for products that support at least this many players.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
+            @Parameter(name = "maxPlayerNumber.lte", description = "Filter for products with a maximum player count up to this value.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
+            @Parameter(name = "minPlayerNumber.eq", description = "Filter by exact minimum player count.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
+            @Parameter(name = "maxPlayerNumber.eq", description = "Filter by exact maximum player count.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
 
-            // Derived/Aggregated fields (if Querydsl or custom service logic supports them)
-            @Parameter(name = "reviewCount", description = "Filter by total review count", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int32")),
-            @Parameter(name = "averageRating", description = "Filter by average customer rating", in = ParameterIn.QUERY, schema = @Schema(type = "number", format = "double")),
+            // --- Play Time (Numeric) ---
+            @Parameter(name = "minPlayTime.gte", description = "Filter by minimum play time in minutes.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
+            @Parameter(name = "maxPlayTime.lte", description = "Filter by maximum play time in minutes.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
 
-            // Date field
-            @Parameter(name = "createdAt", description = "Filter by creation timestamp (ISO 8601 format, e.g., '2023-01-01T10:00:00Z')", in = ParameterIn.QUERY, schema = @Schema(type = "string", format = "date-time"))
+            // --- Age (Numeric) ---
+            @Parameter(name = "minAge.gte", description = "Filter by minimum recommended age.", in = ParameterIn.QUERY, schema = @Schema(type = "integer")),
+
+            // --- BGG Rating & Complexity (Numeric) ---
+            @Parameter(name = "bggRating.between", description = "Filter by BoardGameGeek rating between two values. Example: 7.5,9.0", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "complexity.between", description = "Filter by complexity rating between two values. Example: 2.0,3.5", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+
+            // --- Language (String) ---
+            @Parameter(name = "language.eq", description = "Filter by exact language.", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "language.in", description = "Filter for languages in a list. Example: English,Polish", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+
+            // --- Publisher (String) ---
+            @Parameter(name = "publisher.contains", description = "Filter for publisher names containing the value.", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "publisher.in", description = "Filter for publishers in a list.", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+
+            // --- Author (String) ---
+            @Parameter(name = "author.contains", description = "Filter for author names containing the value.", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+
+            // --- Collections & Relationships ---
+            @Parameter(name = "mechanics.in", description = "Filter for products with ANY of the given mechanics (comma-separated). Example: Deckbuilding,Worker Placement", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "mechanics.all", description = "Filter for products with ALL of the given mechanics (comma-separated). Example: Deckbuilding,Area Control", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "categories.id.in", description = "Filter for products in ANY of the given category IDs (comma-separated).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "categories.name.in", description = "Filter for products in ANY of the given category names (comma-separated).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "genres.id.in", description = "Filter for products in ANY of the given genre IDs (comma-separated).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "genres.name.in", description = "Filter for products in ANY of the given genre names (comma-separated).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "addons.id.in", description = "Filter for products that have ANY of the given addon IDs (comma-separated).", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+
+            // --- Product Type (Nested) ---
+            @Parameter(name = "type.id.eq", description = "Filter by exact product type ID.", in = ParameterIn.QUERY, schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "type.name.eq", description = "Filter by exact product type name.", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+
+            // --- Date Fields ---
+            @Parameter(name = "createdAt.between", description = "Filter by creation timestamp between two dates (ISO 8601, comma-separated). Example: 2025-01-01T00:00:00Z,2025-07-23T23:59:59Z", in = ParameterIn.QUERY, schema = @Schema(type = "string")),
+            @Parameter(name = "createdAt.gte", description = "Filter for products created on or after a timestamp (ISO 8601).", in = ParameterIn.QUERY, schema = @Schema(type = "string", format = "date-time")),
+            @Parameter(name = "createdAt.lte", description = "Filter for products created on or before a timestamp (ISO 8601).", in = ParameterIn.QUERY, schema = @Schema(type = "string", format = "date-time")),
+
+            // --- General ---
+            @Parameter(name = "page", description = "Page number you want to retrieve (0..N).", in = ParameterIn.QUERY, schema = @Schema(type = "integer", defaultValue = "0")),
+            @Parameter(name = "size", description = "Number of records per page.", in = ParameterIn.QUERY, schema = @Schema(type = "integer", defaultValue = "20")),
+            @Parameter(name = "sort", description = "Sorting criteria in the format: property,(asc|desc). Default sort is ascending. Multiple sort criteria are supported.", in = ParameterIn.QUERY, schema = @Schema(type = "string"))
     })
     public Page<ProductResponse> findAllProducts(@QuerydslPredicate(root = Product.class) Predicate predicate, Pageable pageable) {
         return productService.findAllProducts(predicate, pageable);
