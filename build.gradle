@@ -78,6 +78,7 @@ allprojects {
         implementation 'org.flywaydb:flyway-core'
         implementation "io.jsonwebtoken:jjwt-api:${jwtApiVersion}"
         implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
+        implementation "org.springdoc:springdoc-openapi-data-rest:1.7.0"
         implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
         implementation "org.mapstruct:mapstruct:${mapStructVersion}"
         implementation "com.querydsl:querydsl-core:${queryDslVersion}"
