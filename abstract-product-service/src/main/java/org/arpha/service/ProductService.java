@@ -5,6 +5,7 @@ import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
+import org.arpha.dto.product.response.FilterOptionsResponse;
 import org.arpha.dto.product.response.GetProductListInfo;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.dto.product.response.ProductSearchResponse;
@@ -34,4 +35,5 @@ public interface ProductService {
     List<RecommendedProductResponse> getRecommendationsForUser(UserDetails user);
     List<ProductSearchResponse> searchProducts(String query);
     void generateFakeProducts(int count);
+    FilterOptionsResponse getFilterOptions();
 }

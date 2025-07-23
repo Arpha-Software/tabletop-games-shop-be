@@ -17,6 +17,8 @@ import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.CreateProductRequest.ProductFileRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
+import org.arpha.dto.product.response.FilterOptionsResponse;
+import org.arpha.dto.product.response.PriceRange;
 import org.arpha.dto.product.response.ProductResponse;
 import org.arpha.dto.product.response.ProductSearchResponse;
 import org.arpha.dto.product.response.RecommendationReason;
@@ -155,6 +157,32 @@ public class ProductServiceImpl implements ProductService {
                 .mapToBoxed(productRepository::save)
                 .mapToBoxed(productMapper::toProductResponse)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.formatted(id)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FilterOptionsResponse getFilterOptions() {
+        Set<String> languages = productRepository.findDistinctLanguages();
+        Set<String> publishers = productRepository.findDistinctPublishers();
+        Set<String> mechanics = productRepository.findDistinctMechanics();
+        PriceRange priceRange = productRepository.findPriceRange();
+
+        Set<String> categories = categoryRepository.findAll().stream()
+                .map(Category::getName)
+                .collect(Collectors.toSet());
+
+        Set<String> genres = genreRepository.findAll().stream()
+                .map(Genre::getName)
+                .collect(Collectors.toSet());
+
+        return FilterOptionsResponse.builder()
+                .languages(languages)
+                .publishers(publishers)
+                .mechanics(mechanics)
+                .categories(categories)
+                .genres(genres)
+                .priceRange(priceRange)
+                .build();
     }
 
     @Override
