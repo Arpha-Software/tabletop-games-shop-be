@@ -3,6 +3,7 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import org.arpha.dto.order.request.CreateOrderItem;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.request.ProductFilterRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.FilterOptionsResponse;
@@ -36,4 +37,5 @@ public interface ProductService {
     List<ProductSearchResponse> searchProducts(String query);
     void generateFakeProducts(int count);
     FilterOptionsResponse getFilterOptions();
+    Page<ProductResponse> findAllProductsFilter(ProductFilterRequest filter, Pageable pageable);
 }

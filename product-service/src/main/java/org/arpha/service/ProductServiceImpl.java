@@ -15,6 +15,7 @@ import org.arpha.dto.order.response.OrderAnalyticsDto;
 import org.arpha.dto.product.Dimension;
 import org.arpha.dto.product.request.CreateProductRequest;
 import org.arpha.dto.product.request.CreateProductRequest.ProductFileRequest;
+import org.arpha.dto.product.request.ProductFilterRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.FilterOptionsResponse;
@@ -43,6 +44,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +80,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductTypeRepository productTypeRepository;
     private final CategoryRepository categoryRepository;
     private final GenreRepository genreRepository;
+    private final ProductSpecification productSpecification;
 
     @Override
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) { // Changed return type
@@ -118,14 +121,11 @@ public class ProductServiceImpl implements ProductService {
             return Page.empty(pageable);
         }
 
-        // 1. Fetch all media links in just two efficient batch calls
         Map<Long, List<String>> mainImageLinks = mediaService.getFileLinksForProducts(productIds, TargetType.PRODUCT_MAIN_IMG);
         Map<Long, List<String>> otherImageLinks = mediaService.getFileLinksForProducts(productIds, TargetType.PRODUCT);
 
-        // 2. Create the context object to pass to the mappera
         ProductMapper.ImageLinksContext imageLinksContext = new ProductMapper.ImageLinksContext(mainImageLinks, otherImageLinks);
 
-        // 3. Use the new optimized mapper to map the page of products
         return productPage.map(product -> productMapper.toProductResponse(product, imageLinksContext));
     }
 
@@ -183,6 +183,26 @@ public class ProductServiceImpl implements ProductService {
                 .genres(genres)
                 .priceRange(priceRange)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public Page<ProductResponse> findAllProductsFilter(ProductFilterRequest filter, Pageable pageable) {
+        Specification<Product> spec = (filter == null) ? Specification.where(null) : productSpecification.from(filter);
+        Page<Product> productPage = productRepository.findAll(spec, pageable);
+
+        List<Long> productIds = productPage.getContent().stream().map(Product::getId).collect(Collectors.toList());
+
+        if (productIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        Map<Long, List<String>> mainImageLinks = mediaService.getFileLinksForProducts(productIds, TargetType.PRODUCT_MAIN_IMG);
+        Map<Long, List<String>> otherImageLinks = mediaService.getFileLinksForProducts(productIds, TargetType.PRODUCT);
+
+        ProductMapper.ImageLinksContext imageLinksContext = new ProductMapper.ImageLinksContext(mainImageLinks, otherImageLinks);
+
+        return productPage.map(product -> productMapper.toProductResponse(product, imageLinksContext));
     }
 
     @Override

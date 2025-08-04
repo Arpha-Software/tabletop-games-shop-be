@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.product.request.CreateProductRequest;
+import org.arpha.dto.product.request.ProductFilterRequest;
 import org.arpha.dto.product.request.UpdateProductRequest;
 import org.arpha.dto.product.response.CreateProductResponse;
 import org.arpha.dto.product.response.FilterOptionsResponse;
@@ -123,5 +124,12 @@ public class ProductController {
     public ResponseEntity<Void> generateFakeProducts(@RequestParam(defaultValue = "50") int count) {
         productService.generateFakeProducts(count);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/filter")
+    public Page<ProductResponse> findAllProducts(
+            @RequestBody(required = false) ProductFilterRequest filter,
+            Pageable pageable) {
+        return productService.findAllProductsFilter(filter, pageable);
     }
 }
