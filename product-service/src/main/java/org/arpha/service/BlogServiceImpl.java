@@ -87,7 +87,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public PostResponse getPostById(Long postId) {
         return postRepository.findById(postId)
                 .map(postMapper::toPostResponse)
@@ -95,7 +95,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<PostResponse> getAllPosts(Predicate predicate, Pageable pageable) {
         return postRepository.findAll(predicate, pageable).map(postMapper::toPostResponse);
     }
