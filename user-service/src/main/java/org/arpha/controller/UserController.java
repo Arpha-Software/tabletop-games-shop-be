@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import com.querydsl.core.types.Predicate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.arpha.dto.user.request.CreateUserDeliveryAddressRequest;
 import org.arpha.dto.user.request.UpdateUserRequest;
+import org.arpha.dto.user.response.UserDeliveryAddressResponse;
 import org.arpha.dto.user.response.UserResponse;
 import org.arpha.dto.user.response.analytics.UserAnalyticsResponse;
 import org.arpha.entity.User;
@@ -24,10 +26,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -71,6 +76,30 @@ public class UserController {
     @GetMapping("/me")
     public UserResponse getAuthenticatedUser(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter) {
         return userService.findUserByEmail(userDetailsAdapter.getUsername());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PostMapping("/addresses")
+    public UserDeliveryAddressResponse addAddress(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter, @RequestBody @Valid CreateUserDeliveryAddressRequest request) {
+        return userService.addUserDeliveryAddress(userDetailsAdapter.user().getId(), request);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @GetMapping("/addresses")
+    public List<UserDeliveryAddressResponse> getAddresses(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter) {
+        return userService.getUserDeliveryAddresses(userDetailsAdapter.user().getId());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @DeleteMapping("/addresses/{addressId}")
+    public void deleteAddress(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter, @PathVariable long addressId) {
+        userService.deleteUserDeliveryAddress(userDetailsAdapter.user().getId(), addressId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PatchMapping("/addresses/{addressId}/set-default")
+    public void setDefaultAddress(@AuthenticationPrincipal UserDetailsAdapter userDetailsAdapter, @PathVariable long addressId) {
+        userService.setDefaultDeliveryAddress(userDetailsAdapter.user().getId(), addressId);
     }
 
     @Operation(summary = "Get user analytics",

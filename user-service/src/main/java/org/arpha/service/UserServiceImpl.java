@@ -3,19 +3,25 @@ package org.arpha.service;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.response.OrderAnalyticsDto;
+import org.arpha.dto.user.request.CreateUserDeliveryAddressRequest;
 import org.arpha.dto.user.request.UpdateUserRequest;
+import org.arpha.dto.user.response.UserDeliveryAddressResponse;
 import org.arpha.dto.user.response.UserResponse;
 import org.arpha.dto.user.response.analytics.UserAnalyticsResponse;
 import org.arpha.entity.User;
+import org.arpha.entity.UserDeliveryAddress;
 import org.arpha.exception.EmailAlreadyTakenException;
 import org.arpha.exception.UserNotFoundException;
 import org.arpha.mapper.AnalyticsMapper;
+import org.arpha.mapper.UserDeliveryAddressMapper;
 import org.arpha.mapper.UserMapper;
+import org.arpha.repository.UserDeliveryAddressRepository;
 import org.arpha.repository.UserRepository;
 import org.arpha.security.UserDetailsAdapter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +42,48 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final OrderService orderService;
     private final AnalyticsMapper analyticsMapper;
+    private final UserDeliveryAddressRepository userDeliveryAddressRepository;
+    private final UserDeliveryAddressMapper userDeliveryAddressMapper;
+
+    @Override
+    public UserDeliveryAddressResponse addUserDeliveryAddress(long userId, CreateUserDeliveryAddressRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(userId)));
+        UserDeliveryAddress address = userDeliveryAddressMapper.toUserDeliveryAddress(request);
+        address.setUser(user);
+
+        // If this is the first address, make it the default
+        if (userDeliveryAddressRepository.findByUserId(userId).isEmpty()) {
+            address.setDefault(true);
+        }
+
+        return userDeliveryAddressMapper.toUserDeliveryAddressResponse(userDeliveryAddressRepository.save(address));
+    }
+
+    @Override
+    public List<UserDeliveryAddressResponse> getUserDeliveryAddresses(long userId) {
+        return userDeliveryAddressRepository.findByUserId(userId).stream()
+                .map(userDeliveryAddressMapper::toUserDeliveryAddressResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteUserDeliveryAddress(long userId, long addressId) {
+        UserDeliveryAddress address = userDeliveryAddressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+
+        if (address.getUser().getId() != userId) {
+            throw new AccessDeniedException("You do not have permission to delete this address.");
+        }
+        userDeliveryAddressRepository.delete(address);
+    }
+
+    @Override
+    public void setDefaultDeliveryAddress(long userId, long addressId) {
+        List<UserDeliveryAddress> addresses = userDeliveryAddressRepository.findByUserId(userId);
+        addresses.forEach(address -> address.setDefault(address.getId() == addressId));
+        userDeliveryAddressRepository.saveAll(addresses);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
