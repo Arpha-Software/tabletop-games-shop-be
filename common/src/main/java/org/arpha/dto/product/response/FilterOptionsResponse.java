@@ -16,5 +16,9 @@ public class FilterOptionsResponse {
     private Set<String> categories;
     private Set<String> mechanics;
     private Set<String> publishers;
+    private Set<String> authors;
+    private Integer minPlayers;
+    private Integer maxPlayers;
+    private Integer minAge;
     private PriceRange priceRange;
 }

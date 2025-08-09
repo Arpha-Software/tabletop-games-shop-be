@@ -175,6 +175,30 @@ public class ProductServiceImpl implements ProductService {
                 .map(Genre::getName)
                 .collect(Collectors.toSet());
 
+        List<Product> allProducts = productRepository.findAll();
+
+        Set<String> authors = allProducts.stream()
+                .map(Product::getAuthor)
+                .filter(java.util.Objects::nonNull)
+                .filter(a -> !a.isBlank())
+                .collect(Collectors.toSet());
+
+        Integer minPlayers = allProducts.stream()
+                .map(Product::getMinPlayerNumber)
+                .filter(java.util.Objects::nonNull)
+                .min(Integer::compareTo)
+                .orElse(null);
+        Integer maxPlayers = allProducts.stream()
+                .map(Product::getMaxPlayerNumber)
+                .filter(java.util.Objects::nonNull)
+                .max(Integer::compareTo)
+                .orElse(null);
+        Integer minAge = allProducts.stream()
+                .map(Product::getMinAge)
+                .filter(java.util.Objects::nonNull)
+                .min(Integer::compareTo)
+                .orElse(null);
+
         return FilterOptionsResponse.builder()
                 .languages(languages)
                 .publishers(publishers)
@@ -182,6 +206,10 @@ public class ProductServiceImpl implements ProductService {
                 .categories(categories)
                 .genres(genres)
                 .priceRange(priceRange)
+                .authors(authors)
+                .minPlayers(minPlayers)
+                .maxPlayers(maxPlayers)
+                .minAge(minAge)
                 .build();
     }
 

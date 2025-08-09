@@ -10,10 +10,8 @@ import org.arpha.dto.blog.response.CommentResponse;
 import org.arpha.dto.blog.response.PostResponse;
 import org.arpha.dto.media.enums.TargetType;
 import org.arpha.dto.media.request.FileUploadRequest;
-import org.arpha.dto.media.response.FileResponse;
 import org.arpha.entity.Comment;
 import org.arpha.entity.Post;
-import org.arpha.exception.CreateEntityException;
 import org.arpha.exception.ProductNotFoundException;
 import org.arpha.mapper.CommentMapper;
 import org.arpha.mapper.PostMapper;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
