@@ -35,7 +35,7 @@ public class ConsignmentDocumentMapperHelper {
                 .map(orderItem -> orderItem.getProduct().getDimension().getWeight()
                         .multiply(BigDecimal.valueOf(orderItem.getQuantity())))
                 .reduce(BigDecimal::add)
-                .orElseThrow(() -> new IllegalArgumentException("Can create consignment document because weight is null"))
+                .orElseThrow(() -> new IllegalArgumentException("Can't create consignment document because weight is null"))
                 .toString();
     }
 
