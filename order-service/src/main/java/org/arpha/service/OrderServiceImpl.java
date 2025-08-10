@@ -83,6 +83,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderInfoResponse createConsignmentDocument(CreateConsignmentDocumentRequest documentRequest) {
         Order order = orderRepository.findById(documentRequest.getOrderId()).orElseThrow(() ->
                 new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(documentRequest.getOrderId())));
@@ -96,6 +97,11 @@ public class OrderServiceImpl implements OrderService {
                     " wrong delivery type!").formatted(order.getId()));
         }
         orderMapper.addDocumentDataToOrder(order, createConsignmentDocumentResponse.getData().getFirst());
+        order.getStatusHistory().add(OrderStatusHistory.builder()
+                .order(order)
+                .status(order.getOrderStatus())
+                .notes("Consignment document created.")
+                .build());
         orderRepository.save(order);
         return orderMapper.toOrderInfoResponse(order);
 
