@@ -77,8 +77,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderDetailsResponse> getUsersOrders(long userId, Predicate predicate, Pageable pageable) {
-        return orderRepository.findAllByUserId(userId, predicate, pageable).map(orderMapper::toOrderDetailsResponse);
+    public Page<OrderDetailsResponse> getUsersOrders(long userId, Pageable pageable) {
+        return orderRepository.findAllByUserId(userId, pageable).map(orderMapper::toOrderDetailsResponse);
 
     }
 
