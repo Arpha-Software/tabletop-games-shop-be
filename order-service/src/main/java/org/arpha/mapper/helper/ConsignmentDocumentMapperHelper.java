@@ -28,6 +28,17 @@ public class ConsignmentDocumentMapperHelper {
         return deliveryDetails.getPaymentMethod().getValue();
     }
 
+    @Named("toWeight")
+    public String toWeight(Order order) {
+        return order.getOrderedItems()
+                .stream()
+                .map(orderItem -> orderItem.getProduct().getDimension().getWeight()
+                        .multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElseThrow(() -> new IllegalArgumentException("Can't create consignment document because weight is null"))
+                .toString();
+    }
+
     @Named("toServiceType")
     public String toServiceType(DeliveryDetails deliveryDetails) {
         return deliveryDetails.getDeliveryType().getServiceType();

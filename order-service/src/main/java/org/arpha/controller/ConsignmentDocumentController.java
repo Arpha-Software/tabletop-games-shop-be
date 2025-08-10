@@ -29,7 +29,6 @@ public class ConsignmentDocumentController {
         return consignmentDocumentService.searchSettlements(searchSettlementsRequest);
     }
 
-
     @PostMapping("/settlements/streets/search")
     public SearchSettlementsStreetsResponse searchSettlementsStreets(@RequestBody SearchSettlementsStreetsProperties searchSettlementsProperties) {
         return consignmentDocumentService.searchSettlementsStreets(searchSettlementsProperties);
