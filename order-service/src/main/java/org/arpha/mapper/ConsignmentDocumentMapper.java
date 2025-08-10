@@ -1,9 +1,7 @@
 package org.arpha.mapper;
 
-import org.arpha.dto.order.novaposhta.SettlementsStreetsAddress;
 import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.data.CreateHomeAddressData;
-import org.arpha.dto.order.novaposhta.data.SearchWarehousesData;
 import org.arpha.dto.order.novaposhta.properties.CreateConsignmentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.CreateHomeAddressMethodProperties;
@@ -46,6 +44,7 @@ public interface ConsignmentDocumentMapper {
 
     @Mapping(target = "payerType", constant = "Recipient")
     @Mapping(target = "recipientType", constant = "PrivatePerson")
+    @Mapping(target = "weight", source = "order", qualifiedByName = "toWeight")
     @Mapping(target = "paymentMethod", source = "order.deliveryDetails", qualifiedByName = "toPaymentMethod")
     @Mapping(target = "dateTime", source = "documentRequest.sendDate", qualifiedByName = "toDate")
     @Mapping(target = "cargoType", constant = "Cargo")
