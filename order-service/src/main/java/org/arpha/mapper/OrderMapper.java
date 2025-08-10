@@ -60,6 +60,8 @@ public interface OrderMapper {
     @Mapping(target = "orderStatus", source = "orderStatus")
     @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "orderedItems", source = "orderedItems", qualifiedByName = "toItemDetails")
+    @Mapping(target = "orderPriceSummary", source = "order", qualifiedByName = "getOrderPriceSummary")
+    @Mapping(target = "orderQuantity", source = "order", qualifiedByName = "getOrderItemsQuantity")
     OrderInfoResponse toOrderInfoResponse(Order order);
 
     @Mapping(target = "id", source = "id")
@@ -71,6 +73,8 @@ public interface OrderMapper {
     @Mapping(target = "expectedDeliveryDate", source = "deliveryDetails.expectedDeliveryDate")
     @Mapping(target = "orderStatus", source = "orderStatus")
     @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "orderPriceSummary", source = "order", qualifiedByName = "getOrderPriceSummary")
+    @Mapping(target = "orderQuantity", source = "order", qualifiedByName = "getOrderItemsQuantity")
     OrderDetailsResponse toOrderDetailsResponse(Order order);
 
     @Mapping(target = "order.deliveryDetails.deliveryPrice", source = "document.costOnSite", qualifiedByName = "toDeliveryPrice")

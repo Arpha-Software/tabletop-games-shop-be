@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.arpha.dto.order.enums.OrderStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
@@ -23,6 +24,8 @@ public class OrderDetailsResponse {
     private String houseNumber;
     private String flatNumber;
     private String department;
+    private BigDecimal orderPriceSummary;
     private LocalDate expectedDeliveryDate;
+    private Integer orderQuantity;
 
 }
