@@ -14,7 +14,6 @@ public class CustomerDetails {
 
     @NotEmpty(message = "First name can't empty!")
     private String firstName;
-    @NotEmpty(message = "Middle name can't empty!")
     private String middleName;
     @NotEmpty(message = "Last name can't empty!")
     private String lastName;
