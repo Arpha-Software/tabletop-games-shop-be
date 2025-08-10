@@ -6,8 +6,10 @@ import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
 import org.arpha.dto.order.response.OrderAnalyticsDto;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
+import org.arpha.dto.order.response.OrderStatusHistoryResponse;
 import org.arpha.entity.Order;
 import org.arpha.entity.OrderItem;
+import org.arpha.entity.OrderStatusHistory;
 import org.arpha.mapper.helper.OrderMapperHelper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -87,6 +89,8 @@ public interface OrderMapper {
     @Mapping(target = "price", source = "product.price")
     @Mapping(target = "productId", source = "product.id")
     OrderAnalyticsDto.OrderItemAnalyticsDto toOrderItemAnalyticsDto(OrderItem orderItem);
+
+    List<OrderStatusHistoryResponse> toOrderStatusHistoryResponseList(List<OrderStatusHistory> history);
 
     @AfterMapping
     default void setOrderForIter(@MappingTarget Order order) {

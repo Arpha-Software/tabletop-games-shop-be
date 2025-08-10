@@ -24,5 +24,6 @@ public class OrderInfoResponse {
     private OrderStatus orderStatus;
     private List<ItemDetails> orderedItems;
     private OffsetDateTime createdAt;
+    private List<OrderStatusHistoryResponse> statusHistory;
 
 }

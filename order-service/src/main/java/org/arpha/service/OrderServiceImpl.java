@@ -13,6 +13,7 @@ import org.arpha.dto.order.request.CreateConsignmentNovaPoshtaDocumentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.*;
 import org.arpha.entity.Order;
+import org.arpha.entity.OrderStatusHistory;
 import org.arpha.exception.CreateConsignmentDocumentException;
 import org.arpha.exception.CreateOrderException;
 import org.arpha.exception.OrderNotFoundException;
@@ -20,6 +21,7 @@ import org.arpha.mapper.ConsignmentDocumentMapper;
 import org.arpha.mapper.OrderMapper;
 import org.arpha.property.NovaPoshtaConsignmentProperties;
 import org.arpha.repository.OrderRepository;
+import org.arpha.repository.OrderStatusHistoryRepository;
 import org.arpha.utils.Boxed;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,12 +44,19 @@ public class OrderServiceImpl implements OrderService {
     private final ConsignmentDocumentMapper consignmentDocumentMapper;
     private final NovaPoshtaConsignmentProperties novaPoshtaConsignmentProperties;
     private final ConsignmentDocumentService consignmentDocumentService;
+    private final OrderStatusHistoryRepository orderStatusHistoryRepository;
 
     @Override
+    @Transactional
     public OrderInfoResponse createOrder(CreateOrderRequest createOrderRequest) {
         return Boxed
                 .of(createOrderRequest)
                 .mapToBoxed(orderMapper::toOrder)
+                .doWith(order -> order.getStatusHistory().add(OrderStatusHistory.builder()
+                        .order(order)
+                        .status(order.getOrderStatus())
+                        .notes("Order created.")
+                        .build()))
                 .mapToBoxed(orderRepository::save)
                 .mapToBoxed(orderMapper::toOrderInfoResponse)
                 .orElseThrow(() -> new CreateOrderException("Not enough quantity of item in store"));
@@ -147,15 +156,28 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(long orderId) {
-        Boxed
-                .of(orderId)
-                .flatOpt(orderRepository::findById)
-                .doIfTrue(order -> List.of(DeliveryType.NOVA_POSHTA_COURIER, NOVA_POSHTA_POSHTMAT,
-                                NOVA_POSHTA_DEPARTMENT).contains(order.getDeliveryDetails().getDeliveryType()) &&
-                                order.getOrderStatus() == OrderStatus.CREATED_CONSIGNMENT,
-                        order -> consignmentDocumentService.deleteConsignment(order.getDeliveryDetails().getDocumentRef()))
-                .doWith(this::returnQuantities)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND_MESSAGE.formatted(orderId)));
+
+        if (List.of(DeliveryType.NOVA_POSHTA_COURIER, NOVA_POSHTA_POSHTMAT, NOVA_POSHTA_DEPARTMENT).contains(order.getDeliveryDetails().getDeliveryType()) &&
+                order.getOrderStatus() == OrderStatus.CREATED_CONSIGNMENT) {
+            consignmentDocumentService.deleteConsignment(order.getDeliveryDetails().getDocumentRef());
+        }
+
+        updateOrderStatus(order, OrderStatus.CANCELLED, "Order cancelled by user/admin.");
+
+        order.getOrderedItems().forEach(orderItem -> orderItem.getProduct().addQuantity(orderItem.getQuantity()));
+        orderRepository.save(order);
+    }
+
+    private void updateOrderStatus(Order order, OrderStatus newStatus, String notes) {
+        order.setOrderStatus(newStatus);
+        order.getStatusHistory().add(OrderStatusHistory.builder()
+                .order(order)
+                .status(newStatus)
+                .notes(notes)
+                .build());
+        orderRepository.save(order);
     }
 
     private void returnQuantities(Order order) {
