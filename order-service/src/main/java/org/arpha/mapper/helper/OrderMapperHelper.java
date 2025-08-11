@@ -9,12 +9,14 @@ import org.arpha.entity.User;
 import org.arpha.mapper.OrderItemMapper;
 import org.arpha.security.UserDetailsAdapter;
 import org.mapstruct.Named;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +26,12 @@ public class OrderMapperHelper {
 
     @Named("getUser")
     public User getUser(Object plug) {
-        return  ((UserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .map(Authentication::getPrincipal)
+                .filter(UserDetailsAdapter.class::isInstance)
+                .map(UserDetailsAdapter.class::cast)
+                .map(UserDetailsAdapter::user)
+                .orElse(null);
     }
 
     @Named("toDeliveryPrice")
