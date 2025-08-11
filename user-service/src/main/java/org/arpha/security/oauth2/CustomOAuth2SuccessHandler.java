@@ -7,14 +7,17 @@ import org.arpha.dto.user.TokenDetails;
 import org.arpha.dto.user.response.LoginResponse;
 import org.arpha.dto.user.response.UserResponse;
 import org.arpha.security.jwt.JwtUtils;
+import org.arpha.service.OrderService;
 import org.arpha.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     private final JwtUtils jwtUtils;
     private final UserService userService;
+    private final OrderService orderService;
     @Value("${spring.security.oauth2.feRedirectUrl}")
     private String frontendUrl;
 
@@ -35,6 +39,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             String firstName = oauthToken.getPrincipal().getAttribute("given_name");
             String lastName = oauthToken.getPrincipal().getAttribute("family_name");
             userResponse = userService.createUser(email, firstName, lastName);
+            List<Long> guestOrderIds = orderService.findGuestOrderIds(userResponse);
+
+            if (!CollectionUtils.isEmpty(guestOrderIds)) {
+                orderService.assignOrdersToUser(guestOrderIds, userResponse.getId());
+            }
         } else {
             userResponse = userService.findUserByEmail(email);
         }

@@ -89,21 +89,24 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return Optional
                 .of(username)
-                .flatMap(userRepository::findByEmail)
+                .flatMap(this::findUserByIdentifierInternal)
                 .map(UserDetailsAdapter::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User with %s email wasn't found!".formatted(username)));
     }
 
     @Override
-    public UserResponse createUser(String email, String firstName, String lastName) {
+    public UserResponse createUser(String identifier, String firstName, String lastName) {
+        if ((identifier.contains("@") && userRepository.existsByEmail(identifier)) ||
+                (!identifier.contains("@") && userRepository.findByPhone(identifier).isPresent())) {
+            throw new EmailAlreadyTakenException("User with this identifier already exists: " + identifier);
+        }
+
         return Optional
-                .of(email)
-                .filter(email1 -> !userRepository.existsByEmail(email1))
-                .map(email1 -> userMapper.toUser(firstName, lastName, email1))
+                .of(identifier)
+                .map(ident -> userMapper.toUser(firstName, lastName, ident))
                 .map(userRepository::save)
                 .map(userMapper::toUserResponse)
-                .orElseThrow(() -> new EmailAlreadyTakenException("User with %s email already exists"
-                        .formatted(email)));
+                .orElseThrow(() -> new UserNotFoundException("Failed to create user."));
     }
 
     @Override
@@ -159,12 +162,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean existByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    @Override
     public UserResponse findUserByEmail(String email) {
         return Optional
                 .of(email)
                 .flatMap(userRepository::findByEmail)
                 .map(userMapper::toUserResponse)
                 .orElseThrow(() -> new UserNotFoundException("User with %s email doesn't exist!".formatted(email)));
+    }
+
+    @Override
+    public UserResponse findUserByIdentifier(String identifier) {
+        Optional<User> userOptional;
+        if (identifier.contains("@")) {
+            userOptional = userRepository.findByEmail(identifier);
+        } else {
+            userOptional = userRepository.findByPhone(identifier);
+        }
+
+        return userOptional
+                .map(userMapper::toUserResponse)
+                .orElseThrow(() -> new UserNotFoundException("User with identifier '%s' doesn't exist!".formatted(identifier)));
+    }
+
+    public Optional<User> findUserByIdentifierInternal(String identifier) {
+        if (identifier.contains("@")) {
+            return userRepository.findByEmail(identifier);
+        } else {
+            return userRepository.findByPhone(identifier);
+        }
     }
 
     @Override

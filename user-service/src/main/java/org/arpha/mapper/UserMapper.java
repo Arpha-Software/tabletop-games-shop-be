@@ -33,14 +33,14 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "firstName", source = "firstName")
     @Mapping(target = "lastName", source = "lastName")
-    @Mapping(target = "email", source = "email")
-    @Mapping(target = "phone",  ignore = true)
+    @Mapping(target = "email", expression = "java(identifier.contains(\"@\") ? identifier : null)")
+    @Mapping(target = "phone", expression = "java(identifier.contains(\"@\") ? null : identifier)")
     @Mapping(target = "subscribedToNewsLetter", constant = "false")
     @Mapping(target = "active", constant = "true")
     @Mapping(target = "blocked", constant = "false")
     @Mapping(target = "role", constant = "ROLE_USER")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    User toUser(String firstName, String lastName, String email);
+    User toUser(String firstName, String lastName, String identifier);
 
 }
