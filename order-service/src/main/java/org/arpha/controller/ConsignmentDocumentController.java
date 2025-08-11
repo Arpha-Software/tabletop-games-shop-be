@@ -3,10 +3,12 @@ package org.arpha.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
+import org.arpha.dto.order.novaposhta.properties.GetNovaPoshtaTrackingMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsStreetsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
 import org.arpha.dto.order.response.CreateContrAgentResponse;
+import org.arpha.dto.order.response.GetNovaPoshtaTrackingResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
@@ -43,4 +45,10 @@ public class ConsignmentDocumentController {
     public CreateContrAgentResponse createContrAgent(@RequestBody CreateContrAgentMethodProperties contrAgentMethodProperties) {
         return consignmentDocumentService.createContrAgent(contrAgentMethodProperties);
     }
+
+    @PostMapping
+    public GetNovaPoshtaTrackingResponse getTrackingData(@RequestBody GetNovaPoshtaTrackingMethodProperties methodProperties) {
+        return consignmentDocumentService.getGetNovaPoshtaTracking(methodProperties);
+    }
+
 }
