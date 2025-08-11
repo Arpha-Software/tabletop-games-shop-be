@@ -2,6 +2,7 @@ package org.arpha.service;
 
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.CreateHomeAddressMethodProperties;
+import org.arpha.dto.order.novaposhta.properties.GetNovaPoshtaTrackingMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsStreetsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
@@ -11,6 +12,7 @@ import org.arpha.dto.order.response.CreateContrAgentResponse;
 import org.arpha.dto.order.response.CreateHomeAddressResponse;
 import org.arpha.dto.order.response.GetCounterpartiesResponse;
 import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
+import org.arpha.dto.order.response.GetNovaPoshtaTrackingResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
@@ -35,4 +37,5 @@ public interface ConsignmentDocumentService {
 
     CreateHomeAddressResponse createHomeAddress(CreateHomeAddressMethodProperties createHomeAddressMethodProperties);
 
+    GetNovaPoshtaTrackingResponse getGetNovaPoshtaTracking(GetNovaPoshtaTrackingMethodProperties trackingMethodProperties);
 }
