@@ -43,8 +43,8 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authExpressions.isUserAllowed(#userId)")
     @GetMapping("/users/{userId}/orders")
-    public Page<OrderDetailsResponse> getUserOrders(@PathVariable long userId, @QuerydslPredicate(root = Order.class) Predicate predicate,  @PageableDefault Pageable pageable) {
-        return orderService.getUsersOrders(userId, predicate, pageable);
+    public Page<OrderDetailsResponse> getUserOrders(@PathVariable long userId, @PageableDefault Pageable pageable) {
+        return orderService.getUsersOrders(userId, pageable);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

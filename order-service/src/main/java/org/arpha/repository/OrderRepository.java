@@ -16,6 +16,7 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long>, QuerydslPredicateExecutor<Order> {
 
     Page<Order> findAllByUserId(long userId, Predicate predicate, Pageable pageable);
+    Page<Order> findAllByUserId(long userId, Pageable pageable);
     List<Order> findAllByUserId(long userId, Sort sort);
     List<Order> findAllByOrderStatusIsIn(Collection<OrderStatus> orderStatuses);
 

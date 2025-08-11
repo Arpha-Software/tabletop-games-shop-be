@@ -9,6 +9,7 @@ import org.arpha.dto.order.DeliveryDetails;
 import org.arpha.dto.order.ItemDetails;
 import org.arpha.dto.order.enums.OrderStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -24,5 +25,8 @@ public class OrderInfoResponse {
     private OrderStatus orderStatus;
     private List<ItemDetails> orderedItems;
     private OffsetDateTime createdAt;
+    private List<OrderStatusHistoryResponse> statusHistory;
+    private BigDecimal orderPriceSummary;
+    private Integer orderQuantity;
 
 }

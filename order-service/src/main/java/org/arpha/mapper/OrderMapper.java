@@ -6,8 +6,10 @@ import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
 import org.arpha.dto.order.response.OrderAnalyticsDto;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
+import org.arpha.dto.order.response.OrderStatusHistoryResponse;
 import org.arpha.entity.Order;
 import org.arpha.entity.OrderItem;
+import org.arpha.entity.OrderStatusHistory;
 import org.arpha.mapper.helper.OrderMapperHelper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -58,6 +60,8 @@ public interface OrderMapper {
     @Mapping(target = "orderStatus", source = "orderStatus")
     @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "orderedItems", source = "orderedItems", qualifiedByName = "toItemDetails")
+    @Mapping(target = "orderPriceSummary", source = "order", qualifiedByName = "getOrderPriceSummary")
+    @Mapping(target = "orderQuantity", source = "order", qualifiedByName = "getOrderItemsQuantity")
     OrderInfoResponse toOrderInfoResponse(Order order);
 
     @Mapping(target = "id", source = "id")
@@ -69,6 +73,8 @@ public interface OrderMapper {
     @Mapping(target = "expectedDeliveryDate", source = "deliveryDetails.expectedDeliveryDate")
     @Mapping(target = "orderStatus", source = "orderStatus")
     @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "orderPriceSummary", source = "order", qualifiedByName = "getOrderPriceSummary")
+    @Mapping(target = "orderQuantity", source = "order", qualifiedByName = "getOrderItemsQuantity")
     OrderDetailsResponse toOrderDetailsResponse(Order order);
 
     @Mapping(target = "order.deliveryDetails.deliveryPrice", source = "document.costOnSite", qualifiedByName = "toDeliveryPrice")
@@ -87,6 +93,8 @@ public interface OrderMapper {
     @Mapping(target = "price", source = "product.price")
     @Mapping(target = "productId", source = "product.id")
     OrderAnalyticsDto.OrderItemAnalyticsDto toOrderItemAnalyticsDto(OrderItem orderItem);
+
+    List<OrderStatusHistoryResponse> toOrderStatusHistoryResponseList(List<OrderStatusHistory> history);
 
     @AfterMapping
     default void setOrderForIter(@MappingTarget Order order) {

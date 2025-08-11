@@ -15,7 +15,7 @@ import java.util.List;
 public interface OrderService {
 
     OrderInfoResponse createOrder(CreateOrderRequest createOrderRequest);
-    Page<OrderDetailsResponse> getUsersOrders(long userId, Predicate predicate, Pageable pageable);
+    Page<OrderDetailsResponse> getUsersOrders(long userId, Pageable pageable);
     Page<OrderDetailsResponse> getsOrders(Predicate predicate, Pageable pageable);
     OrderInfoResponse getById(long orderId);
     void cancelOrder(long orderId);

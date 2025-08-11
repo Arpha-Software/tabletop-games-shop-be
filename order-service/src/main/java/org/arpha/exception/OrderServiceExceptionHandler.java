@@ -19,8 +19,7 @@ public class OrderServiceExceptionHandler {
     @ExceptionHandler(NovaPoshtaApiException.class)
     public ProblemDetail handleNovaPoshtaApiException(NovaPoshtaApiException e) {
         log.error(StringUtils.EMPTY, e);
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Exception happened when we tried " +
-                                                                                  "to connect to Nova poshta servers");
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, e.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

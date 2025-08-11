@@ -3,6 +3,7 @@ package org.arpha.mapper.helper;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.ItemDetails;
 import org.arpha.dto.order.request.CreateOrderItem;
+import org.arpha.entity.Order;
 import org.arpha.entity.OrderItem;
 import org.arpha.entity.User;
 import org.arpha.mapper.OrderItemMapper;
@@ -44,6 +45,17 @@ public class OrderMapperHelper {
     @Named("toItemDetails")
     public List<ItemDetails> toItemDetails(List<OrderItem> createOrderItems) {
         return orderItemMapper.toItemDetails(createOrderItems);
+    }
+
+    @Named("getOrderPriceSummary")
+    public BigDecimal getOrderPriceSummary(Order order) {
+        return order.getOrderedItems().stream().map(orderItem -> orderItem.getProduct().getPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Named("getOrderItemsQuantity")
+    public Integer getOrderItemsQuantity(Order order) {
+        return order.getOrderedItems().size();
     }
 
 }
