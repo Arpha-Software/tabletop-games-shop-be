@@ -22,7 +22,7 @@ public record UserDetailsAdapter(User user) implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getEmail() == null ? user.getPhone() : user.getEmail();
     }
 
     @Override

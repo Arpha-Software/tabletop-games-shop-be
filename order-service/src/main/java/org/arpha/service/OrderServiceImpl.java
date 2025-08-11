@@ -11,7 +11,15 @@ import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodPropertie
 import org.arpha.dto.order.request.CreateConsignmentDocumentRequest;
 import org.arpha.dto.order.request.CreateConsignmentNovaPoshtaDocumentRequest;
 import org.arpha.dto.order.request.CreateOrderRequest;
-import org.arpha.dto.order.response.*;
+import org.arpha.dto.order.response.CreateConsignmentDocumentResponse;
+import org.arpha.dto.order.response.CreateContrAgentResponse;
+import org.arpha.dto.order.response.CreateHomeAddressResponse;
+import org.arpha.dto.order.response.GetCounterpartiesResponse;
+import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
+import org.arpha.dto.order.response.OrderAnalyticsDto;
+import org.arpha.dto.order.response.OrderDetailsResponse;
+import org.arpha.dto.order.response.OrderInfoResponse;
+import org.arpha.dto.user.response.UserResponse;
 import org.arpha.entity.Order;
 import org.arpha.entity.OrderStatusHistory;
 import org.arpha.exception.CreateConsignmentDocumentException;
@@ -30,7 +38,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.arpha.dto.order.enums.DeliveryType.*;
+import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_COURIER;
+import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_DEPARTMENT;
+import static org.arpha.dto.order.enums.DeliveryType.NOVA_POSHTA_POSHTMAT;
 
 @Service
 @RequiredArgsConstructor
@@ -174,6 +184,20 @@ public class OrderServiceImpl implements OrderService {
 
         order.getOrderedItems().forEach(orderItem -> orderItem.getProduct().addQuantity(orderItem.getQuantity()));
         orderRepository.save(order);
+    }
+
+    @Override
+    public List<Long> findGuestOrderIds(UserResponse userResponse) {
+        return orderRepository.findGuestOrderIds(userResponse.getEmail(), userResponse.getPhone(), userResponse.getFirstName(), userResponse.getLastName());
+    }
+
+    @Override
+    @Transactional
+    public void assignOrdersToUser(List<Long> orderIds, long userId) {
+        if (orderIds == null || orderIds.isEmpty()) {
+            return;
+        }
+        orderRepository.assignUserToOrders(orderIds, userId);
     }
 
     private void updateOrderStatus(Order order, OrderStatus newStatus, String notes) {

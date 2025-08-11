@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    UserResponse createUser(String email, String firstName, String lastName);
+    UserResponse createUser(String identifier, String firstName, String lastName);
 
     UserResponse updateUser(long userId, UpdateUserRequest updateUserRequest);
 
@@ -27,6 +27,7 @@ public interface UserService extends UserDetailsService {
     Page<UserResponse> findAll(Predicate predicate, Pageable pageable);
 
     boolean existByEmail(String email);
+    boolean existByPhone(String phone);
 
     UserResponse findUserByEmail(String email);
 
@@ -38,4 +39,5 @@ public interface UserService extends UserDetailsService {
     void deleteUserDeliveryAddress(long userId, long addressId);
 
     void setDefaultDeliveryAddress(long userId, long addressId);
+    UserResponse findUserByIdentifier(String identifier);
 }

@@ -6,6 +6,7 @@ import org.arpha.dto.order.request.CreateOrderRequest;
 import org.arpha.dto.order.response.OrderAnalyticsDto;
 import org.arpha.dto.order.response.OrderDetailsResponse;
 import org.arpha.dto.order.response.OrderInfoResponse;
+import org.arpha.dto.user.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,4 +22,6 @@ public interface OrderService {
     void cancelOrder(long orderId);
     OrderInfoResponse createConsignmentDocument(CreateConsignmentDocumentRequest documentRequest);
     List<OrderAnalyticsDto> findAllByUserId(long userId, Sort sort);
+    List<Long> findGuestOrderIds(UserResponse userResponse);
+    void assignOrdersToUser(List<Long> orderIds, long userId);
 }
