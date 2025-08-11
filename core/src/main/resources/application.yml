@@ -56,3 +56,9 @@ kyivstar:
 springdoc:
   swagger-ui:
     persist-authorization: true
+
+orders:
+  novaposhta:
+    statusScheduler:
+      enabled: ${NOVAPOSHTA_STATUS_SCHEDULER_ENABLED:true}
+      cron: ${NOVAPOSHTA_STATUS_SCHEDULER:0 */3 * * *}

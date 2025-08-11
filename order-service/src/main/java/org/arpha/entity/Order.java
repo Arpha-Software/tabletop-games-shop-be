@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 import org.arpha.dto.order.enums.OrderStatus;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -53,7 +52,7 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_details_id")
     private DeliveryDetails deliveryDetails;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> orderedItems;
     @Column(name="created_at", nullable = false)
     @CreationTimestamp

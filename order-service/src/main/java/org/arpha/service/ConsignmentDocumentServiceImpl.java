@@ -3,6 +3,7 @@ package org.arpha.service;
 import lombok.RequiredArgsConstructor;
 import org.arpha.dto.order.novaposhta.properties.CreateContrAgentMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.CreateHomeAddressMethodProperties;
+import org.arpha.dto.order.novaposhta.properties.GetNovaPoshtaTrackingMethodProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchSettlementsStreetsProperties;
 import org.arpha.dto.order.novaposhta.properties.SearchWarehouseMethodProperties;
@@ -12,6 +13,7 @@ import org.arpha.dto.order.request.CreateHomeAddressRequest;
 import org.arpha.dto.order.request.DeleteConsignmentDocumentRequest;
 import org.arpha.dto.order.request.GetCounterpartiesRequest;
 import org.arpha.dto.order.request.GetCounterpartyContactPersonsRequest;
+import org.arpha.dto.order.request.GetNovaPoshtaTrackingRequest;
 import org.arpha.dto.order.request.SearchSettlementsRequest;
 import org.arpha.dto.order.request.SearchSettlementsStreetsRequest;
 import org.arpha.dto.order.request.SearchWarehousesRequest;
@@ -21,6 +23,7 @@ import org.arpha.dto.order.response.CreateHomeAddressResponse;
 import org.arpha.dto.order.response.DeleteConsignmentDocumentResponse;
 import org.arpha.dto.order.response.GetCounterpartiesResponse;
 import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
+import org.arpha.dto.order.response.GetNovaPoshtaTrackingResponse;
 import org.arpha.dto.order.response.SearchSettlementsResponse;
 import org.arpha.dto.order.response.SearchSettlementsStreetsResponse;
 import org.arpha.dto.order.response.SearchWarehousesResponse;
@@ -181,6 +184,23 @@ public class ConsignmentDocumentServiceImpl implements ConsignmentDocumentServic
         if (!response.isSuccess()) {
             throw new NovaPoshtaApiException("Exception happened during home address creation for user. Reasons: " +
                                              String.join(",", response.getErrors()));
+        }
+        return response;
+    }
+
+    @Override
+    public GetNovaPoshtaTrackingResponse getGetNovaPoshtaTracking(GetNovaPoshtaTrackingMethodProperties trackingMethodProperties) {
+        GetNovaPoshtaTrackingResponse response = restClient
+                .post()
+                .uri(novaPoshtaConsignmentProperties.apiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new GetNovaPoshtaTrackingRequest(novaPoshtaConsignmentProperties.apiKey(), trackingMethodProperties))
+                .retrieve()
+                .toEntity(GetNovaPoshtaTrackingResponse.class)
+                .getBody();
+        if (!response.isSuccess()) {
+            throw new NovaPoshtaApiException("Exception happened during getting tracking information for document. Reasons: " +
+                    String.join(",", response.getErrors()));
         }
         return response;
     }

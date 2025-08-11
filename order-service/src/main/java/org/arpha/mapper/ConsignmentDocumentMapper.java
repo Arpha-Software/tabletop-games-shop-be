@@ -1,5 +1,6 @@
 package org.arpha.mapper;
 
+import org.arpha.dto.order.novaposhta.GetNovaPoshtaTrackingDocument;
 import org.arpha.dto.order.novaposhta.data.CreateContrAgentData;
 import org.arpha.dto.order.novaposhta.data.CreateHomeAddressData;
 import org.arpha.dto.order.novaposhta.properties.CreateConsignmentMethodProperties;
@@ -14,9 +15,12 @@ import org.arpha.dto.order.response.GetCounterpartyContactPersonsResponse;
 import org.arpha.entity.DeliveryAddress;
 import org.arpha.entity.Order;
 import org.arpha.mapper.helper.ConsignmentDocumentMapperHelper;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = ConsignmentDocumentMapperHelper.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ConsignmentDocumentMapper {
@@ -112,4 +116,9 @@ public interface ConsignmentDocumentMapper {
     @Mapping(target = "flat", source = "deliveryAddress.flatNumber")
     CreateHomeAddressMethodProperties toCreateHomeAddressMethodProperties(String contactPersonRef,
                                                                           DeliveryAddress deliveryAddress);
+
+    List<GetNovaPoshtaTrackingDocument> toGetNovaPoshtaTrackingDocuments(List<Order> orders);
+
+    @Mapping(target = "documentNumber", source = "order.deliveryDetails.docNumber")
+    GetNovaPoshtaTrackingDocument toGetNovaPoshtaTrackingDocument (Order order);
 }
