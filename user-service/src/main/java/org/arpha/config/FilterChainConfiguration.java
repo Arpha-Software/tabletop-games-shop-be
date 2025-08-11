@@ -54,6 +54,7 @@ public class FilterChainConfiguration {
                         .requestMatchers(GET, "/api/v1/products/{id}/reviews").permitAll()
                         .requestMatchers(GET, "/api/v1/blog/posts/{id}").permitAll()
                         .requestMatchers(GET, "/api/v1/blog/posts").permitAll()
+                        .requestMatchers(POST, "/api/v1/orders").permitAll()
                         .requestMatchers(POST, "/api/v1/nova-poshta/settlements/search").permitAll()
                         .requestMatchers(POST, "/api/v1/nova-poshta/settlements/streets/search").permitAll()
                         .requestMatchers(POST, "/api/v1/nova-poshta/warehouses/search").permitAll()

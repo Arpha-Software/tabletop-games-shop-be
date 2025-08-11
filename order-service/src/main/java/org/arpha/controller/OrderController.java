@@ -35,7 +35,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/orders")
     public OrderInfoResponse createOrder(@Valid @RequestBody CreateOrderRequest createOrderRequest) {
         return orderService.createOrder(createOrderRequest);
