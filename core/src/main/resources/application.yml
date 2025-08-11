@@ -61,4 +61,4 @@ orders:
   novaposhta:
     statusScheduler:
       enabled: ${NOVAPOSHTA_STATUS_SCHEDULER_ENABLED:true}
-      cron: ${NOVAPOSHTA_STATUS_SCHEDULER:0 0/5 * * * ?}
+      cron: ${NOVAPOSHTA_STATUS_SCHEDULER:0 0 * * * ?}
