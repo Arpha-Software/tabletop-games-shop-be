@@ -39,14 +39,16 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             String firstName = oauthToken.getPrincipal().getAttribute("given_name");
             String lastName = oauthToken.getPrincipal().getAttribute("family_name");
             userResponse = userService.createUser(email, firstName, lastName);
-            List<Long> guestOrderIds = orderService.findGuestOrderIds(userResponse);
-
-            if (!CollectionUtils.isEmpty(guestOrderIds)) {
-                orderService.assignOrdersToUser(guestOrderIds, userResponse.getId());
-            }
         } else {
             userResponse = userService.findUserByEmail(email);
         }
+
+        List<Long> guestOrderIds = orderService.findGuestOrderIds(userResponse);
+
+        if (!CollectionUtils.isEmpty(guestOrderIds)) {
+            orderService.assignOrdersToUser(guestOrderIds, userResponse.getId());
+        }
+
         TokenDetails accessToken = jwtUtils.generateAccessToken(email);
         TokenDetails refreshToken = jwtUtils.generateRefreshToken(email);
         response.sendRedirect(getRedirectUrl(LoginResponse.of(userResponse, accessToken, refreshToken)));

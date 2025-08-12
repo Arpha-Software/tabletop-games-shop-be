@@ -65,11 +65,12 @@ public class AuthService {
             String firstName = request.getFirstName() != null ? request.getFirstName() : "New";
             String lastName = request.getLastName() != null ? request.getLastName() : "User";
             userResponse = userService.createUser(request.getIdentifier(), firstName, lastName);
-            List<Long> guestOrderIds = orderService.findGuestOrderIds(userResponse);
+        }
 
-            if (!CollectionUtils.isEmpty(guestOrderIds)) {
-                orderService.assignOrdersToUser(guestOrderIds, userResponse.getId());
-            }
+        List<Long> guestOrderIds = orderService.findGuestOrderIds(userResponse);
+
+        if (!CollectionUtils.isEmpty(guestOrderIds)) {
+            orderService.assignOrdersToUser(guestOrderIds, userResponse.getId());
         }
 
         return LoginResponse.of(userResponse, jwtUtils.generateAccessToken(userResponse.getEmail() == null ? userResponse.getPhone() : userResponse.getEmail()),
