@@ -65,6 +65,7 @@ public interface OrderMapper {
     OrderInfoResponse toOrderInfoResponse(Order order);
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "userId", source = "order", qualifiedByName = "toUserId")
     @Mapping(target = "city", source = "deliveryDetails.deliveryAddress.city")
     @Mapping(target = "street", source = "deliveryDetails.deliveryAddress.street")
     @Mapping(target = "houseNumber", source = "deliveryDetails.deliveryAddress.houseNumber")

@@ -17,6 +17,7 @@ import java.time.OffsetDateTime;
 public class OrderDetailsResponse {
 
     private long id;
+    private long userId;
     private OrderStatus orderStatus;
     private OffsetDateTime createdAt;
     private String city;

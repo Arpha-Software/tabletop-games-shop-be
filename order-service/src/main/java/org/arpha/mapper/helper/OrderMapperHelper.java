@@ -34,6 +34,11 @@ public class OrderMapperHelper {
                 .orElse(null);
     }
 
+    @Named("toUserId")
+    public long toUser(Order order) {
+        return order.getUser().getId();
+    }
+
     @Named("toDeliveryPrice")
     public BigDecimal toDeliveryPrice(String deliveryPrice) {
         return new BigDecimal(deliveryPrice);
